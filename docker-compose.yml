@@ -1,0 +1,10 @@
+services:
+  report-env:
+    image: kayleeli/dsci310_g6_milestone1
+    ports:
+      - "10000:8888"
+    volumes:
+      - ./reports:/home/jovyan/work/reports
+      - ./data:/home/jovyan/work/data
+      - ./src:/home/jovyan/work/src
+    command: start-notebook.sh --NotebookApp.token=''
