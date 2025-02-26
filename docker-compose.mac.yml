@@ -1,0 +1,10 @@
+# services: # These are the containers I want you to run
+#   analysis-env: # When system loads up, can refer this particular container as analysis-env; otherwise will randomly use 2 words to name it 
+#     image: kayleeli/dsci310_g6_milestone1 # Using version specified on Docker Hub 
+#     ports: 
+#       - "10000:8888" # Default port
+#     volumes: # To mount
+#       - .:/home/jovyan/work/src # links to directory named "work"; /home/jovyan kept to avoid overwriting original home directory
+#       - .:/home/jovyan/work/data
+#     environment: 
+#       PASSWORD: "password" # Set password to password
