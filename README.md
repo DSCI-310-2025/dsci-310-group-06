@@ -16,24 +16,23 @@ Our project aims to classify people with or without diabetes based on the factor
 
 ## How to run data analysis
 
-1. Run either `run_container_locally.sh` for Windows or `run_container_mac.sh` for Mac.
-2. Open `http://localhost:10000/` in a browser window.
-3. Open the file `milestone1_draft.ipynb` and run the notebook.
-    - If `cdc_diabetes_health_indicators.csv` is not present in the file `data/raw`, uncomment and run `py_run_file("/home/jovyan/work/data/raw/dataset_download.py")`.
+
+1. Setup: Ensure Docker Desktop is installed and running.
+2. Start container: In the project directory (dsci-310-group-06), run the following in the terminal:
+```
+docker-compose up
+```
+3. Open http://localhost:10000/ in a browser.
+4. Open `work/projects/diabetes_classification_report.ipynb` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
 - `reticulate`
 - `tidyverse`
-- `recipes`
-- `rsample`
-- `tune`
-- `broom`
-- `workflows`
-- `readr`
-- `ggplot2`
+- `tidymodels`
 - `patchwork`
 - `ROSE`
+- `purrr`
 
 ## Licenses
 
