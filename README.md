@@ -16,13 +16,14 @@ Our project aims to classify people with or without diabetes based on the factor
 
 ## How to run data analysis
 
-
 1. Setup: Ensure Docker Desktop is installed and running.
 2. Start container: In the project directory (dsci-310-group-06), run the following in the terminal:
-```
+
+```{terminal}
 docker-compose up
 ```
-3. Open http://localhost:10000/ in a browser.
+
+3. Open `http://localhost:10000/` in a browser.
 4. Open `work/projects/diabetes_classification_report.ipynb` and run the notebook.
 
 ## List of dependencies needed to run analysis
