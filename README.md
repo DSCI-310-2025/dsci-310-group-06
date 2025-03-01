@@ -9,9 +9,9 @@
 
 ## Project Summary
 
-The Behavioral Risk Factor Surveillance System (BRFSS) is a collaborative project between all of the states in the United States (US) and participating US territories and the Centers for Disease Control and Prevention (CDC), with the aim to collect uniform, state-specific data on preventive health practices and risk behaviors that are linked to chronic diseases, injuries, and preventable infectious diseases that affect the adult population (Centers for Disease Control and Prevention, 2017).
+The Behavioral Risk Factor Surveillance System (BRFSS) is a collaborative project between all of the states in the United States (US) and participating US territories and the Centers for Disease Control and Prevention (CDC), with the aim to collect uniform, state-specific data on preventive health practices and risk behaviors that are linked to chronic diseases, injuries, and preventable infectious diseases that affect the adult population (Pickens et al., 2018).
 
-Our project aims to predict if an individual is at high risk of developing diabetes based on the health indicators provided by the BRFSS, using a cleaned diabetes dataset derived from the BRFSS 2015 survey responses. The majority of attributes are categorical and binary due to the nature of the survey questions.
+Our project aims to predict if an individual is at high risk of developing diabetes based on the health indicators provided by the BRFSS, using a cleaned diabetes dataset derived from the BRFSS 2015 survey responses. The majority of attributes are categorical and binary due to the nature of the survey questions (CDC, 2017).
 
 The original dataset can be found on the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 
@@ -44,5 +44,6 @@ docker-compose up
 ## References
 
 - Burrows, N. R., Hora, I., Geiss, L. S., Gregg, E. W., & Albright, A. (2017). Incidence of End-Stage Renal Disease Attributed to Diabetes Among Persons with Diagnosed Diabetes — United States and Puerto Rico, 2000–2014. *MMWR Morbidity and Mortality Weekly Report, 66*(43), 1165–1170. [https://doi.org/10.15585/mmwr.mm6643a2](https://doi.org/10.15585/mmwr.mm6643a2)
-- CDC. (2023, September 25). *CDC diabetes health indicators* [Data set]. UCI Machine Learning Repository. [https://doi.org/10.24432/C53919](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 - CDC. (2017, August 11). *CDC - 2015 BRFSS survey data and Documentation*. Centers for Disease Control and Prevention. [https://www.cdc.gov/brfss/annual_data/annual_2015.html](https://www.cdc.gov/brfss/annual_data/annual_2015.html)
+- CDC. (2023, September 25). *CDC diabetes health indicators* [Data set]. UCI Machine Learning Repository. [https://doi.org/10.24432/C53919](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
+- Pickens, C. M., Pierannunzi, C., Garvin, W., & Town, M. (2018). Surveillance for certain health behaviors and conditions among states and selected local areas — Behavioral Risk Factor Surveillance System, United States, 2015. *MMWR Surveillance Summaries, 67*(SS-9), 1–90. [https://doi.org/10.15585/mmwr.ss6709a1](https://doi.org/10.15585/mmwr.ss6709a1)
