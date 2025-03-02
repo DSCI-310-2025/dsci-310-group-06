@@ -17,25 +17,35 @@ The original dataset can be found on the [UCI Machine Learning Repository](https
 
 ## How to run data analysis
 
-1. Setup: Ensure Docker Desktop is installed and running.
-2. Start container: In the project directory (dsci-310-group-06), run the following in the terminal:
+
+1. Prerequisites: Ensure Docker Desktop is installed and running.
+
+2. Clone the repository (if not already done):
+
+```bash
+git clone https://github.com/DSCI-310-2025/dsci-310-group-06.git
+cd dsci-310-group-06
+```
+
+3. Start container: In the project directory (`dsci-310-group-06/`), run the following in the terminal:
 
 ```{terminal}
 docker-compose up
 ```
 
 3. Open `http://localhost:10000/` in a browser.
-4. Open `work/projects/diabetes_classification_report.ipynb` and run the notebook.
+
+4. Navigate to `work/projects/diabetes_classification_report.ipynb` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
-- `reticulate`
-- `tidyverse`
-- `tidymodels`
-- `glmnet`
-- `patchwork`
-- `ROSE`
-- `vcd`
+- `reticulate` (v1.25)  
+- `tidyverse` (v2.0.0)  
+- `tidymodels` (v1.1.1)  
+- `glmnet` (v4.1-8)  
+- `patchwork` (v1.3.0)  
+- `ROSE` (v0.0-4)  
+- `vcd` (v1.4-13)  
 
 ## Licenses
 
