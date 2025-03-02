@@ -35,7 +35,7 @@ docker-compose up
 
 3. Open `http://localhost:10000/` in a browser.
 
-4. Navigate to `work/projects/diabetes_classification_report.ipynb` and run the notebook.
+4. Navigate to `work/reports/diabetes_classification_report.ipynb` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
