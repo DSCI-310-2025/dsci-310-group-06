@@ -130,15 +130,25 @@ suppressPackageStartupMessages({
 ```
 
 ```{r}
+#| echo: false
+
 # Do only once. Takes ages but it works. 
 # This run the python script to extract file from uci in R
 
-# py_run_file("/home/jovyan/work/src/dataset_download.py")
+# reticulate::py_install(c("pandas", "ucimlrepo"), method = "auto")
+
+# Explicitly set the Python environment
+Sys.setenv(RETICULATE_PYTHON = "/venv/bin/python")
+
+# Can't find way to get reticulate to work
+# reticulate::py_run_file("/home/rstudio/work/src/dataset_download.py")
+
+system("/venv/bin/python /home/rstudio/work/src/dataset_download.py")
 ```
 
 ```{r}
 # Reads the downloaded dataset into a variable named raw_diabetes_df
-raw_diabetes_df <- read_csv("/home/jovyan/work/data/raw/cdc_diabetes_health_indicators.csv", show_col_types = FALSE)
+raw_diabetes_df <- read_csv("/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv", show_col_types = FALSE)
 ```
 
 ```{r}
@@ -229,7 +239,7 @@ balanced_raw_comparision_df
 
 ```{r}
 # Write out balanced df into /work/data/processed/ so we don't have to run all the steps above each time
-balanced_raw_diabetes_df %>% write_csv("/home/jovyan/work/data/processed/balanced_cdc_diabetes_health_indicators.csv")
+balanced_raw_diabetes_df %>% write_csv("/home/rstudio/work/data/processed/balanced_cdc_diabetes_health_indicators.csv")
 ```
 
 ```{r}
