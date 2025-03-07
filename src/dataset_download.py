@@ -8,11 +8,11 @@ cdc_diabetes_health_indicators = fetch_ucirepo(id=891)
 X = cdc_diabetes_health_indicators.data.features
 y = cdc_diabetes_health_indicators.data.targets
 
-# Metadata
-print(cdc_diabetes_health_indicators.metadata)
+# Metadata (remove comment if metadata is required to be listed)
+# print(cdc_diabetes_health_indicators.metadata)
 
-# Variable information
-print(cdc_diabetes_health_indicators.variables)
+# Variable information (remove comment if metadata is required to be listed)
+# print(cdc_diabetes_health_indicators.variables)
 
 df = pd.concat([X, y], axis=1)
 df.to_csv('/home/jovyan/work/data/raw/cdc_diabetes_health_indicators.csv', index=False)

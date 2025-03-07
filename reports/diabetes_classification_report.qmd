@@ -119,7 +119,6 @@ The packages used in this document are `reticulate`, `tidyverse`, `tidymodels`, 
 ```{r}
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
 suppressPackageStartupMessages({
-  suppressWarnings(library(reticulate)) # Run Python code in R session
   suppressWarnings(library(tidyverse)) # Data wrangling and visualization
   suppressWarnings(library(tidymodels)) # Machine learning tools
   suppressWarnings(library(glmnet)) # Fit generalized linear models by penalty
@@ -129,21 +128,9 @@ suppressPackageStartupMessages({
 })
 ```
 
-```{r}
-#| echo: false
-
-# Do only once. Takes ages but it works. 
-# This run the python script to extract file from uci in R
-
-# reticulate::py_install(c("pandas", "ucimlrepo"), method = "auto")
-
-# Explicitly set the Python environment
-Sys.setenv(RETICULATE_PYTHON = "/venv/bin/python")
-
-# Can't find way to get reticulate to work
-# reticulate::py_run_file("/home/rstudio/work/src/dataset_download.py")
-
-system("/venv/bin/python /home/rstudio/work/src/dataset_download.py")
+```{bash}
+# This run the python script to extract file from uci
+/venv/bin/python /home/rstudio/work/src/dataset_download.py
 ```
 
 ```{r}
