@@ -13,4 +13,4 @@ RUN apt install -y python3.12 python3-pip python3-venv
 COPY src/requirements.txt /requirements.txt
 
 RUN python3.12 -m venv /venv
-RUN /venv/bin/pip install -r /python_requirements.txt
+RUN /venv/bin/pip install -r /requirements.txt
