@@ -4,8 +4,8 @@ services:
     ports:
       - "10000:8787"
     volumes:
-      - ./reports:/home/rstudio/work/reports
-      - ./data:/home/rstudio/work/data
-      - ./src:/home/rstudio/work/src
+      - "./reports:/home/rstudio/work/reports"
+      - "./data:/home/rstudio/work/data"
+      - "./src:/home/rstudio/work/src"
     environment:
       DISABLE_AUTH: true
