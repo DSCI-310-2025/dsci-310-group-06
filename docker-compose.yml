@@ -7,6 +7,5 @@ services:
       - ./reports:/home/rstudio/work/reports
       - ./data:/home/rstudio/work/data
       - ./src:/home/rstudio/work/src
-    environment: 
-      PASSWORD: "password" # Set password to password; Needs GUI
-      DISABLE_AUTH: "true"
+    environment:
+      DISABLE_AUTH: true
