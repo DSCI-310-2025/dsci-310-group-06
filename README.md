@@ -17,7 +17,6 @@ The original dataset can be found on the [UCI Machine Learning Repository](https
 
 ## How to run data analysis
 
-
 1. Prerequisites: Ensure Docker Desktop is installed and running.
 
 2. Clone the repository (if not already done):
@@ -33,9 +32,9 @@ cd dsci-310-group-06
 docker-compose up
 ```
 
-3. Open `http://localhost:10000/` in a browser.
+4. Open `http://localhost:10000/` in a browser.
 
-4. Navigate to `work/reports/diabetes_classification_report.ipynb` and run the notebook.
+5. Navigate to `work/reports/diabetes_classification_report.qmd` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
