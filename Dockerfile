@@ -34,8 +34,8 @@ RUN python3 -m venv /venv && \
     /venv/bin/pip install --upgrade pip && \
     /venv/bin/pip install -r /requirements.txt
 
-# Ensures the virtual environment has appropriate permissions for all users inside the container
-RUN chmod -R 777 /venv
+# Change permissions: rwx for owner, rw for group and r for others
+RUN chmod -R 764 /venv
 
 # Set RETICULATE_PYTHON so R and RStudio use the virtual environment's Python
 ENV RETICULATE_PYTHON="/venv/bin/python"
