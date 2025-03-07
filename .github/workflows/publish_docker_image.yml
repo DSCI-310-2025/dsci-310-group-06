@@ -26,7 +26,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: kayleeli/dsci310_g6_milestone1
+          images: nt2103/dsci310_g6 # Remember to change accordingly
           tags: |
             type=raw, value={{sha}},enable=${{github.ref_type != 'tag' }}
             type=raw, value=latest
