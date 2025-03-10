@@ -162,7 +162,7 @@ checking_raw_matrix <- rbind(
   Distinct_Count = sapply(raw_diabetes_df, function(x) n_distinct(x)),
   Current_Data_Type = sapply(raw_diabetes_df, typeof)
 )
-                    
+
 checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 ```
 
