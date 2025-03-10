@@ -38,13 +38,18 @@ docker-compose up
 
 ## List of dependencies needed to run analysis
 
+#### R
 - `reticulate` (v1.25)  
 - `tidyverse` (v2.0.0)  
 - `tidymodels` (v1.1.1)  
 - `glmnet` (v4.1-8)  
 - `patchwork` (v1.3.0)  
 - `ROSE` (v0.0-4)  
-- `vcd` (v1.4-13)  
+- `vcd` (v1.4-13)
+
+#### Python
+- `pandas` (v2.2)
+- `ucimlrepo` (v0.0.7)
 
 ## Licenses
 
