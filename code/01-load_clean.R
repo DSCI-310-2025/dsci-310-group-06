@@ -1,10 +1,7 @@
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
 library(tidyverse) # Data wrangling and visualization
 library(tidymodels) # Machine learning tools
-library(glmnet) # Fit generalized linear models by penalty
-library(patchwork) # Combine plots
 library(ROSE) # Random Over-Sampling Examples for dataset balancing
-library(vcd) # For Cramér’s V
 
 # This run the python script to extract file from uci
 system("/venv/bin/python /home/rstudio/work/src/dataset_download.py")
