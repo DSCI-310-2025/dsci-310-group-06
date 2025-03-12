@@ -1,8 +1,13 @@
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-library(tidyverse) # Data wrangling and visualization
-library(patchwork) # Combine plots
-library(vcd) # For Cramér’s V
-library(docopt)
+# library(tidyverse) # Data wrangling and visualization
+library(readr)      # read_csv, write_csv
+library(ggplot2)    # ggplot, geom_bar, geom_density, theme
+library(dplyr)      # %>%, arrange
+library(purrr)      # map_dfr
+library(tibble)     # tibble
+library(patchwork)  # wrap_plots, plot_layout, plot_annotation
+library(vcd)        # assocstats (Cramér’s V)
+library(docopt)     # docopt
 
 # READ diabetes_train, diabetes_test
 diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
@@ -27,18 +32,18 @@ density_plots <- list()
 # --------------------------------------------------
 # Creating bar plots for each categorical variable in the dataset
 for (var in categorical_vars) {
-  p <- ggplot(diabetes_train, aes(x = !!sym(var), fill = as.factor(Diabetes_binary))) +
-    geom_bar(position = "fill") + 
-    scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
-    labs(title = paste("Diabetes Binary by", var),
+  p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
+    ggplot2::geom_bar(position = "fill") + 
+    ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
+    ggplot2::labs(title = paste("Diabetes Binary by", var),
          x = var,
          y = "Proportion",
          fill = "Diabetes Binary") +
-    theme_minimal() + 
-    theme(
-      axis.text = element_text(size = 30),  
-      axis.title = element_text(size = 30), 
-      plot.title = element_text(size = 35, face = "bold")
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 30),  
+      axis.title = ggplot2::element_text(size = 30), 
+      plot.title = ggplot2::element_text(size = 35, face = "bold")
     )
   bar_plots[[var]] <- p
 }
@@ -46,18 +51,18 @@ for (var in categorical_vars) {
 # --------------------------------------------------
 # Density plot for BMI
 for (var in noncat_var) {
-  p <- ggplot(diabetes_train, aes(x = !!sym(var), fill = as.factor(Diabetes_binary))) +
-    geom_density(alpha = 0.5) +
-    scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
-    labs(title = paste("Diabetes Binary by", var),
+  p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
+    ggplot2::geom_density(alpha = 0.5) +
+    ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
+    ggplot2::labs(title = paste("Diabetes Binary by", var),
          x = var,
          y = "Density",
          fill = "Diabetes Binary") +
-    theme_minimal() + 
-    theme(
-      axis.text = element_text(size = 30),  
-      axis.title = element_text(size = 30), 
-      plot.title = element_text(size = 35, face = "bold")
+    ggplot2::theme_minimal() + 
+    ggplot2::theme(
+      axis.text = ggplot2::element_text(size = 30),  
+      axis.title = ggplot2::element_text(size = 30), 
+      plot.title = ggplot2::element_text(size = 35, face = "bold")
     )
   density_plots[[var]] <- p
 }
@@ -66,28 +71,28 @@ all_plots = c(bar_plots, density_plots)
 num_cols = 3
 
 # Combining all of the plots into a 3 x 7 grid
-combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = num_cols) + 
-  plot_layout(guides = "collect") +
-  plot_annotation(
+combined_plots <- patchwork::wrap_plots(c(bar_plots, density_plots), ncol = num_cols) + 
+  patchwork::plot_layout(guides = "collect") +
+  patchwork::plot_annotation(
     title = "Figure 1. Distribution of Diabetes Binary by Various Variables",
     subtitle = "This figure shows the distribution of the binary diabetes outcome across different variables, including binary and continuous variables.",
-    theme = theme(
-      plot.title = element_text(size = 50, face = "bold"),
-      plot.subtitle = element_text(size = 40),
-      axis.title = element_text(size = 30),
-      axis.text = element_text(size = 30),
+    theme = ggplot2::theme(
+      plot.title = ggplot2::element_text(size = 50, face = "bold"),
+      plot.subtitle = ggplot2::element_text(size = 40),
+      axis.title = ggplot2::element_text(size = 30),
+      axis.text = ggplot2::element_text(size = 30)
       )
     )
 
 # WRITE combined_plots
-ggsave("/home/rstudio/work/output/combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
+ggplot2::ggsave("/home/rstudio/work/output/combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 
 # Run chi-squared tests independently for each feature
-cramer_chi_results <- map_dfr(categorical_vars, function(var) {
+cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
   tbl <- table(diabetes_train$Diabetes_binary, diabetes_train[[var]])
-  test_result <- chisq.test(tbl)
-  cv <- assocstats(tbl)$cramer
-  tibble(
+  test_result <- stats::chisq.test(tbl)
+  cv <- vcd::assocstats(tbl)$cramer
+  tibble::tibble(
     Variable = var,
     Statistic = test_result$statistic,
     DF = test_result$parameter,
@@ -99,8 +104,7 @@ cramer_chi_results <- map_dfr(categorical_vars, function(var) {
 })
 
 # Arrange the results by p-value (from smallest to largest)
-cramer_chi_results_sorted <- cramer_chi_results %>% arrange(desc(CramersV))
+cramer_chi_results_sorted <- cramer_chi_results %>% dplyr::arrange(dplyr::desc(CramersV))
 
 # WRITE cramer_chi_results_sorted
-write_csv(cramer_chi_results_sorted, "/home/rstudio/work/data/processed/cramer_chi_results_sorted.csv")
-
+readr::write_csv(cramer_chi_results_sorted, "/home/rstudio/work/data/processed/cramer_chi_results_sorted.csv")

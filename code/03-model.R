@@ -1,7 +1,15 @@
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-library(tidyverse) # Data wrangling and visualization
-library(tidymodels) # Machine learning tools
-library(glmnet) # Fit generalized linear models by penalty
+# library(tidyverse) # Data wrangling and visualization
+# library(tidymodels) # Machine learning tools
+library(readr)         # read_csv, write_rds
+library(dplyr)         # %>%, select
+library(parsnip)       # logistic_reg, set_engine, set_mode
+library(rsample)       # vfold_cv
+library(recipes)       # recipe, step_dummy, step_normalize
+library(workflows)     # workflow, add_recipe, add_model
+library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
+library(workflowsets)  # finalize_workflow
+library(glmnet)        # Fit generalized linear models by penalty
 
 # READ diabetes_train, diabetes_test
 diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
@@ -9,36 +17,36 @@ diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_tes
 
 # Selecting only the features we determined from 3.2. EDA - Feature Selection and Visualization
 diabetes_train_filtered <- diabetes_train %>%
-  select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk)
+  dplyr::select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk)
 
 # Pipeline for logistic regression 
-lr_mod <- logistic_reg(penalty = tune(), mixture = 1) %>% 
-    set_engine("glmnet") %>%
-    set_mode("classification")
+lr_mod <- parsnip::logistic_reg(penalty = tune::tune(), mixture = 1) %>% 
+    parsnip::set_engine("glmnet") %>%
+    parsnip::set_mode("classification")
 
-folds <- vfold_cv(diabetes_train_filtered, v=5)
+folds <- rsample::vfold_cv(diabetes_train_filtered, v = 5)
 
-lr_recipe <- recipe(Diabetes_binary ~ ., data = diabetes_train_filtered) %>%
-  step_dummy(all_nominal_predictors(), -all_ordered()) %>% 
-  step_normalize(all_predictors())
+lr_recipe <- recipes::recipe(Diabetes_binary ~ ., data = diabetes_train_filtered) %>%
+  recipes::step_dummy(recipes::all_nominal_predictors(), -recipes::all_ordered()) %>% 
+  recipes::step_normalize(recipes::all_predictors())
 
-lr_workflow <- workflow() %>%
-  add_recipe(lr_recipe)
+lr_workflow <- workflows::workflow() %>%
+  workflows::add_recipe(lr_recipe)
 
 # Tuning with cross-validation set for penalty
-lambda_grid <- grid_max_entropy(penalty(), size = 10)
+lambda_grid <- tune::grid_max_entropy(parsnip::penalty(), size = 10)
 
-lasso_grid <- tune_grid(lr_workflow %>% add_model(lr_mod),
-                        resamples = folds,
-                        grid = lambda_grid,
-                        metrics = metric_set(recall))
+lasso_grid <- tune::tune_grid(lr_workflow %>% workflows::add_model(lr_mod),
+                              resamples = folds,
+                              grid = lambda_grid,
+                              metrics = tune::metric_set(recall))
 
 # Choosing the metric with the highest recall
-highest_auc <- lasso_grid %>% select_best(metric = "recall")
+highest_auc <- lasso_grid %>% tune::select_best(metric = "recall")
 
-lasso_tuned_wflow <- finalize_workflow(lr_workflow %>% 
-                                         add_model(lr_mod),highest_auc) %>%
-  fit(data = diabetes_train_filtered)
+lasso_tuned_wflow <- workflowsets::finalize_workflow(lr_workflow %>% 
+                                                       workflows::add_model(lr_mod), highest_auc) %>%
+  parsnip::fit(data = diabetes_train_filtered)
 
 # WRITE lasso_tuned_wflow
-write_rds(lasso_tuned_wflow, "/home/rstudio/work/output/lasso_tuned_wflow.RDS")
+readr::write_rds(lasso_tuned_wflow, "/home/rstudio/work/output/lasso_tuned_wflow.RDS")
