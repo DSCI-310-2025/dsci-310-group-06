@@ -4,6 +4,8 @@ library(tidymodels) # Machine learning tools
 library(glmnet) # Fit generalized linear models by penalty
 
 # READ diabetes_train, diabetes_test
+diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
+diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
 
 # Selecting only the features we determined from 3.2. EDA - Feature Selection and Visualization
 diabetes_train_filtered <- diabetes_train %>%
@@ -39,3 +41,4 @@ lasso_tuned_wflow <- finalize_workflow(lr_workflow %>%
   fit(data = diabetes_train_filtered)
 
 # WRITE lasso_tuned_wflow
+write_rds(lasso_tuned_wflow, "/home/rstudio/work/output/lasso_tuned_wflow.RDS")

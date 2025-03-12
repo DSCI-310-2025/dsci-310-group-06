@@ -4,6 +4,9 @@ library(tidymodels) # Machine learning tools
 library(glmnet) # Fit generalized linear models by penalty
 
 # READ diabetes_train, diabetes_test, lasso_tuned_wflow
+diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
+diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
+lasso_tuned_wflow <- readr::read_rds("/home/rstudio/work/output/lasso_tuned_wflow.RDS")
 
 # Applying to the test set
 lasso_preds <- lasso_tuned_wflow %>% predict(diabetes_test)
@@ -17,6 +20,7 @@ lasso_metrics <- rbind(classificationMetrics(lasso_modelOutputs, truth = Diabete
                        roc_auc_value)
 
 # WRITE lasso_metrics
+write_csv(lasso_metrics, "/home/rstudio/work/data/processed/lasso_metrics.csv")
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
@@ -35,6 +39,7 @@ roc_plot <- autoplot(roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, eve
   )
 
 # WRITE roc_plot
+ggsave("/home/rstudio/work/output/roc_plot.png", roc_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
@@ -62,3 +67,4 @@ cm_plot <- ggplot(cm_df, aes(x = Prediction, y = Truth, fill = Freq)) +
   guides(fill = "none")
 
 # WRITE cm_plot
+ggsave("/home/rstudio/work/output/cm_plot.png", cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)

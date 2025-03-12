@@ -28,7 +28,7 @@ checking_raw_matrix <- rbind(
 checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 
 # WRITE checking_raw_df
-checking_raw_df('/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv', index=False)
+write_csv(checking_raw_df, "/home/rstudio/work/output/checking_raw_df.csv")
 
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
@@ -41,6 +41,7 @@ target_result <- raw_diabetes_df %>%
   ungroup()
 
 # WRITE target_result
+write_csv(target_result, "/home/rstudio/work/output/target_result.csv")
 
 # Using ROSE to balance data by oversampling
 # Setting the seed for consistent results
@@ -52,7 +53,7 @@ balanced_target_result <- balanced_raw_diabetes_df %>%
   ungroup()
 
 # WRITE balanced_target_result
-
+write_csv(balanced_target_result, "/home/rstudio/work/output/balanced_target_result.csv")
 
 # Comparing class distribution before and after balancing
 balanced_raw_comparision_df <- data.frame(
@@ -64,6 +65,7 @@ balanced_raw_comparision_df <- data.frame(
 )
 
 # WRITE balanced_raw_comparision_df
+write_csv(balanced_raw_comparision_df, "/home/rstudio/work/data/processed/balanced_raw_comparision_df")
 
 # Split data into 75% train, 25% test for machine learning
 # Setting the seed for consistent results
@@ -73,3 +75,5 @@ diabetes_train <- training(diabetes_split)
 diabetes_test <- testing(diabetes_split)
 
 # WRITE diabetes_train, diabetes_test
+write_csv(diabetes_train, "/home/rstudio/work/data/processed/diabetes_train.csv")
+write_csv(diabetes_test, "/home/rstudio/work/data/processed/diabetes_test.csv")

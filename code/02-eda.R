@@ -4,6 +4,10 @@ library(patchwork) # Combine plots
 library(vcd) # For Cramér’s V
 library(docopt)
 
+# READ diabetes_train, diabetes_test
+diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
+diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
+
 options(repr.plot.width = 30, repr.plot.height = 90, warn = -1)
 
 # Categorical variables
@@ -76,7 +80,7 @@ combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = num_cols) +
     )
 
 # WRITE combined_plots
-ggsave("combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
+ggsave("/home/rstudio/work/output/combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 
 # Run chi-squared tests independently for each feature
 cramer_chi_results <- map_dfr(categorical_vars, function(var) {
@@ -98,4 +102,5 @@ cramer_chi_results <- map_dfr(categorical_vars, function(var) {
 cramer_chi_results_sorted <- cramer_chi_results %>% arrange(desc(CramersV))
 
 # WRITE cramer_chi_results_sorted
+write_csv(cramer_chi_results_sorted, "/home/rstudio/work/data/processed/cramer_chi_results_sorted.csv")
 
