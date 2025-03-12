@@ -1,14 +1,10 @@
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
 library(tidyverse) # Data wrangling and visualization
-library(tidymodels) # Machine learning tools
-library(glmnet) # Fit generalized linear models by penalty
 library(patchwork) # Combine plots
-library(ROSE) # Random Over-Sampling Examples for dataset balancing
 library(vcd) # For Cramér’s V
+library(docopt)
 
-options(repr.plot.width = 15, repr.plot.height = 10, warn = -1)
-
-# READ diabetes_train, diabetes_test
+options(repr.plot.width = 30, repr.plot.height = 90, warn = -1)
 
 # Categorical variables
 categorical_vars <- c("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", 
@@ -34,7 +30,12 @@ for (var in categorical_vars) {
          x = var,
          y = "Proportion",
          fill = "Diabetes Binary") +
-    theme_minimal()
+    theme_minimal() + 
+    theme(
+      axis.text = element_text(size = 30),  
+      axis.title = element_text(size = 30), 
+      plot.title = element_text(size = 35, face = "bold")
+    )
   bar_plots[[var]] <- p
 }
 
@@ -48,26 +49,34 @@ for (var in noncat_var) {
          x = var,
          y = "Density",
          fill = "Diabetes Binary") +
-    theme_minimal()
+    theme_minimal() + 
+    theme(
+      axis.text = element_text(size = 30),  
+      axis.title = element_text(size = 30), 
+      plot.title = element_text(size = 35, face = "bold")
+    )
   density_plots[[var]] <- p
 }
 
-options(repr.plot.width = 20, repr.plot.height = 12)
+all_plots = c(bar_plots, density_plots)
+num_cols = 3
 
 # Combining all of the plots into a 3 x 7 grid
-combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = 3, nrow = 7) + 
+combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = num_cols) + 
+  plot_layout(guides = "collect") +
   plot_annotation(
     title = "Figure 1. Distribution of Diabetes Binary by Various Variables",
     subtitle = "This figure shows the distribution of the binary diabetes outcome across different variables, including binary and continuous variables.",
-    theme =   theme(
-      plot.title = element_text(size = 16, face = "bold"),
-      plot.subtitle = element_text(size = 12),
-      axis.title = element_text(size = 12),
-      axis.text = element_text(size = 10)
+    theme = theme(
+      plot.title = element_text(size = 50, face = "bold"),
+      plot.subtitle = element_text(size = 40),
+      axis.title = element_text(size = 30),
+      axis.text = element_text(size = 30),
+      )
     )
-  )
 
 # WRITE combined_plots
+ggsave("combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 
 # Run chi-squared tests independently for each feature
 cramer_chi_results <- map_dfr(categorical_vars, function(var) {
