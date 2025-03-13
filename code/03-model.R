@@ -11,8 +11,9 @@ library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
 library(workflowsets)  # finalize_workflow
 library(glmnet)        # Fit generalized linear models by penalty
 
-# 03-model.R --file_path="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path="/home/rstudio/work/output/lasso_tuned_wflow.RDS"
-
+# 03-model.R --file_path=/home/rstudio/work/data/processed/diabetes_train.csv --output_path=/home/rstudio/work/output/lasso_tuned_wflow.RDS
+# 03-model.R /home/rstudio/work/data/processed/diabetes_train.csv 
+# /home/rstudio/work/output/lasso_tuned_wflow.RDS
 "This script constructs the lasso_tuned_wflow classification analysis model 
 
 Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
