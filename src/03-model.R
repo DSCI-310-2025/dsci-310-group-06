@@ -11,9 +11,17 @@ library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
 library(workflowsets)  # finalize_workflow
 library(glmnet)        # Fit generalized linear models by penalty
 
-# READ diabetes_train, diabetes_test
-diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
-diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
+# 03-model.R --file_path="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path="/home/rstudio/work/output/lasso_tuned_wflow.RDS"
+
+"This script constructs the lasso_tuned_wflow classification analysis model 
+
+Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
+" -> doc
+
+opt <- docopt::docopt(doc)
+
+# READ diabetes_train
+diabetes_train <- readr::read_csv(opt$file_path)
 
 # Selecting only the features we determined from 3.2. EDA - Feature Selection and Visualization
 diabetes_train_filtered <- diabetes_train %>%
@@ -49,4 +57,4 @@ lasso_tuned_wflow <- workflowsets::finalize_workflow(lr_workflow %>%
   parsnip::fit(data = diabetes_train_filtered)
 
 # WRITE lasso_tuned_wflow
-readr::write_rds(lasso_tuned_wflow, "/home/rstudio/work/output/lasso_tuned_wflow.RDS")
+readr::write_rds(lasso_tuned_wflow, opt$output_path)
