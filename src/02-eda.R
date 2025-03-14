@@ -9,8 +9,9 @@ library(patchwork)  # wrap_plots, plot_layout, plot_annotation
 library(vcd)        # assocstats (Cramér’s V)
 library(docopt)     # docopt
 
-# 02-eda.R --file_path="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path_plots="/home/rstudio/work/output/combined_plots.png" --output_path_cramers="/home/rstudio/work/output/cramer_chi_results_sorted.csv"
-
+# 02-eda.R --file_path=/home/rstudio/work/data/processed/diabetes_train.csv --output_path_plots=/home/rstudio/work/output/combined_plots.png --output_path_cramers=/home/rstudio/work/output/cramer_chi_results_sorted.csv
+# 02-eda.R /home/rstudio/work/data/processed/diabetes_train.csv 
+# /home/rstudio/work/output/combined_plots.png /home/rstudio/work/output/cramer_chi_results_sorted.csv
 "This script conducts exploratory data analysis on the diabetes_train dataset
 
 Usage: 02-eda.R --file_path=<file_path> --output_path_plots=<output_path_plots> --output_path_cramers=<output_path_cramers>

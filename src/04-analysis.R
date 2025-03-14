@@ -9,8 +9,9 @@ library(tune)      # select_best
 library(rsample)   # Resampling (not explicitly used in this script)
 library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
 
-# 04-analysis.R --file_path_test="/home/rstudio/work/data/processed/diabetes_test.csv" --file_path_wflow="/home/rstudio/work/output/lasso_tuned_wflow.RDS" --output_path_lasso="/home/rstudio/work/output/lasso_metrics.csv" --output_path_roc="/home/rstudio/work/output/roc_curve.png" --output_path_cm="/home/rstudio/work/output/cm_plot.png"
-
+# 04-analysis.R --file_path_test=/home/rstudio/work/data/processed/diabetes_test.csv --file_path_wflow=/home/rstudio/work/output/lasso_tuned_wflow.RDS --output_path_lasso=/home/rstudio/work/output/lasso_metrics.csv --output_path_roc=/home/rstudio/work/output/roc_curve.png --output_path_cm=/home/rstudio/work/output/cm_plot.png
+# 04-analysis.R /home/rstudio/work/data/processed/diabetes_test.csv /home/rstudio/work/output/lasso_tuned_wflow.RDS 
+# /home/rstudio/work/output/lasso_metrics.csv /home/rstudio/work/output/roc_curve.png /home/rstudio/work/output/cm_plot.png
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
 Usage: 04-analysis.R --file_path_test=<file_path_test> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>

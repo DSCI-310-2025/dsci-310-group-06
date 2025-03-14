@@ -1,22 +1,24 @@
 ---
 title: "Predicting the Risk of Diabetes using Logistic Regression"
-format: pdf
-editor: visual
+format: 
+  html:
+    embed-resources: true
+    editor: visual
+    bibliography: /home/rstudio/work/reports/references.bib
+
 ---
 
 # Predicting the Risk of Diabetes using Logistic Regression
 
 ## 1. Summary
 
-We attempt to develop a logistic regression model to predict whether a patient has diabetes or not using the [Diabetes Health Indicators](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) dataset sourced from the UCI machine learning repository (CDC, 2023). We employ Random Over-Sampling Examples (ROSE) to balance the data and a tuned Least Absolute Shrinkage and Selection Operator (LASSO) regression model to classify patients who are at high risk of developing diabetes, using 5 out of the 21 risk factors provided in the dataset. Recall was used to measure the classifier's performance, as the consequences of false negatives would be more severe than false positives for this task. The area under the receiver operating characteristic (ROC) curve (AUC) was also chosen to evaluate the model's effectiveness in distinguishing between the two classes compared to random guessing.
-
+We attempt to develop a logistic regression model to predict whether a patient has diabetes or not using the [Diabetes Health Indicators](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) dataset sourced from the UCI machine learning repository [@CDC2023]. We employ Random Over-Sampling Examples (ROSE) to balance the data and a tuned Least Absolute Shrinkage and Selection Operator (LASSO) regression model to classify patients who are at high risk of developing diabetes, using 5 out of the 21 risk factors provided in the dataset. Recall was used to measure the classifier's performance, as the consequences of false negatives would be more severe than false positives for this task. The area under the receiver operating characteristic (ROC) curve (AUC) was also chosen to evaluate the model's effectiveness in distinguishing between the two classes compared to random guessing.
 ## 2. Introduction
 
-Diabetes is a chronic condition characterized by high blood sugar levels, resulting from excess buildup of glucose in the bloodstream (Mayo Foundation for Medical Education and Research, 2024). Diabetes is linked to a variety of complications, including retinopathy, cardiovascular disease, stroke, and increased susceptibility to infections (Papatheodorou et al., 2018). Individuals with diabetes often experience significant reductions in their years of healthy life (Ong et al., 2023). In 2021, diabetes-related conditions resulted in over 2 million deaths worldwide and the prevalence of diabetes continues to rise, with its growth only accelerating in the 21st century (Fang et al., 2022). The true mortality rate may be higher than current estimates suggest, as many cases of diabetes go undiagnosed (Stokes & Preston, 2017). However, advancements in screening and detection methods have the potential to reduce the number of undiagnosed cases (Fang et al., 2022). As such, accurate diagnosis in the early stages is crucial since interventions can be administered to prevent the progression of diabetes (Mayo Foundation for Medical Education and Research, 2024).
-
+Diabetes is a chronic condition characterized by high blood sugar levels, resulting from excess buildup of glucose in the bloodstream [@Mayo2024]. Diabetes is linked to a variety of complications, including retinopathy, cardiovascular disease, stroke, and increased susceptibility to infections [@Papatheodorou2018]. Individuals with diabetes often experience significant reductions in their years of healthy life [@Ong2023]. In 2021, diabetes-related conditions resulted in over 2 million deaths worldwide and the prevalence of diabetes continues to rise, with its growth only accelerating in the 21st century [@Fang2022]. The true mortality rate may be higher than current estimates suggest, as many cases of diabetes go undiagnosed [@Stokes2017]. However, advancements in screening and detection methods have the potential to reduce the number of undiagnosed cases [@Fang2022]. As such, accurate diagnosis in the early stages is crucial since interventions can be administered to prevent the progression of diabetes [@Mayo2024].
 This project aims to develop a classification model to predict diabetes status based on various health indicators. By using data preprocessing strategies, we seek to improve the accuracy of diabetes detection using publicly available health datasets. Ultimately, the goal is to answer the following question: **Can we develop a classification model that can predict whether a person will have diabetes more accurately than random guessing?**
 
-The dataset used in this project is sourced from the [CDC Diabetes Health Indicators dataset on the UCI machine learning repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) (CDC, 2023), which contains various demographic and lifestyle-related features that may influence the likelihood of an individual developing diabetes. The dataset contains 23 features, of which 21 can be used as predictors in a classification model. The total 23 features are:
+The dataset used in this project is sourced from the [CDC Diabetes Health Indicators dataset on the UCI machine learning repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) [@CDC2023], which contains various demographic and lifestyle-related features that may influence the likelihood of an individual developing diabetes. The dataset contains 23 features, of which 21 can be used as predictors in a classification model. The total 23 features are:
 
 -   `ID`: Patient identification number. This feature was removed from the publicly available dataset.
 
@@ -147,9 +149,21 @@ head(raw_diabetes_df, n = 5)
 
 *Analysis Workflow:*
 
-All features in the dataset are checked for the following attributes: - `NA_Count`: Number of "NA" values within each variable; if they exist, they would need to be replaced or removed. - `Distinct_Count`: Number of possible values for each variable; primarily to check if the variables are numerical, categorical or binary (only 2 possible values). - `Current_Data_Type`: Current data type for each variable; primarily to ensure that they are in the appropriate format we require, as the data type may be lost during `read_csv()`.
+All features in the dataset are checked for the following attributes:
 
-Given the initial check, the following observations can be made using Table 2: - None of the columns have `NA` values. - `BMI` is the only numerical variable, with the rest being categorical or binary. - All variables are treated as `double` in the original dataset, and thus every variable except for `BMI` will need to be converted to the factor data type.
+-   `NA_Count`: Number of "NA" values within each variable; if they exist, they would need to be replaced or removed.
+
+-   `Distinct_Count`: Number of possible values for each variable; primarily to check if the variables are numerical, categorical or binary (only 2 possible values).
+
+-   `Current_Data_Type`: Current data type for each variable; primarily to ensure that they are in the appropriate format we require, as the data type may be lost during `read_csv()`.
+
+Given the initial check, the following observations can be made using Table 2:
+
+-   None of the columns have `NA` values.
+
+-   `BMI` is the only numerical variable, with the rest being categorical or binary.
+
+-   All variables are treated as `double` in the original dataset, and thus every variable except for `BMI` will need to be converted to the factor data type.
 
 We aim to balance the dataset for our machine learning model to reduce bias towards the majority class, improve the model's ability to generalize to unseen data, and increase model training efficiency. In the original `raw_diabetes_df` dataset, approximately 86% of individuals do not have diabetes, resulting in heavily imbalanced classes (Table 3). To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`. After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly 50-50 (Table 4). A summary of the class distribution before and after ROSE can be seen in Table 5.
 
@@ -405,13 +419,28 @@ lasso_tuned_wflow <- finalize_workflow(lr_workflow %>%
 
 *Analysis Workflow:*
 
-The results of our LASSO regression predictions include `lasso_preds`, which provides the predictions for each row, `lasso_probs`, which provides the probability of each classification for each row, and `lasso_metrics`, which displays the following metrics in Table 7: - `sens`: Sensitivity; true positive rate - `spec`: Specificity; true negative rate - `ppv`: Positive predictive value; precision - `npv`: Negative predictive value - `accuracy`: Accuracy for all predictions - `recall`: Recall; true positive rate - `f_meas`: F-measure; harmonic mean of precision and recall - `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes.
+The results of our LASSO regression predictions include `lasso_preds`, which provides the predictions for each row, `lasso_probs`, which provides the probability of each classification for each row, and `lasso_metrics`, which displays the following metrics in Table 7:
 
+-   `sens`: Sensitivity; true positive rate
+
+-   `spec`: Specificity; true negative rate
+
+-   `ppv`: Positive predictive value; precision
+
+-   `npv`: Negative predictive value
+
+-   `accuracy`: Accuracy for all predictions
+
+-   `recall`: Recall; true positive rate
+
+-   `f_meas`: F-measure; harmonic mean of precision and recall
+
+-   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes.
 The ROC curve and confusion matrix are visualised below (Fig. 2, 3). The confusion matrix displays the quantity of each type of prediction result; The model predicts 23910 true positive, 22188 true negative, 7789 false negative and 9533 false positive cases (Fig. 3).
 
 Thus, the recall for the model can be calculated as $\frac{True Positives}{True Positives + False Negatives}$ = $\frac{23910}{23910 + 7789}$ = 0.7542825 (7 s.f.). This is the same result as shown in Table 7.
 
-The false negative rate can be calculated as: $\frac{False Negatives}{True Positives + False Negatives}$ = $\frac{7789}{23910 + 7789}$ = 0.2457175 (7 s.f.) or \~25%. This is the same result as calculating 1 - `sens` from Table 7.
+The false negative rate can be calculated as: $\frac{False Negatives}{True Positives + False Negatives}$ = $\frac{7789}{23910 + 7789}$ = 0.2457175 (7 s.f.) or \~25%. This is the same result as calculating (1 - `sens`) from Table 7.
 
 From Table 7, the values of particular interest are the `recall` score of 0.7542825 (7 s.f.) and the `roc_auc_value` of 0.7989357 (7 s.f.).
 
@@ -489,33 +518,11 @@ Our model achieved a recall score of 0.7542825 (7 s.f.) on the test set, implyin
 We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around 25% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
 
 Our model was optimized for recall through hyperparameter tuning, with cross-validation used to evaluate model performance during the process. However, despite our results, the model falls short of what is expected in clinical applications. For example, more complex models in the literature which incorporate advanced feature selection techniques (Alhussan et al., 2023) or Generative Adversarial Networks (GANs) (Feng et al., 2023) can achieve recall and AUC scores upwards of 97%.
-
 Our findings serve as a proof of concept for the feasibility of classification models to predict the risk of diabetes based on publicly available health data. Since our model did relatively well compared to random guessing, this indicates potential correlations between health indicators and the likelihood of developing diabetes. With this information, people might be more aware of their health and lifestyle choices. They may be inclined to work harder to reduce cholesterol levels, manage high blood pressure, keep alcohol consumption under control and maintain a healthy lifestyle. Thus, this may help decrease the global mortality rate from diabetes through early interventions and lifestyle changes.
 
 Future directions could include how we can improve our classification method to more accurately predict the risk of diabetes in patients. We can explore more rigorous feature selection techniques or implement other machine learning models such as boosted trees to improve our classification performance. In the context of the healthcare system, we can look to integrate classification models into the diagnosis process to help detect diabetes early to improve patient outcomes.
 
-## 5. References
+## References
 
--   Akoglu, H. (2018). User’s guide to correlation coefficients. *Turkish Journal of Emergency Medicine, 18*(3), 91–93. <https://doi.org/10.1016/j.tjem.2018.08.001>
-
--   Alhussan, A. A., Abdelhamid, A. A., Towfek, S. K., Ibrahim, A., Eid, M. M., Khafaga, D. S., & Saraya, M. S. (2023). Classification of diabetes using feature selection and hybrid Al-Biruni Earth radius and dipper throated optimization. *Diagnostics, 13*(12), 2038. <https://doi.org/10.3390/diagnostics13122038>
-
--   CDC. (2023, September 25). *CDC diabetes health indicators* \[Data set\]. UCI Machine Learning Repository. <https://doi.org/10.24432/C53919>
-
--   Dai, J., Teng, L., Zhao, L., & Zou, H. (2021). The combined analgesic effect of pregabalin and morphine in the treatment of pancreatic cancer pain, a retrospective study. *Cancer Medicine, 10*(5), 1738–1744. <https://doi.org/10.1002/cam4.3779>
-
--   Fang, M., Wang, D., Coresh, J., & Selvin, E. (2022). Undiagnosed diabetes in U.S. Adults: Prevalence and trends. *Diabetes Care, 45*(9), 1994–2002. <https://doi.org/10.2337/dc22-0242>
-
--   Feng, X., Cai, Y., & Xin, R. (2023). Optimizing diabetes classification with a machine learning-based framework. *BMC Bioinformatics, 24*(1). <https://doi.org/10.1186/s12859-023-05467-x>
-
--   Mayo Foundation for Medical Education and Research. (2024, March 27). *Diabetes*. Mayo Clinic. Retrieved February 28, 2025 from <https://www.mayoclinic.org/diseases-conditions/diabetes/symptoms-causes/syc-20371444>
-
--   Ong, K. L., Stafford, L. K., McLaughlin, S. A., Boyko, E. J., Vollset, S. E., Smith, A. E., Dalton, B. E., Duprey, J., Cruz, J. A., Hagins, H., Lindstedt, P. A., Aali, A., Abate, Y. H., Abate, M. D., Abbasian, M., Abbasi-Kangevari, Z., Abbasi-Kangevari, M., ElHafeez, S. A., Abd-Rabu, R., . . . Vos, T. (2023). Global, regional, and national burden of diabetes from 1990 to 2021, with projections of prevalence to 2050: a systematic analysis for the Global Burden of Disease Study 2021. *The Lancet, 402*(10397), 203–234. <https://doi.org/10.1016/s0140-6736(23)01301-6>
-
--   Papatheodorou, K., Banach, M., Bekiari, E., Rizzo, M., & Edmonds, M. (2018). Complications of Diabetes 2017. *Journal of Diabetes Research*, 1–4. <https://doi.org/10.1155/2018/3086167>
-
--   StatsTest.com. (2020, April 7). Cramer's V. Retrieved February 28, 2025 from <https://www.statstest.com/cramers-v-2/>
-
--   Stokes, A., & Preston, S. H. (2017). Deaths attributable to Diabetes in the United States: Comparison of data sources and estimation approaches. *PLoS ONE, 12*(1), e0170219. <https://doi.org/10.1371/journal.pone.0170219>
-
--   World Health Organization. (2024, November 14). *Diabetes*. Retrieved February 28, 2025 from <https://www.who.int/news-room/fact-sheets/detail/diabetes>
+::: {#refs}
+:::
