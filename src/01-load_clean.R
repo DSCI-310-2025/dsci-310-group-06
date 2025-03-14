@@ -9,16 +9,18 @@ library(ROSE)     # ROSE
 library(docopt)   # docopt
 
 # 01-load_clean.R --python_path="/venv/bin/python /home/rstudio/work/src/dataset_download.py" --file_path="/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv" --output_path_raw="/home/rstudio/work/output/checking_raw_df.csv" --output_path_target="/home/rstudio/work/output/balanced_target_result.csv" --output_path_bal="/home/rstudio/work/output/balanced_target_result.csv" --output_path_df="/home/rstudio/work/data/processed/balanced_raw_comparision_df" --output_path_train="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path_test="/home/rstudio/work/data/processed/diabetes_test.csv"
-
+# 01-load_clean.R --python_path=/venv/bin/python --extract_path=/home/rstudio/work/src/dataset_download.py --file_path=/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv --output_path_raw=/home/rstudio/work/output/checking_raw_df.csv --output_path_target=/home/rstudio/work/output/target_result.csv --output_path_bal=/home/rstudio/work/output/balanced_target_result.csv --output_path_df=/home/rstudio/work/output/balanced_raw_comparision_df.csv --output_path_train=/home/rstudio/work/data/processed/diabetes_train.csv --output_path_test=/home/rstudio/work/data/processed/diabetes_test.csv
+# 01-load_clean.R /venv/bin/python /home/rstudio/work/src/dataset_download.py /home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv 
+# /home/rstudio/work/output/checking_raw_df.csv /home/rstudio/work/output/target_result.csv /home/rstudio/work/output/balanced_target_result.csv /home/rstudio/work/output/balanced_raw_comparision_df.csv /home/rstudio/work/data/processed/diabetes_train.csv /home/rstudio/work/data/processed/diabetes_test.csv
 "This script loads, cleans, saves diabetes_train, diabetes_test
 
-Usage: 01-load_clean.R --python_path=<python_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+Usage: 01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
 " -> doc
 
 opt <- docopt::docopt(doc)
 
 # This runs the Python script to extract file from UCI
-system(opt$python_path)
+system(paste(opt$python_path, opt$extract_path))
 
 # Reads the downloaded dataset into a variable named raw_diabetes_df
 raw_diabetes_df <- readr::read_csv(
