@@ -1,21 +1,24 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
-# library(tidymodels) # Machine learning tools
-library(readr)    # read_csv, write_csv
-library(dplyr)    # %>%, mutate, across, group_by, summarise, ungroup
-library(tibble)   # as_tibble
-library(rsample)  # initial_split, training, testing
-library(ROSE)     # ROSE
-library(docopt)   # docopt
-
-# 01-load_clean.R --python_path="/venv/bin/python /home/rstudio/work/src/dataset_download.py" --file_path="/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv" --output_path_raw="/home/rstudio/work/output/checking_raw_df.csv" --output_path_target="/home/rstudio/work/output/balanced_target_result.csv" --output_path_bal="/home/rstudio/work/output/balanced_target_result.csv" --output_path_df="/home/rstudio/work/data/processed/balanced_raw_comparision_df" --output_path_train="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path_test="/home/rstudio/work/data/processed/diabetes_test.csv"
-# 01-load_clean.R --python_path=/venv/bin/python --extract_path=/home/rstudio/work/src/dataset_download.py --file_path=/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv --output_path_raw=/home/rstudio/work/output/checking_raw_df.csv --output_path_target=/home/rstudio/work/output/target_result.csv --output_path_bal=/home/rstudio/work/output/balanced_target_result.csv --output_path_df=/home/rstudio/work/output/balanced_raw_comparision_df.csv --output_path_train=/home/rstudio/work/data/processed/diabetes_train.csv --output_path_test=/home/rstudio/work/data/processed/diabetes_test.csv
-# 01-load_clean.R /venv/bin/python /home/rstudio/work/src/dataset_download.py /home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv 
-# /home/rstudio/work/output/checking_raw_df.csv /home/rstudio/work/output/target_result.csv /home/rstudio/work/output/balanced_target_result.csv /home/rstudio/work/output/balanced_raw_comparision_df.csv /home/rstudio/work/data/processed/diabetes_train.csv /home/rstudio/work/data/processed/diabetes_test.csv
 "This script loads, cleans, saves diabetes_train, diabetes_test
 
-Usage: 01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+
+Options:
+--python_path=<python_path>                 Path to python executable
+--extract_path=<extract_path>               Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
+--file_path=<file_path>                     Path to save the raw dataset CSV file
+--output_path_raw=<output_path_raw>         Path to save the raw dataset checking results
+--output_path_target=<output_path_target>   Path to save the summary statistics of the target variable before balancing
+--output_path_bal=<output_path_bal>         Path to save the summary statistics of the target variable after balancing
+--output_path_df=<output_path_df>           Path to save the comparison data frame of target variable class distribution before and after balancing
+--output_path_train=<output_path_train>     Path to save the training dataset
+--output_path_test=<output_path_test>       Path to save the test dataset
 " -> doc
+
+library(tidyverse)
+library(tidymodels)
+library(ROSE)  
+library(docopt)
+set.seed(6)
 
 opt <- docopt::docopt(doc)
 
@@ -53,7 +56,6 @@ readr::write_csv(target_result, opt$output_path_target)
 
 # Using ROSE to balance data by oversampling
 # Setting the seed for consistent results
-set.seed(6)
 balanced_raw_diabetes_df <- ROSE::ROSE(Diabetes_binary ~ ., data = raw_diabetes_df, seed = 123)$data
 balanced_target_result <- balanced_raw_diabetes_df %>%
   dplyr::group_by(Diabetes_binary) %>%
@@ -77,7 +79,6 @@ readr::write_csv(balanced_raw_comparision_df, opt$output_path_df)
 
 # Split data into 75% train, 25% test for machine learning
 # Setting the seed for consistent results
-set.seed(6)
 diabetes_split <- rsample::initial_split(balanced_raw_diabetes_df, prop = 0.75, strata = Diabetes_binary)
 diabetes_train <- rsample::training(diabetes_split)
 diabetes_test <- rsample::testing(diabetes_split)
