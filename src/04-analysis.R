@@ -9,10 +9,18 @@ library(tune)      # select_best
 library(rsample)   # Resampling (not explicitly used in this script)
 library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
 
-# READ diabetes_train, diabetes_test, lasso_tuned_wflow
-diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
-diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
-lasso_tuned_wflow <- readr::read_rds("/home/rstudio/work/output/lasso_tuned_wflow.RDS")
+# 04-analysis.R --file_path_test="/home/rstudio/work/data/processed/diabetes_test.csv" --file_path_wflow="/home/rstudio/work/output/lasso_tuned_wflow.RDS" --output_path_lasso="/home/rstudio/work/output/lasso_metrics.csv" --output_path_roc="/home/rstudio/work/output/roc_curve.png" --output_path_cm="/home/rstudio/work/output/cm_plot.png"
+
+"This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
+
+Usage: 04-analysis.R --file_path_test=<file_path_test> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
+" -> doc
+
+opt <- docopt::docopt(doc)
+
+# READ diabetes_test, lasso_tuned_wflow
+diabetes_test <- readr::read_csv(opt$file_path_test)
+lasso_tuned_wflow <- readr::read_rds(opt$file_path_wflow)
 
 # Applying to the test set
 lasso_preds <- lasso_tuned_wflow %>% parsnip::predict(diabetes_test)
@@ -28,7 +36,7 @@ lasso_metrics <- rbind(
 )
 
 # WRITE lasso_metrics
-readr::write_csv(lasso_metrics, "/home/rstudio/work/data/processed/lasso_metrics.csv")
+readr::write_csv(lasso_metrics, opt$output_path_lasso)
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
@@ -49,7 +57,7 @@ roc_plot <- yardstick::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabete
   )
 
 # WRITE roc_plot
-ggplot2::ggsave("/home/rstudio/work/output/roc_plot.png", roc_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+ggplot2::ggsave(opt$output_path_roc, roc_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
@@ -79,4 +87,4 @@ cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill =
   ggplot2::guides(fill = "none")
 
 # WRITE cm_plot
-ggplot2::ggsave("/home/rstudio/work/output/cm_plot.png", cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+ggplot2::ggsave(opt$output_path_cm, cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)

@@ -9,9 +9,17 @@ library(patchwork)  # wrap_plots, plot_layout, plot_annotation
 library(vcd)        # assocstats (Cramér’s V)
 library(docopt)     # docopt
 
-# READ diabetes_train, diabetes_test
-diabetes_train <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_train.csv")
-diabetes_test <- readr::read_csv("/home/rstudio/work/data/processed/diabetes_test.csv")
+# 02-eda.R --file_path="/home/rstudio/work/data/processed/diabetes_train.csv" --output_path_plots="/home/rstudio/work/output/combined_plots.png" --output_path_cramers="/home/rstudio/work/output/cramer_chi_results_sorted.csv"
+
+"This script conducts exploratory data analysis on the diabetes_train dataset
+
+Usage: 02-eda.R --file_path=<file_path> --output_path_plots=<output_path_plots> --output_path_cramers=<output_path_cramers>
+" -> doc
+
+opt <- docopt::docopt(doc)
+
+# READ diabetes_train
+diabetes_train <- readr::read_csv(opt$file_path)
 
 options(repr.plot.width = 30, repr.plot.height = 90, warn = -1)
 
@@ -85,7 +93,7 @@ combined_plots <- patchwork::wrap_plots(c(bar_plots, density_plots), ncol = num_
     )
 
 # WRITE combined_plots
-ggplot2::ggsave("/home/rstudio/work/output/combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
+ggplot2::ggsave(opt$output_path_plots, combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 
 # Run chi-squared tests independently for each feature
 cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
@@ -107,4 +115,4 @@ cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
 cramer_chi_results_sorted <- cramer_chi_results %>% dplyr::arrange(dplyr::desc(CramersV))
 
 # WRITE cramer_chi_results_sorted
-readr::write_csv(cramer_chi_results_sorted, "/home/rstudio/work/data/processed/cramer_chi_results_sorted.csv")
+readr::write_csv(cramer_chi_results_sorted, opt$output_path_cramers)
