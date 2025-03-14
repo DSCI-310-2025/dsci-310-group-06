@@ -2,9 +2,6 @@
 library(tidyverse) # Data wrangling and visualization
 library(tidymodels) # Machine learning tools
 library(glmnet) # Fit generalized linear models by penalty
-library(patchwork) # Combine plots
-library(ROSE) # Random Over-Sampling Examples for dataset balancing
-library(vcd) # For Cramér’s V
 
 # READ diabetes_train, diabetes_test
 
