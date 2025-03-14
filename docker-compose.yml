@@ -7,5 +7,6 @@ services:
       - "./reports:/home/rstudio/work/reports"
       - "./data:/home/rstudio/work/data"
       - "./src:/home/rstudio/work/src"
+      - "Makefile:/home/rstudio/work/
     environment:
       DISABLE_AUTH: true
