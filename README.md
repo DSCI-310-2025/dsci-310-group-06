@@ -11,7 +11,10 @@
 
 The Behavioral Risk Factor Surveillance System (BRFSS) is a collaborative project between all of the states in the United States (US) and participating US territories and the Centers for Disease Control and Prevention (CDC), with the aim to collect uniform, state-specific data on preventive health practices and risk behaviors that are linked to chronic diseases, injuries, and preventable infectious diseases that affect the adult population (Pickens et al., 2018).
 
-Our project aims to predict if an individual is at high risk of developing diabetes based on the health indicators provided by the BRFSS, using a cleaned diabetes dataset derived from the BRFSS 2015 survey responses. The majority of attributes are categorical and binary due to the nature of the survey questions (CDC, 2017).
+Our project aims to predict if an individual is at high risk of developing diabetes based on the health indicators provided by the BRFSS, using a cleaned diabetes dataset derived from the BRFSS 2015 survey responses. The majority of attributes are categorical and binary due to the nature of the survey questions (CDC, 2017). Our project highlights the importance of using key health indicators such as general health, high blood pressure, age and high cholesterol in diabetes prediction. The use of Cramér’s V helped in selecting the most relevant features, reducing unnecessary complexity and improving the interpretability of the model. Moreover, to address the imbalance in the dataset, synthetic resampling (ROSE method) was applied to ensure that both diabetic and non-diabetic cases were equally represented, improving the model’s generalizability.
+ 
+ Our model effectively predicts diabetes risk with 75.43% recall, correctly identifying most diabetic cases. Its AUC of 0.7989 shows strong discrimination between diabetic and non-diabetic cases. Key predictors include general health, high blood pressure, age, high cholesterol, and difficulty walking. Synthetic resampling (ROSE) balanced the dataset, improving model performance. However, a ~25% false negative rate highlights the need for refinement. The study demonstrates the potential of data-driven early detection to aid diabetes prevention.
+ 
 
 The original dataset can be found on the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 
