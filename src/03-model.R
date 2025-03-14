@@ -1,6 +1,11 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
-# library(tidymodels) # Machine learning tools
+"This script constructs the lasso_tuned_wflow classification analysis model 
+
+Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
+Options:
+--file_path=<file_path>     Path to obtain the raw dataset CSV file
+--output_path=<output_path> Path to save the lasso_tuned_wflow
+" -> doc
+
 library(readr)         # read_csv, write_rds
 library(dplyr)         # %>%, select
 library(parsnip)       # logistic_reg, set_engine, set_mode
@@ -10,14 +15,7 @@ library(workflows)     # workflow, add_recipe, add_model
 library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
 library(workflowsets)  # finalize_workflow
 library(glmnet)        # Fit generalized linear models by penalty
-
-# 03-model.R --file_path=/home/rstudio/work/data/processed/diabetes_train.csv --output_path=/home/rstudio/work/output/lasso_tuned_wflow.RDS
-# 03-model.R /home/rstudio/work/data/processed/diabetes_train.csv 
-# /home/rstudio/work/output/lasso_tuned_wflow.RDS
-"This script constructs the lasso_tuned_wflow classification analysis model 
-
-Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
-" -> doc
+library(docopt)     # docopt
 
 opt <- docopt::docopt(doc)
 

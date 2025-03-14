@@ -1,5 +1,12 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
+"This script conducts exploratory data analysis on the diabetes_train dataset
+
+Usage: 02-eda.R --file_path=<file_path> --output_path_plots=<output_path_plots> --output_path_cramers=<output_path_cramers>
+Options:
+--file_path=<file_path>                     Path to obtain the raw dataset CSV file
+--output_path_plots=<output_path_plots>     Path to save the summary statistics of the target variable before balancing
+--output_path_cramers=<output_path_cramers> Path to save the comparison data frame of target variable class distribution before and after balancing
+" -> doc
+
 library(readr)      # read_csv, write_csv
 library(ggplot2)    # ggplot, geom_bar, geom_density, theme
 library(dplyr)      # %>%, arrange
@@ -8,14 +15,6 @@ library(tibble)     # tibble
 library(patchwork)  # wrap_plots, plot_layout, plot_annotation
 library(vcd)        # assocstats (Cramér’s V)
 library(docopt)     # docopt
-
-# 02-eda.R --file_path=/home/rstudio/work/data/processed/diabetes_train.csv --output_path_plots=/home/rstudio/work/output/combined_plots.png --output_path_cramers=/home/rstudio/work/output/cramer_chi_results_sorted.csv
-# 02-eda.R /home/rstudio/work/data/processed/diabetes_train.csv 
-# /home/rstudio/work/output/combined_plots.png /home/rstudio/work/output/cramer_chi_results_sorted.csv
-"This script conducts exploratory data analysis on the diabetes_train dataset
-
-Usage: 02-eda.R --file_path=<file_path> --output_path_plots=<output_path_plots> --output_path_cramers=<output_path_cramers>
-" -> doc
 
 opt <- docopt::docopt(doc)
 

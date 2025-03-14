@@ -10,7 +10,7 @@ report:
 	make index.html
 
 clean:
-rm -rf /home/rstudio/work/output/*
+	rm -rf /home/rstudio/work/output/*
 	rm -rf /home/rstudio/work/data/processed/*
 	rm -f *.pdf
 	rm -rf /home/rstudio/work/docs/* # Remove docs directory, r to make it recursive
