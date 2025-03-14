@@ -7,6 +7,8 @@ RUN Rscript -e "remotes::install_version('patchwork', version='1.3.0', repos='ht
 RUN Rscript -e "remotes::install_version('glmnet', version='4.1-8', repos='https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('vcd', version='1.4-13', repos='https://cloud.r-project.org')"
 RUN Rscript -e "remotes::install_version('tidymodels', version='1.2.0', repos='https://cloud.r-project.org')"
+# RUN Rscript -e "remotes::install_version('janitor', version='2.2.1', repos='https://cloud.r-project.org')"
+RUN Rscript -e "remotes::install_version('docopt', version='0.7.1', repos='https://cloud.r-project.org')"
 
 RUN apt update
 RUN apt install -y python3.12 python3-pip python3-venv

@@ -5,6 +5,13 @@ library(glmnet) # Fit generalized linear models by penalty
 library(patchwork) # Combine plots
 library(ROSE) # Random Over-Sampling Examples for dataset balancing
 library(vcd) # For Cramér’s V
+library(docopt)
+
+"This script loads, cleans, saves diabetes_train, diabetes_test
+Usage: 01-load_clean.R --file_path=<file_path> --output_path=<output_path>
+" -> doc
+
+opt <- docopt(doc)
 
 # This run the python script to extract file from uci
 system("/venv/bin/python /home/rstudio/work/src/dataset_download.py")
@@ -23,6 +30,7 @@ checking_raw_matrix <- rbind(
 checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 
 # WRITE checking_raw_df
+checking_raw_df('/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv', index=False)
 
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
