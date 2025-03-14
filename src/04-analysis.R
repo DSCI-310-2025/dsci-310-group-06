@@ -1,21 +1,24 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
-# library(tidymodels) # Machine learning tools
-library(readr)     # read_csv, write_rds, write_csv
-library(ggplot2)   # ggplot, geom_bar, geom_density, theme, autoplot, ggsave
-library(parsnip)   # predict
-library(yardstick) # metric_set, roc_auc, conf_mat
-library(tune)      # select_best
-library(rsample)   # Resampling (not explicitly used in this script)
-library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
-
-# 04-analysis.R --file_path_test=/home/rstudio/work/data/processed/diabetes_test.csv --file_path_wflow=/home/rstudio/work/output/lasso_tuned_wflow.RDS --output_path_lasso=/home/rstudio/work/output/lasso_metrics.csv --output_path_roc=/home/rstudio/work/output/roc_curve.png --output_path_cm=/home/rstudio/work/output/cm_plot.png
-# 04-analysis.R /home/rstudio/work/data/processed/diabetes_test.csv /home/rstudio/work/output/lasso_tuned_wflow.RDS 
-# /home/rstudio/work/output/lasso_metrics.csv /home/rstudio/work/output/roc_curve.png /home/rstudio/work/output/cm_plot.png
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
 Usage: 04-analysis.R --file_path_test=<file_path_test> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
+Options: 
+--file_path_test=<file_path_test>       Path to obtain the raw dataset CSV file
+--file_path_wflow=<file_path_wflow>     Path to obtain the lasso_tuned_wflow
+--output_path_lasso=<output_path_lasso> Path to save the lasso_metrics
+--output_path_roc=<output_path_roc>     Path to save the ROC curve
+--output_path_cm=<output_path_cm>       Path to save the confusion matrix
 " -> doc
+
+# library(readr)     # read_csv, write_rds, write_csv
+# library(ggplot2)   # ggplot, geom_bar, geom_density, theme, autoplot, ggsave
+# library(parsnip)   # predict
+# library(yardstick) # metric_set, roc_auc, conf_mat
+# library(tune)      # select_best
+# library(rsample)   # Resampling (not explicitly used in this script)
+library(tidyverse)  # Data wrangling and visualization
+library(tidymodels) # Machine learning tools
+library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
+library(docopt)    # docopt
 
 opt <- docopt::docopt(doc)
 
