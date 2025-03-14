@@ -1,26 +1,17 @@
 "This script loads, cleans, saves diabetes_train, diabetes_test
 
-#' Usage:
-#'   01-load_clean.R --python_path=<python_path> 
-#'                    --extract_path=<extract_path> 
-#'                    --file_path=<file_path> 
-#'                    --output_path_raw=<output_path_raw> 
-#'                    --output_path_target=<output_path_target> 
-#'                    --output_path_bal=<output_path_bal> 
-#'                    --output_path_df=<output_path_df> 
-#'                    --output_path_train=<output_path_train> 
-#'                    --output_path_test=<output_path_test>
-#'
-#' Options:
-#'   --python_path=<python_path>                 Path to python executable
-#'   --extract_path=<extract_path>               Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
-#'   --file_path=<file_path>                     Path to the raw dataset CSV file
-#'   --output_path_raw=<output_path_raw>         Path to save the raw dataset checking results
-#'   --output_path_target=<output_path_target>   Path to save the summary statistics of the target variable before balancing
-#'   --output_path_bal=<output_path_bal>         Path to save the summary statistics of the target variable after balancing 
-#'   --output_path_df=<output_path_df>           Path to save the comparison data frame of target variable class distribution before and after balancing
-#'   --output_path_train=<output_path_train>     Path to save the training dataset
-#'   --output_path_test=<output_path_test>       Path to save the test dataset
+Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+
+Options:
+--python_path=<python_path>                 Path to python executable
+--extract_path=<extract_path>               Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
+--file_path=<file_path>                     Path to save the raw dataset CSV file
+--output_path_raw=<output_path_raw>         Path to save the raw dataset checking results
+--output_path_target=<output_path_target>   Path to save the summary statistics of the target variable before balancing
+--output_path_bal=<output_path_bal>         Path to save the summary statistics of the target variable after balancing
+--output_path_df=<output_path_df>           Path to save the comparison data frame of target variable class distribution before and after balancing
+--output_path_train=<output_path_train>     Path to save the training dataset
+--output_path_test=<output_path_test>       Path to save the test dataset
 " -> doc
 
 library(tidyverse)
