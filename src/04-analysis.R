@@ -9,12 +9,14 @@ Options:
 --output_path_cm=<output_path_cm>       Path to save the confusion matrix
 " -> doc
 
-library(readr)     # read_csv, write_rds, write_csv
-library(ggplot2)   # ggplot, geom_bar, geom_density, theme, autoplot, ggsave
-library(parsnip)   # predict
-library(yardstick) # metric_set, roc_auc, conf_mat
-library(tune)      # select_best
-library(rsample)   # Resampling (not explicitly used in this script)
+# library(readr)     # read_csv, write_rds, write_csv
+# library(ggplot2)   # ggplot, geom_bar, geom_density, theme, autoplot, ggsave
+# library(parsnip)   # predict
+# library(yardstick) # metric_set, roc_auc, conf_mat
+# library(tune)      # select_best
+# library(rsample)   # Resampling (not explicitly used in this script)
+library(tidyverse)  # Data wrangling and visualization
+library(tidymodels) # Machine learning tools
 library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
 library(docopt)    # docopt
 

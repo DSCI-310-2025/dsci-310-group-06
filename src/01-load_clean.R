@@ -14,10 +14,12 @@ Options:
 --output_path_test=<output_path_test>       Path to save the test dataset
 " -> doc
 
-library(readr)    # read_csv, write_csv
-library(dplyr)    # %>%, mutate, across, group_by, summarise, ungroup
-library(tibble)   # as_tibble
-library(rsample)  # initial_split, training, testing
+# library(readr)    # read_csv, write_csv
+# library(dplyr)    # %>%, mutate, across, group_by, summarise, ungroup
+# library(tibble)   # as_tibble
+# library(rsample)  # initial_split, training, testing
+library(tidyverse)  # Data wrangling and visualization
+library(tidymodels) # Machine learning tools
 library(ROSE)     # ROSE
 library(docopt)   # docopt
 set.seed(6)

@@ -6,14 +6,16 @@ Options:
 --output_path=<output_path> Path to save the lasso_tuned_wflow
 " -> doc
 
-library(readr)         # read_csv, write_rds
-library(dplyr)         # %>%, select
-library(parsnip)       # logistic_reg, set_engine, set_mode
-library(rsample)       # vfold_cv
-library(recipes)       # recipe, step_dummy, step_normalize
-library(workflows)     # workflow, add_recipe, add_model
-library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
-library(workflowsets)  # finalize_workflow
+# library(readr)         # read_csv, write_rds
+# library(dplyr)         # %>%, select
+# library(parsnip)       # logistic_reg, set_engine, set_mode
+# library(rsample)       # vfold_cv
+# library(recipes)       # recipe, step_dummy, step_normalize
+# library(workflows)     # workflow, add_recipe, add_model
+# library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
+# library(workflowsets)  # finalize_workflow
+library(tidyverse)  # Data wrangling and visualization
+library(tidymodels) # Machine learning tools
 library(glmnet)        # Fit generalized linear models by penalty
 library(docopt)     # docopt
 

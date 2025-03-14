@@ -7,11 +7,12 @@ Options:
 --output_path_cramers=<output_path_cramers> Path to save the comparison data frame of target variable class distribution before and after balancing
 " -> doc
 
-library(readr)      # read_csv, write_csv
-library(ggplot2)    # ggplot, geom_bar, geom_density, theme
-library(dplyr)      # %>%, arrange
-library(purrr)      # map_dfr
-library(tibble)     # tibble
+# library(readr)      # read_csv, write_csv
+# library(ggplot2)    # ggplot, geom_bar, geom_density, theme
+# library(dplyr)      # %>%, arrange
+# library(purrr)      # map_dfr
+# library(tibble)     # tibble
+library(tidyverse)  # Data wrangling and visualization
 library(patchwork)  # wrap_plots, plot_layout, plot_annotation
 library(vcd)        # assocstats (Cramér’s V)
 library(docopt)     # docopt
