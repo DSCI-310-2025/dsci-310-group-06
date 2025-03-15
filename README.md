@@ -22,22 +22,30 @@ The original dataset can be found on the [UCI Machine Learning Repository](https
 
 1. Prerequisites: Ensure Docker Desktop is installed and running.
 
-2. Clone the repository (if not already done):
+2. For Mac users: Enable Rosetta in Docker settings:
+
+- Open Docker Settings > General
+
+- Check Use Virtualization Framework
+
+- Check Use Rosetta for x86/amd64 emulation on Apple Silicon
+
+3. Clone the repository (if not already done):
 
 ```bash
 git clone https://github.com/DSCI-310-2025/dsci-310-group-06.git
 cd dsci-310-group-06
 ```
 
-3. Start container: In the project directory (`dsci-310-group-06/`), run the following in the terminal:
+4. Start container: In the project directory (`dsci-310-group-06/`), run the following in the terminal:
 
 ```{terminal}
 docker-compose up
 ```
 
-4. Open `http://localhost:10000/` in a browser.
+5. Open `http://localhost:10000/` in a browser.
 
-5. Navigate to `work/reports/diabetes_classification_report.qmd` and run the notebook.
+6. Navigate to `work/reports/diabetes_classification_report.qmd` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
