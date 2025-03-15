@@ -7,6 +7,10 @@ format:
     toc-depth: 3
     editor: visual
     bibliography: /home/rstudio/work/reports/references.bib
+execute:
+  echo: false
+  warning: false
+  error: false
 ---
 
 ## 1. Summary
@@ -20,7 +24,7 @@ Diabetes is a chronic condition characterized by high blood sugar levels, result
 The dataset used in this project is sourced from the [CDC Diabetes Health Indicators dataset on the UCI machine learning repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators) [@CDC2023], which contains various demographic and lifestyle-related features that may influence the likelihood of an individual developing diabetes. The dataset contains 23 features, of which 21 can be used as predictors in a classification model. The total 23 features are:
 
 -   `ID`: Patient identification number. This feature was removed from the publicly available dataset.
--   `Diabetes_binary`: Diabetes/pre-diabetes (1) or no diabetes (0)
+-   `Diabetes_binary`: Diabetes/pre-diabetes (1) or no diabetes (0). This is the target feature.
 -   `HighBP`: High blood pressure (1) or not (0)
 -   `HighChol`: High cholesterol (1) or not (0)
 -   `CholCheck`: Cholesterol check in past 5 years (1) or no check (0)
@@ -76,7 +80,7 @@ Visualizations (bar plots, density plots) are generated to explore the relations
 
 ### 3.1. Loading Data from Original Source on the Web
 
-The packages used in this document are `reticulate`, `tidyverse`, `tidymodels`, `glmnet`, `patchwork`, `ROSE`, and `vcd`. The dataset of interest can be acquired from the source by running `dataset_download.py` through the `py_run_file()` function, which writes the result into `cdc_diabetes_health_indicators.csv` located in the `/work/data/raw/` directory; this .csv file is then read into the variable `raw_diabetes_df`. A preview of the downloaded dataset can be seen in @tbl-diabetes_1 below.
+The packages used in this document are `tidyverse`, `tidymodels`, `glmnet`, `patchwork`, `ROSE`, and `vcd`. The dataset of interest can be acquired from the source by running `dataset_download.py` through the `py_run_file()` function, which writes the result into `cdc_diabetes_health_indicators.csv` located in the `/work/data/raw/` directory; this .csv file is then read into the variable `raw_diabetes_df`. A preview of the downloaded dataset can be seen in @tbl-diabetes_1 below.
 
 ```{r}
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
@@ -91,6 +95,7 @@ suppressPackageStartupMessages({
 ```
 
 ```{bash}
+#| include: false
 # This run the python script to extract file from uci
 /venv/bin/python /home/rstudio/work/src/dataset_download.py
 ```
@@ -117,16 +122,6 @@ All features in the dataset are checked for the following attributes:
 -   `Distinct_Count`: Number of possible values for each variable; primarily to check if the variables are numerical, categorical or binary (only 2 possible values).
 -   `Current_Data_Type`: Current data type for each variable; primarily to ensure that they are in the appropriate format we require, as the data type may be lost during `read_csv()`.
 
-Given the initial check, the following observations can be made using @tbl-diabetes_2:
-
--   None of the columns have `NA` values.
--   `BMI` is the only numerical variable, with the rest being categorical or binary.
--   All variables are treated as `double` in the original dataset, and thus every variable except for `BMI` will need to be converted to the factor data type.
-
-We aim to balance the dataset for our machine learning model to reduce bias towards the majority class, improve the model's ability to generalize to unseen data, and increase model training efficiency. In the original `raw_diabetes_df` dataset, approximately 86% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3). To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`. After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly 50-50 (@tbl-diabetes_4). A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes_5.
-
-The balanced dataset, `balanced_raw_diabetes_df`, will be saved in the `/work/data/processed/` directory and then split into training (`diabetes_train`) and testing (`diabetes_test`) sets for machine learning.
-
 ```{r}
 # Checking for NA values, distinct counts of each variable, and the current data type
 checking_raw_matrix <- rbind(
@@ -145,6 +140,14 @@ checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 knitr::kable(checking_raw_df)
 ```
 
+Given the initial check, the following observations can be made using @tbl-diabetes_2:
+
+-   None of the columns have `NA` values.
+-   `BMI` is the only numerical variable, with the rest being categorical or binary.
+-   All variables are treated as `double` in the original dataset, and thus every variable except for `BMI` will need to be converted to the factor data type.
+
+We aim to balance the dataset for our machine learning model to reduce bias towards the majority class, improve the model's ability to generalize to unseen data, and increase model training efficiency. 
+
 ```{r}
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
@@ -157,6 +160,11 @@ target_result <- raw_diabetes_df %>%
   group_by(Diabetes_binary) %>%
   summarise(Count = n(), Proportion = n() / nrow(raw_diabetes_df)) %>%
   ungroup()
+
+# Proportion of individuals who do not have diabetes (Table 3)
+prop_no_diabetes3 <- target_result %>%
+  filter(Diabetes_binary == 0) %>%
+  pull(Proportion)
 ```
 
 ```{r}
@@ -165,6 +173,10 @@ target_result <- raw_diabetes_df %>%
 
 knitr::kable(target_result)
 ```
+
+In the original `raw_diabetes_df` dataset, approximately `{r} round(prop_no_diabetes3*100)`% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3). 
+
+To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`. 
 
 ```{r}
 # Using ROSE to balance data by oversampling
@@ -177,6 +189,16 @@ balanced_target_result <- balanced_raw_diabetes_df %>%
   group_by(Diabetes_binary) %>%
   summarise(Count = n(), Proportion = n() / nrow(balanced_raw_diabetes_df)) %>%
   ungroup()
+
+# Proportion of individuals who do not have diabetes (Table 4)
+prop_no_diabetes4 <- balanced_target_result %>%
+  filter(Diabetes_binary == 0) %>%
+  pull(Proportion)
+
+# Proportion of individuals who have diabetes (Table 4)
+prop_diabetes4 <- balanced_target_result %>%
+  filter(Diabetes_binary == 1) %>%
+  pull(Proportion)
 ```
 
 ```{r}
@@ -185,6 +207,8 @@ balanced_target_result <- balanced_raw_diabetes_df %>%
 
 knitr::kable(balanced_target_result)
 ```
+
+After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly `{r} round(prop_no_diabetes4*100)` - `{r} round(prop_diabetes4*100)` (@tbl-diabetes_4). A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes_5 below.
 
 ```{r}
 # Comparing class distribution before and after balancing
@@ -209,8 +233,12 @@ knitr::kable(balanced_raw_comparision_df)
 balanced_raw_diabetes_df %>% write_csv("/home/rstudio/work/data/processed/balanced_cdc_diabetes_health_indicators.csv")
 ```
 
+The balanced dataset, `balanced_raw_diabetes_df`, will be saved in the `/work/data/processed/` directory and then split into training (`diabetes_train`) and testing (`diabetes_test`) sets for machine learning.
+
 ```{r}
 # Split data into 75% train, 25% test for machine learning
+train_prop = 0.75
+test_prop = 0.25
 # Setting the seed for consistent results
 set.seed(6)
 
@@ -225,17 +253,15 @@ diabetes_test <- testing(diabetes_split)
 
 Using every feature in the dataset would not be optimal as having a large number of features in our model could lead to a risk of overfitting, difficulty in interpretation and increased computation time. Thus, we will select only a subset of relevant predictors from the 21 total risk factors in the dataset.
 
-First, bar plots are created below to visually determine correlation between each categorical variable and the target variable `Diabetes_binary`. For `BMI`, a density plot was created due to this feature being numerical. Of the 21 features, it appears that `HighBP`, `HighChol`, `CholCheck`, `Stroke`, `HeartDiseaseorAttack`, `HvyAlcoholConsump`, `DiffWalk`, `Age`, `Education`, `Income`, and `GenHlth` provide the most obvious differences in distribution between their categories and the target (@fig-eda_1). We decided to exclude `BMI` from further feature selection given it was the only numerical feature; Including it would complicate the statistical tests, and its density plot exhibited a high degree of overlap, suggesting a weak correlation with the target (@fig-eda_1).
+First, bar plots are created below to visually determine correlation between each categorical variable and the target variable `Diabetes_binary`. For `BMI`, a density plot was created due to this feature being numerical.
 
-To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`. All chi-squared tests yielded very small p-values (\< 0.05), indicating significant relationships between each feature and the target (@tbl-diabetes_6). However, there is a key limitation to this test: It only tests for statistical significance (i.e., whether an association exists) but does not indicate the strength of that association. In large datasets, chi-squared tests can produce extremely small p-values even for weak associations, making it difficult to determine their practical importance.
+![Distribution of Diabetes Binary by Various Variables](../output/combined_plots.png){#fig-eda_1}
 
-To address this, we employed Cramér’s V which provides a standardized measure of the strength of association between each categorical variable and the target variable. Cramér’s V quantifies how strong the association is on a scale from 0 (no association) to 1 (perfect association). To utilize Cramér’s V, both the variables of interest and the target variable should be categorical. More than two unique values are also allowed for the categorical variables [@StatsTest2020].
+Of the 21 features, it appears that `HighBP`, `HighChol`, `CholCheck`, `Stroke`, `HeartDiseaseorAttack`, `HvyAlcoholConsump`, `DiffWalk`, `Age`, `Education`, `Income`, and `GenHlth` provide the most obvious differences in distribution between their categories and the target (@fig-eda_1). We decided to exclude `BMI` from further feature selection given it was the only numerical feature; Including it would complicate the statistical tests, and its density plot exhibited a high degree of overlap, suggesting a weak correlation with the target (@fig-eda_1).
 
-We defined a Cramér’s V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér’s V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes_6).
+To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`. 
 
 ```{r}
-options(repr.plot.width = 30, repr.plot.height = 90, warn = -1)
-
 # Categorical variables
 categorical_vars <- c("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", 
                       "HeartDiseaseorAttack", "PhysActivity", "Fruits", "Veggies", 
@@ -245,71 +271,6 @@ categorical_vars <- c("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke",
 # Non-categorical variables
 noncat_var <- c("BMI")
 
-# --------------------------------------------------
-# inits with empty lists
-bar_plots <- list()
-density_plots <- list()
-
-# --------------------------------------------------
-# Creating bar plots for each categorical variable in the dataset
-for (var in categorical_vars) {
-  p <- ggplot(diabetes_train, aes(x = !!sym(var), fill = as.factor(Diabetes_binary))) +
-    geom_bar(position = "fill") + 
-    scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
-    labs(title = paste("Diabetes Binary by", var),
-         x = var,
-         y = "Proportion",
-         fill = "Diabetes Binary") +
-    theme_minimal() + 
-    theme(
-      axis.text = element_text(size = 30),  
-      axis.title = element_text(size = 30), 
-      plot.title = element_text(size = 35, face = "bold")
-    )
-  bar_plots[[var]] <- p
-}
-
-# --------------------------------------------------
-# Density plot for BMI
-for (var in noncat_var) {
-  p <- ggplot(diabetes_train, aes(x = !!sym(var), fill = as.factor(Diabetes_binary))) +
-    geom_density(alpha = 0.5) +
-    scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
-    labs(title = paste("Diabetes Binary by", var),
-         x = var,
-         y = "Density",
-         fill = "Diabetes Binary") +
-    theme_minimal() + 
-    theme(
-      axis.text = element_text(size = 30),  
-      axis.title = element_text(size = 30), 
-      plot.title = element_text(size = 35, face = "bold")
-    )
-  density_plots[[var]] <- p
-}
-```
-
-```{r}
-# Combining all of the plots into a 3 x 7 grid
-combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = 3, nrow = 7) + 
-  plot_layout(guides = "collect") +
-  plot_annotation(
-    title = "Figure 1. Distribution of Diabetes Binary by Various Variables",
-    subtitle = "This figure shows the distribution of the binary diabetes outcome across different variables, including binary and continuous variables.",
-    theme = theme(
-      plot.title = element_text(size = 50, face = "bold"),
-      plot.subtitle = element_text(size = 40),
-      axis.title = element_text(size = 30),
-      axis.text = element_text(size = 30),
-      )
-    )
-# combined_plots
-# ggsave("combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
-```
-
-![Distribution of Diabetes Binary by Various Variables](../output/combined_plots.png){#fig-eda_1 width="100%"}
-
-```{r}
 # Run chi-squared tests independently for each feature
 cramer_chi_results <- map_dfr(categorical_vars, function(var) {
     
@@ -339,6 +300,12 @@ cramer_chi_results_sorted <- cramer_chi_results %>% arrange(desc(CramersV))
 knitr::kable(cramer_chi_results_sorted)
 ```
 
+All chi-squared tests yielded very small p-values (\< 0.05), indicating significant relationships between each feature and the target (@tbl-diabetes_6). However, there is a key limitation to this test: It only tests for statistical significance (i.e., whether an association exists) but does not indicate the strength of that association. In large datasets, chi-squared tests can produce extremely small p-values even for weak associations, making it difficult to determine their practical importance.
+
+To address this, we employed Cramér’s V which provides a standardized measure of the strength of association between each categorical variable and the target variable. Cramér’s V quantifies how strong the association is on a scale from 0 (no association) to 1 (perfect association). To utilize Cramér’s V, both the variables of interest and the target variable should be categorical. More than two unique values are also allowed for the categorical variables [@StatsTest2020].
+
+We defined a Cramér’s V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér’s V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes_6).
+
 ### 3.4. Classification Analysis
 
 *Analysis Workflow:*
@@ -351,7 +318,6 @@ Given the large quantity of binary features and with the task being for classifi
 # Selecting only the features we determined from 3.2. EDA - Feature Selection and Visualization
 diabetes_train_filtered <- diabetes_train %>%
   select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk)
-
 
 # Pipeline for logistic regression 
 lr_mod <- logistic_reg(penalty = tune(), mixture = 1) %>% 
@@ -400,13 +366,7 @@ The results of our LASSO regression predictions include `lasso_preds`, which pro
 -   `accuracy`: Accuracy for all predictions
 -   `recall`: Recall; true positive rate
 -   `f_meas`: F-measure; harmonic mean of precision and recall
--   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes. The ROC curve and confusion matrix are visualised below (@fig-roc_2, @fig-cm_3). The confusion matrix displays the quantity of each type of prediction result; The model predicts 23910 true positive, 22188 true negative, 7789 false negative and 9533 false positive cases (@fig-cm_3).
-
-Thus, the recall for the model can be calculated as $\frac{True Positives}{True Positives + False Negatives}$ = $\frac{23910}{23910 + 7789}$ = 0.7542825 (7 s.f.). This is the same result as shown in @tbl-diabetes_7.
-
-The false negative rate can be calculated as: $\frac{False Negatives}{True Positives + False Negatives}$ = $\frac{7789}{23910 + 7789}$ = 0.2457175 (7 s.f.) or \~25%. This is the same result as calculating (1 - `sens`) from @tbl-diabetes_7.
-
-From @tbl-diabetes_7, the values of particular interest are the `recall` score of 0.7542825 (7 s.f.) and the `roc_auc_value` of 0.7989357 (7 s.f.).
+-   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes. 
 
 ```{r}
 # Applying to the test set
@@ -419,6 +379,21 @@ roc_auc_value <- roc_auc(lasso_modelOutputs, truth = Diabetes_binary, .pred_1, e
 
 lasso_metrics <- rbind(classificationMetrics(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second"), 
                        roc_auc_value)
+
+# Pulls the recall metric
+recall_value <- lasso_metrics %>%
+  filter(.metric == "recall") %>%
+  pull(.estimate)
+
+# Pulls the sens metric for the False Negative rate
+sens_value <- lasso_metrics %>%
+  filter(.metric == "sens") %>%
+  pull(.estimate)
+
+# Pulls the auc metric
+auc_value <- lasso_metrics %>%
+  filter(.metric == "roc_auc") %>%
+  pull(.estimate)
 ```
 
 ```{r}
@@ -428,27 +403,9 @@ lasso_metrics <- rbind(classificationMetrics(lasso_modelOutputs, truth = Diabete
 knitr::kable(lasso_metrics)
 ```
 
-```{r}
-options(repr.plot.width = 8, repr.plot.height = 8)
+The ROC curve and confusion matrix are visualised below (@fig-roc_2, @fig-cm_3). 
 
-# Creating the ROC curve
-roc_plot <- autoplot(roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
-  ggtitle("Figure 2. ROC Curve for Lasso Model") +
-  labs(subtitle = "Performance of the Lasso Model in Predicting Diabetes State.", 
-       x = "False Positive Rate (1 - Specificity)", 
-       y = "True Positive Rate (Sensitivity)") +
-  annotate("text", x = 0.7, y = 0.2, label = paste("AUC =", round(roc_auc_value$.estimate, 3)), size = 5, color = "blue") + 
-  theme(
-    plot.title = element_text(size = 16, face = "bold"),  
-    plot.subtitle = element_text(size = 12),  
-    axis.title = element_text(size = 12),  
-    axis.text = element_text(size = 10)  
-  )
-
-roc_plot
-```
-
-![ROC Curve for Lasso Model](../output/roc_curve.png){#fig-roc_2 width="100%"}
+![ROC Curve for Lasso Model](../output/roc_curve.png){#fig-roc_2 width="65%"}
 
 ```{r}
 options(repr.plot.width = 8, repr.plot.height = 8)
@@ -476,16 +433,39 @@ cm_plot <- ggplot(cm_df, aes(x = Prediction, y = Truth, fill = Freq)) +
   ) +
   guides(fill = "none")
 
-cm_plot
+# TP, TN, FP, FN values from confusion matrix
+TP <- cm_df %>% 
+  filter(Truth == 1, Prediction == 1) %>%
+  pull(Freq)
+TN <- cm_df %>%
+  filter(Truth == 0, Prediction == 0) %>%
+  pull(Freq)
+FP <- cm_df %>%
+  filter(Truth == 0, Prediction == 1) %>%
+  pull(Freq)
+FN <- cm_df %>%
+  filter(Truth == 1, Prediction == 0) %>%
+  pull(Freq)
+
+recall_calc <- TP / (TP + FN)
+fnr_calc <- FN / (TP + FN)
 ```
 
-![Confusion Matrix for Lasso Model](../output/cm_plot.png){#fig-cm_3 width="100%"}
+![Confusion Matrix for Lasso Model](../output/cm_plot.png){#fig-cm_3 width="65%"}
+
+The confusion matrix displays the quantity of each type of prediction result; The model predicts `{r} format(TP, scientific = FALSE)` true positive, `{r} format(TN, scientific = FALSE)` true negative, `{r} FN` false negative and `{r} FP` false positive cases (@fig-cm_3).
+
+Thus, the recall for the model can be calculated as $\frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}$ = `{r} recall_calc` (7 s.f.). This is the same result as shown in @tbl-diabetes_7.
+
+The false negative rate can be calculated as: $\frac{\text{False Negatives}}{\text{True Positives} + \text{False Negatives}}$ = `{r} fnr_calc` (7 s.f.). This is the same result as calculating (1 - `sens`) from @tbl-diabetes_7.
+
+From @tbl-diabetes_7, the values of particular interest are the `recall` score of `{r} recall_value` (7 s.f.) and the `roc_auc_value` of `{r} auc_value` (7 s.f.).
 
 ## 4. Discussion
 
-Our model achieved a recall score of 0.7542825 (7 s.f.) on the test set, implying that about 75.43% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes_7). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of 0.7989357 (7 s.f.) on the test set (@tbl-diabetes_7). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm_3).
+Our model achieved a recall score of `{r} recall_value` (7 s.f.) on the test set, implying that about `{r} round(recall_value*100, 2)`% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes_7). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of `{r} auc_value` (7 s.f.) on the test set (@tbl-diabetes_7). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm_3).
 
-We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around 25% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
+We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around `{r} round(fnr_calc*100)`% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
 
 Our model was optimized for recall through hyperparameter tuning, with cross-validation used to evaluate model performance during the process. However, despite our results, the model falls short of what is expected in clinical applications. For example, more complex models in the literature which incorporate advanced feature selection techniques [@Alhussan2023] or Generative Adversarial Networks (GANs) [@Feng2023] can achieve recall and AUC scores upwards of 97%. Our findings serve as a proof of concept for the feasibility of classification models to predict the risk of diabetes based on publicly available health data. Since our model did relatively well compared to random guessing, this indicates potential correlations between health indicators and the likelihood of developing diabetes. With this information, people might be more aware of their health and lifestyle choices. They may be inclined to work harder to reduce cholesterol levels, manage high blood pressure, keep alcohol consumption under control and maintain a healthy lifestyle. Thus, this may help decrease the global mortality rate from diabetes through early interventions and lifestyle changes.
 
