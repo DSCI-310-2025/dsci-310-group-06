@@ -101,8 +101,10 @@ raw_diabetes_df <- read_csv("/home/rstudio/work/data/raw/cdc_diabetes_health_ind
 ```
 
 ```{r}
-"Table 1. First 5 rows of the Raw Diabetes Dataset"
-head(raw_diabetes_df, n = 5)
+#| label: tbl-diabetes_1
+#| tbl-cap: First 5 rows of the Raw Diabetes Dataset
+
+knitr::kable(head(raw_diabetes_df, n = 5))
 ```
 
 ### 3.2. Preprocessing: Wrangling, Cleaning, and Balancing Data from Original Format
@@ -137,8 +139,10 @@ checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 ```
 
 ```{r}
-"Table 2. Summary of Missing Values, Distinct Counts of each Variable, and Data Types in the Raw Diabetes Dataset"
-checking_raw_df
+#| label: tbl-diabetes_2
+#| tbl-cap: Summary of Missing Values, Distinct Counts of each Variable, and Data Types in the Raw Diabetes Dataset
+
+knitr::kable(checking_raw_df)
 ```
 
 ```{r}
@@ -156,8 +160,10 @@ target_result <- raw_diabetes_df %>%
 ```
 
 ```{r}
-"Table 3. Class Distribution of Diabetes_binary in the Raw Diabetes Dataset"
-target_result
+#| label: tbl-diabetes_3
+#| tbl-cap: Class Distribution of Diabetes_binary in the Raw Diabetes Dataset
+
+knitr::kable(target_result)
 ```
 
 ```{r}
@@ -174,8 +180,10 @@ balanced_target_result <- balanced_raw_diabetes_df %>%
 ```
 
 ```{r}
-"Table 4. Class Distribution of Diabetes_binary in the Balanced Diabetes Dataset"
-balanced_target_result
+#| label: tbl-diabetes_4
+#| tbl-cap: Class Distribution of Diabetes_binary in the Balanced Dataset
+
+knitr::kable(balanced_target_result)
 ```
 
 ```{r}
@@ -190,8 +198,10 @@ balanced_raw_comparision_df <- data.frame(
 ```
 
 ```{r}
-"Table 5. Comparison of Class Distribution before and after running ROSE"
-balanced_raw_comparision_df
+#| label: tbl-diabetes_5
+#| tbl-cap: Comparison of Class Distribution Before and After Balancing with ROSE
+
+knitr::kable(balanced_raw_comparision_df)
 ```
 
 ```{r}
@@ -297,6 +307,8 @@ combined_plots <- wrap_plots(c(bar_plots, density_plots), ncol = 3, nrow = 7) +
 # ggsave("combined_plots.png", combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 ```
 
+![Distribution of Diabetes Binary by Various Variables](../output/combined_plots.png){#fig-eda_1 width=100%}
+
 ```{r}
 # Run chi-squared tests independently for each feature
 cramer_chi_results <- map_dfr(categorical_vars, function(var) {
@@ -318,9 +330,13 @@ cramer_chi_results <- map_dfr(categorical_vars, function(var) {
 ```
 
 ```{r}
-"Table 6. Chi-squared Statistic, Degrees of Freedom, p-value, and Cramér’s V sorted in Descending Order"
+#| label: tbl-diabetes_6
+#| tbl-cap: Chi-squared Statistic, Degrees of Freedom, p-value, and Cramér’s V sorted in Descending Order
+
 # Arrange the results by p-value (from smallest to largest)
-cramer_chi_results %>% arrange(desc(CramersV))
+cramer_chi_results_sorted <- cramer_chi_results %>% arrange(desc(CramersV))
+
+knitr::kable(cramer_chi_results_sorted)
 ```
 
 ### 3.4. Classification Analysis
@@ -406,8 +422,10 @@ lasso_metrics <- rbind(classificationMetrics(lasso_modelOutputs, truth = Diabete
 ```
 
 ```{r}
-"Table 7. Classification Metrics for Lasso Model on Test Set"
-lasso_metrics
+#| label: tbl-diabetes_7
+#| tbl-cap: Classification Metrics for Lasso Model on Test Set
+
+knitr::kable(lasso_metrics)
 ```
 
 ```{r}
@@ -429,6 +447,8 @@ roc_plot <- autoplot(roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, eve
 
 roc_plot
 ```
+
+![ROC Curve for Lasso Model](../output/roc_curve.png){#fig-roc_2 width=100%}
 
 ```{r}
 options(repr.plot.width = 8, repr.plot.height = 8)
@@ -458,6 +478,8 @@ cm_plot <- ggplot(cm_df, aes(x = Prediction, y = Truth, fill = Freq)) +
 
 cm_plot
 ```
+
+![Confusion Matrix for Lasso Model](../output/cm_plot.png){#fig-cm_3 width=100%}
 
 ## 4. Discussion
 
