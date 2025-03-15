@@ -8,6 +8,7 @@ report:
 	make index.html
 
 clean:
+
 	rm -rf work/output/*
 	rm -rf work/data/processed/*
 	rm -rf work/data/raw/*

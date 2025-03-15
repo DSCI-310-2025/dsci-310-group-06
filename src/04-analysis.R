@@ -1,11 +1,11 @@
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
-
 Usage: src/04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
 " -> doc
 
 library(tidymodels)
 library(tidyverse)
 library(glmnet) 
+library(docopt)
 
 opt <- docopt::docopt(doc)
 

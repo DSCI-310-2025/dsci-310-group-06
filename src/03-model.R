@@ -1,6 +1,9 @@
-"This script constructs the lasso_dialsd_wflow classification analysis model 
+"This script constructs the lasso_tuned_wflow classification analysis model 
 
 Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
+Options:
+--file_path=<file_path>     Path to obtain the raw dataset CSV file
+--output_path=<output_path> Path to save the lasso_tuned_wflow
 " -> doc
 
 library(tidyverse)
