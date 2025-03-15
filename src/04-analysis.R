@@ -1,21 +1,11 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
-# library(tidymodels) # Machine learning tools
-library(readr)     # read_csv, write_rds, write_csv
-library(ggplot2)   # ggplot, geom_bar, geom_density, theme, autoplot, ggsave
-library(parsnip)   # predict
-library(yardstick) # metric_set, roc_auc, conf_mat
-library(tune)      # select_best
-library(rsample)   # Resampling (not explicitly used in this script)
-library(glmnet)    # Fit generalized linear models by penalty (used as a model engine)
-
-# 04-analysis.R --file_path_test=/home/rstudio/work/data/processed/diabetes_test.csv --file_path_wflow=/home/rstudio/work/output/lasso_tuned_wflow.RDS --output_path_lasso=/home/rstudio/work/output/lasso_metrics.csv --output_path_roc=/home/rstudio/work/output/roc_curve.png --output_path_cm=/home/rstudio/work/output/cm_plot.png
-# 04-analysis.R /home/rstudio/work/data/processed/diabetes_test.csv /home/rstudio/work/output/lasso_tuned_wflow.RDS 
-# /home/rstudio/work/output/lasso_metrics.csv /home/rstudio/work/output/roc_curve.png /home/rstudio/work/output/cm_plot.png
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
-Usage: 04-analysis.R --file_path_test=<file_path_test> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
+Usage: src/04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
 " -> doc
+
+library(tidymodels)
+library(tidyverse)
+library(glmnet) 
 
 opt <- docopt::docopt(doc)
 
@@ -24,11 +14,22 @@ diabetes_test <- readr::read_csv(opt$file_path_test)
 lasso_tuned_wflow <- readr::read_rds(opt$file_path_wflow)
 
 # Applying to the test set
-lasso_preds <- lasso_tuned_wflow %>% parsnip::predict(diabetes_test)
-lasso_probs <- lasso_tuned_wflow %>% parsnip::predict(diabetes_test, type = "prob")
+lasso_preds <- lasso_tuned_wflow %>% stats::predict(diabetes_test)
+lasso_probs <- lasso_tuned_wflow %>% stats::predict(diabetes_test, type = "prob")
 lasso_modelOutputs <- cbind(diabetes_test, lasso_preds, lasso_probs)
 
-classificationMetrics <- yardstick::metric_set(sens, spec, ppv, npv, accuracy, recall, f_meas)
+# Convert Diabetes_binary to a factor
+lasso_modelOutputs$Diabetes_binary <- as.factor(lasso_modelOutputs$Diabetes_binary)
+
+classificationMetrics <- metrics <- yardstick::metric_set(
+  sens, 
+  ppv, 
+  npv, 
+  accuracy, 
+  recall, 
+  f_meas
+)
+
 roc_auc_value <- yardstick::roc_auc(lasso_modelOutputs, truth = Diabetes_binary, .pred_1, event_level = "second")
 
 lasso_metrics <- rbind(
@@ -42,7 +43,7 @@ readr::write_csv(lasso_metrics, opt$output_path_lasso)
 options(repr.plot.width = 8, repr.plot.height = 8)
 
 # Creating the ROC curve
-roc_plot <- yardstick::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
+roc_plot <- tune::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
   ggplot2::ggtitle("Figure 2. ROC Curve for Lasso Model") +
   ggplot2::labs(
     subtitle = "Performance of the Lasso Model in Predicting Diabetes State.",

@@ -1,23 +1,11 @@
-# Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
-# library(tidyverse) # Data wrangling and visualization
-# library(tidymodels) # Machine learning tools
-library(readr)         # read_csv, write_rds
-library(dplyr)         # %>%, select
-library(parsnip)       # logistic_reg, set_engine, set_mode
-library(rsample)       # vfold_cv
-library(recipes)       # recipe, step_dummy, step_normalize
-library(workflows)     # workflow, add_recipe, add_model
-library(tune)          # tune_grid, grid_max_entropy, metric_set, select_best
-library(workflowsets)  # finalize_workflow
-library(glmnet)        # Fit generalized linear models by penalty
-
-# 03-model.R --file_path=/home/rstudio/work/data/processed/diabetes_train.csv --output_path=/home/rstudio/work/output/lasso_tuned_wflow.RDS
-# 03-model.R /home/rstudio/work/data/processed/diabetes_train.csv 
-# /home/rstudio/work/output/lasso_tuned_wflow.RDS
-"This script constructs the lasso_tuned_wflow classification analysis model 
+"This script constructs the lasso_dialsd_wflow classification analysis model 
 
 Usage: 03-model.R --file_path=<file_path> --output_path=<output_path>
 " -> doc
+
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
 
 opt <- docopt::docopt(doc)
 
@@ -26,10 +14,11 @@ diabetes_train <- readr::read_csv(opt$file_path)
 
 # Selecting only the features we determined from 3.2. EDA - Feature Selection and Visualization
 diabetes_train_filtered <- diabetes_train %>%
-  dplyr::select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk)
+  dplyr::select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk) %>%
+  dplyr::mutate(Diabetes_binary = as.factor(Diabetes_binary))
 
 # Pipeline for logistic regression 
-lr_mod <- parsnip::logistic_reg(penalty = tune::tune(), mixture = 1) %>% 
+lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>% 
     parsnip::set_engine("glmnet") %>%
     parsnip::set_mode("classification")
 
@@ -43,19 +32,18 @@ lr_workflow <- workflows::workflow() %>%
   workflows::add_recipe(lr_recipe)
 
 # Tuning with cross-validation set for penalty
-lambda_grid <- tune::grid_max_entropy(parsnip::penalty(), size = 10)
+lambda_grid <- dials::grid_space_filling(penalty(), size = 10)
 
 lasso_grid <- tune::tune_grid(lr_workflow %>% workflows::add_model(lr_mod),
                               resamples = folds,
                               grid = lambda_grid,
-                              metrics = tune::metric_set(recall))
+                              metrics = metric_set(recall))
 
 # Choosing the metric with the highest recall
 highest_auc <- lasso_grid %>% tune::select_best(metric = "recall")
 
-lasso_tuned_wflow <- workflowsets::finalize_workflow(lr_workflow %>% 
-                                                       workflows::add_model(lr_mod), highest_auc) %>%
-  parsnip::fit(data = diabetes_train_filtered)
+lasso_dialsd_wflow <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), highest_auc) %>%
+                           parsnip::fit(data = diabetes_train_filtered)
 
-# WRITE lasso_tuned_wflow
-readr::write_rds(lasso_tuned_wflow, opt$output_path)
+# WRITE lasso_dialsd_wflow
+readr::write_rds(lasso_dialsd_wflow, opt$output_path)
