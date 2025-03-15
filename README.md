@@ -43,7 +43,7 @@ cd dsci-310-group-06
 
 ### Running the Analysis
 
-#### **Option 1: Run a One-Time Task Inside the Container (No Need to Visit `localhost:1000`)**
+#### **Option 1: Run a One-Time Task Inside the Container (No Need to Visit `localhost:10000`)**
 
 Use this option if you only need to run a one-time task, such as building reports, without interacting with the service on `localhost`.
 
@@ -58,7 +58,7 @@ docker-compose run --rm report-env make all
   - Generate reports in PDF and HTML formats.
   - Automatically remove the container after completing the task.
 
-#### **Option 2: Start Services and Access via `localhost:1000` (Persistent Environment)**
+#### **Option 2: Start Services and Access via `localhost:10000` (Persistent Environment)**
 
 If you want to start services (e.g., a web app or report viewer) and interact with them through a web browser, use this option.
 
@@ -69,7 +69,7 @@ docker-compose up
 ```
 
 - This will start the services defined in the Docker Compose configuration and keep them running.
-- Open a browser and visit `http://localhost:1000` on a web brower to interact with the service (e.g., view reports or access the web app).
+- Open a browser and visit `http://localhost:10000` on a web brower to interact with the service (e.g., view reports or access the web app).
 - To generate the entire report while the services are running, run `make all` in the R terminal inside the container.
 
 ## List of dependencies needed to run analysis
