@@ -18,38 +18,55 @@ Our project aims to predict if an individual is at high risk of developing diabe
 
 The original dataset can be found on the [UCI Machine Learning Repository](https://archive.ics.uci.edu/dataset/891/cdc+diabetes+health+indicators)
 
-## How to run data analysis
+## How to Run Data Analysis
 
-1. Prerequisites: Ensure Docker Desktop is installed and running.
+### 1. Prerequisites
+Ensure Docker Desktop (version 3.3.0 or later) is installed and running.
 
-2. For Mac users: Enable Rosetta in Docker settings:
+### 2. System-Specific Configurations
+- **For Windows/Linux users**:  
+ - No additional configuration is required.
 
-- Open Docker Settings > General
+- **For macOS (Apple Silicon) users**:
+ - Enable Rosetta in Docker settings for x86/amd64 emulation.
+ - Go to Docker settings > General > Check Use Virtualization Framework > Check Use Rosetta for x86/amd64 emulation on Apple Silicon > Click Apply & Restart.
 
-- Check Use Virtualization Framework
-
-- Check Use Rosetta for x86/amd64 emulation on Apple Silicon
-
-3. Clone the repository (if not already done):
-
+### 3. Clone the Repository
+If you haven’t already, clone the repository and navigate into the project directory:
 ```bash
 git clone https://github.com/DSCI-310-2025/dsci-310-group-06.git
 cd dsci-310-group-06
 ```
 
-4. Start container: In the project directory (`dsci-310-group-06/`), run the following in the terminal:
+### Running the Analysis
 
-```{terminal}
+#### **Option 1: Run a One-Time Task Inside the Container (No Need to Visit `localhost:1000`)**
+Use this option if you only need to run a one-time task, such as building reports, without interacting with the service on `localhost`.
+
+Navigate to the project root and run:
+```bash
+docker-compose run --rm report-env make all
+```
+- This command will:
+  - Reset the project.
+  - Generate reports in PDF and HTML formats.
+  - Automatically remove the container after completing the task.
+ 
+#### **Option 2: Start Services and Access via `localhost:1000` (Persistent Environment)**
+If you want to start services (e.g., a web app or report viewer) and interact with them through a web browser, use this option.
+
+Navigate to the project root and run:
+```bash
 docker-compose up
 ```
+- This will start the services defined in the Docker Compose configuration and keep them running.
+- Open a browser and visit `http://localhost:1000` on a web brower to interact with the service (e.g., view reports or access the web app).
+- To generate the entire report while the services are running, run `make all` in the R terminal inside the container.
 
-5. Open `http://localhost:10000/` in a browser.
-
-6. Navigate to `work/reports/diabetes_classification_report.qmd` and run the notebook.
 
 ## List of dependencies needed to run analysis
 
-#### R
+### R version 4.2.1 and R packages:
 - `reticulate` (v1.25)  
 - `tidyverse` (v2.0.0)  
 - `tidymodels` (v1.1.1)  
@@ -57,10 +74,15 @@ docker-compose up
 - `patchwork` (v1.3.0)  
 - `ROSE` (v0.0-4)  
 - `vcd` (v1.4-13)
+- `docopt` (v0.7.1)
+- `janitor` (v2.2.1)
 
-#### Python
-- `pandas` (v2.2)
+### Python 3.8 and Python packages:
+- `pandas` (v2.0.3)
 - `ucimlrepo` (v0.0.7)
+
+### Other Dependencies:
+- GNU Make (v4.2.1)
 
 ## Licenses
 
