@@ -1,6 +1,6 @@
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
-Usage: src/04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
+Usage: 04-analysis.R --file_path_test=<file_path_test> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
 Options: 
 --file_path_test=<file_path_test>       Path to obtain the raw dataset CSV file
 --file_path_wflow=<file_path_wflow>     Path to obtain the lasso_tuned_wflow
