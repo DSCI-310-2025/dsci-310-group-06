@@ -146,7 +146,7 @@ Given the initial check, the following observations can be made using @tbl-diabe
 -   `BMI` is the only numerical variable, with the rest being categorical or binary.
 -   All variables are treated as `double` in the original dataset, and thus every variable except for `BMI` will need to be converted to the factor data type.
 
-We aim to balance the dataset for our machine learning model to reduce bias towards the majority class, improve the model's ability to generalize to unseen data, and increase model training efficiency. 
+We aim to balance the dataset for our machine learning model to reduce bias towards the majority class, improve the model's ability to generalize to unseen data, and increase model training efficiency.
 
 ```{r}
 # Converting categorical/binary variables into factors
@@ -174,9 +174,9 @@ prop_no_diabetes3 <- target_result %>%
 knitr::kable(target_result)
 ```
 
-In the original `raw_diabetes_df` dataset, approximately `{r} round(prop_no_diabetes3*100)`% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3). 
+In the original `raw_diabetes_df` dataset, approximately `{r} round(prop_no_diabetes3*100)`% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3).
 
-To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`. 
+To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`.
 
 ```{r}
 # Using ROSE to balance data by oversampling
@@ -259,7 +259,7 @@ First, bar plots are created below to visually determine correlation between eac
 
 Of the 21 features, it appears that `HighBP`, `HighChol`, `CholCheck`, `Stroke`, `HeartDiseaseorAttack`, `HvyAlcoholConsump`, `DiffWalk`, `Age`, `Education`, `Income`, and `GenHlth` provide the most obvious differences in distribution between their categories and the target (@fig-eda_1). We decided to exclude `BMI` from further feature selection given it was the only numerical feature; Including it would complicate the statistical tests, and its density plot exhibited a high degree of overlap, suggesting a weak correlation with the target (@fig-eda_1).
 
-To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`. 
+To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`.
 
 ```{r}
 # Categorical variables
@@ -366,7 +366,7 @@ The results of our LASSO regression predictions include `lasso_preds`, which pro
 -   `accuracy`: Accuracy for all predictions
 -   `recall`: Recall; true positive rate
 -   `f_meas`: F-measure; harmonic mean of precision and recall
--   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes. 
+-   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes.
 
 ```{r}
 # Applying to the test set
@@ -403,7 +403,7 @@ auc_value <- lasso_metrics %>%
 knitr::kable(lasso_metrics)
 ```
 
-The ROC curve and confusion matrix are visualised below (@fig-roc_2, @fig-cm_3). 
+The ROC curve and confusion matrix are visualised below (@fig-roc_2, @fig-cm_3).
 
 ![ROC Curve for Lasso Model](../output/roc_curve.png){#fig-roc_2 width="65%"}
 
