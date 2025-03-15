@@ -1,4 +1,4 @@
-FROM rocker/verse:4
+FROM rocker/verse:4.2.1
 
 COPY src/requirements.txt /requirements.txt
 
@@ -11,7 +11,7 @@ RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')
     Rscript -e "remotes::install_version('docopt', version='0.7.1', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('janitor', version='2.2.1', repos='https://cloud.r-project.org')" && \
     apt update && \
-    apt install -y python3.12 python3-pip python3-venv && \
+    apt install -y python3.8 python3-pip python3-venv && \
     rm -rf /var/lib/apt/lists/* && \
-    python3.12 -m venv /venv && \
+    python3.8 -m venv /venv && \
     /venv/bin/pip install -r /requirements.txt
