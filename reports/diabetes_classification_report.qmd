@@ -11,6 +11,8 @@ execute:
   echo: false
   warning: false
   error: false
+  eval: true
+engine: knitr
 ---
 
 ## 1. Summary
@@ -174,7 +176,7 @@ prop_no_diabetes3 <- target_result %>%
 knitr::kable(target_result)
 ```
 
-In the original `raw_diabetes_df` dataset, approximately `{r} round(prop_no_diabetes3*100)`% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3).
+In the original `raw_diabetes_df` dataset, approximately `r round(prop_no_diabetes3*100)`% of individuals do not have diabetes, resulting in heavily imbalanced classes (@tbl-diabetes_3).
 
 To address this, we use the `ROSE()` function to create a balanced version of the dataset to form `balanced_raw_diabetes_df` by undersampling the majority class and oversampling the minority class. The size of `balanced_raw_diabetes_df` will be equal to that of the original `raw_diabetes_df`.
 
@@ -208,7 +210,7 @@ prop_diabetes4 <- balanced_target_result %>%
 knitr::kable(balanced_target_result)
 ```
 
-After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly `{r} round(prop_no_diabetes4*100)` - `{r} round(prop_diabetes4*100)` (@tbl-diabetes_4). A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes_5 below.
+After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly `r round(prop_no_diabetes4*100)` - `r round(prop_diabetes4*100)` (@tbl-diabetes_4). A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes_5 below.
 
 ```{r}
 # Comparing class distribution before and after balancing
@@ -302,9 +304,9 @@ knitr::kable(cramer_chi_results_sorted)
 
 All chi-squared tests yielded very small p-values (\< 0.05), indicating significant relationships between each feature and the target (@tbl-diabetes_6). However, there is a key limitation to this test: It only tests for statistical significance (i.e., whether an association exists) but does not indicate the strength of that association. In large datasets, chi-squared tests can produce extremely small p-values even for weak associations, making it difficult to determine their practical importance.
 
-To address this, we employed Cramér’s V which provides a standardized measure of the strength of association between each categorical variable and the target variable. Cramér’s V quantifies how strong the association is on a scale from 0 (no association) to 1 (perfect association). To utilize Cramér’s V, both the variables of interest and the target variable should be categorical. More than two unique values are also allowed for the categorical variables [@StatsTest2020].
+To address this, we employed Cramér's V which provides a standardized measure of the strength of association between each categorical variable and the target variable. Cramér's V quantifies how strong the association is on a scale from 0 (no association) to 1 (perfect association). To utilize Cramér's V, both the variables of interest and the target variable should be categorical. More than two unique values are also allowed for the categorical variables [@StatsTest2020].
 
-We defined a Cramér’s V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér’s V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes_6).
+We defined a Cramér's V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér's V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes_6).
 
 ### 3.4. Classification Analysis
 
@@ -453,19 +455,19 @@ fnr_calc <- FN / (TP + FN)
 
 ![Confusion Matrix for Lasso Model](../output/cm_plot.png){#fig-cm_3 width="65%"}
 
-The confusion matrix displays the quantity of each type of prediction result; The model predicts `{r} format(TP, scientific = FALSE)` true positive, `{r} format(TN, scientific = FALSE)` true negative, `{r} FN` false negative and `{r} FP` false positive cases (@fig-cm_3).
+The confusion matrix displays the quantity of each type of prediction result; The model predicts `r format(TP, scientific = FALSE)` true positive, `r format(TN, scientific = FALSE)` true negative, `r FN` false negative and `r FP` false positive cases (@fig-cm_3).
 
-Thus, the recall for the model can be calculated as $\frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}$ = `{r} recall_calc` (7 s.f.). This is the same result as shown in @tbl-diabetes_7.
+Thus, the recall for the model can be calculated as $\frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}$ = `r recall_calc` (7 s.f.). This is the same result as shown in @tbl-diabetes_7.
 
-The false negative rate can be calculated as: $\frac{\text{False Negatives}}{\text{True Positives} + \text{False Negatives}}$ = `{r} fnr_calc` (7 s.f.). This is the same result as calculating (1 - `sens`) from @tbl-diabetes_7.
+The false negative rate can be calculated as: $\frac{\text{False Negatives}}{\text{True Positives} + \text{False Negatives}}$ = `r fnr_calc` (7 s.f.). This is the same result as calculating (1 - `sens`) from @tbl-diabetes_7.
 
-From @tbl-diabetes_7, the values of particular interest are the `recall` score of `{r} recall_value` (7 s.f.) and the `roc_auc_value` of `{r} auc_value` (7 s.f.).
+From @tbl-diabetes_7, the values of particular interest are the `recall` score of `r recall_value` (7 s.f.) and the `roc_auc_value` of `r auc_value` (7 s.f.).
 
 ## 4. Discussion
 
-Our model achieved a recall score of `{r} recall_value` (7 s.f.) on the test set, implying that about `{r} round(recall_value*100, 2)`% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes_7). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of `{r} auc_value` (7 s.f.) on the test set (@tbl-diabetes_7). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm_3).
+Our model achieved a recall score of `r recall_value` (7 s.f.) on the test set, implying that about `r round(recall_value*100, 2)`% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes_7). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of `r auc_value` (7 s.f.) on the test set (@tbl-diabetes_7). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm_3).
 
-We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around `{r} round(fnr_calc*100)`% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
+We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around `r round(fnr_calc*100)`% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
 
 Our model was optimized for recall through hyperparameter tuning, with cross-validation used to evaluate model performance during the process. However, despite our results, the model falls short of what is expected in clinical applications. For example, more complex models in the literature which incorporate advanced feature selection techniques [@Alhussan2023] or Generative Adversarial Networks (GANs) [@Feng2023] can achieve recall and AUC scores upwards of 97%. Our findings serve as a proof of concept for the feasibility of classification models to predict the risk of diabetes based on publicly available health data. Since our model did relatively well compared to random guessing, this indicates potential correlations between health indicators and the likelihood of developing diabetes. With this information, people might be more aware of their health and lifestyle choices. They may be inclined to work harder to reduce cholesterol levels, manage high blood pressure, keep alcohol consumption under control and maintain a healthy lifestyle. Thus, this may help decrease the global mortality rate from diabetes through early interventions and lifestyle changes.
 
