@@ -25,13 +25,11 @@ Ensure Docker Desktop (version 3.3.0 or later) is installed and running.
 
 ### 2. System-Specific Configurations
 - **For Windows/Linux users**:  
-  No additional configuration is required.
+ - No additional configuration is required.
 
-- **For macOS (Apple Silicon) users**:  
-  Enable Rosetta in Docker settings for x86/amd64 emulation:  
-  1. Open Docker Settings > General  
-  2. Check **Use Virtualization Framework**  
-  3. Check **Use Rosetta for x86/amd64 emulation on Apple Silicon**
+- **For macOS (Apple Silicon) users**:
+ - Enable Rosetta in Docker settings for x86/amd64 emulation.
+ - Go to Docker settings > General > Check Use Virtualization Framework > Check Use Rosetta for x86/amd64 emulation on Apple Silicon > Click Apply & Restart.
 
 ### 3. Clone the Repository
 If you haven’t already, clone the repository and navigate into the project directory:
