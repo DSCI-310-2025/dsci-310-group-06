@@ -403,44 +403,14 @@ The ROC curve and confusion matrix are visualised below (@fig-roc_2, @fig-cm_3).
 ![ROC Curve for Lasso Model](../output/roc_curve.png){#fig-roc_2 width="65%"}
 
 ```{r}
-options(repr.plot.width = 8, repr.plot.height = 8)
+# Read the CSV file into a data frame
+cm_df <- read.csv("/home/rstudio/work/output/cm_df.csv")
 
-# Creating the confusion matrix
-cm <- conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")
-cm_df <- as.data.frame(cm$table)
-
-cm_plot <- ggplot(cm_df, aes(x = Prediction, y = Truth, fill = Freq)) +
-  geom_tile() +  
-  geom_text(aes(label = Freq), color = "black", size = 5) +
-  scale_fill_gradient(low = "white", high = "#66B2FF") + 
-  ggtitle("Figure 3. Confusion Matrix for Lasso Model") +  
-  labs(subtitle = "Performance of the Lasso Model in Predicting diabetic (1) or non-diabetic (0).", 
-       x = "Predicted Class", 
-       y = "True Class",
-       fill = "Count") + 
-  theme(
-    plot.title = element_text(size = 16, face = "bold"),  
-    plot.subtitle = element_text(size = 12),  
-    axis.title = element_text(size = 12),  
-    axis.text = element_text(size = 10), 
-    plot.background = element_blank(),   
-    panel.grid = element_blank()
-  ) +
-  guides(fill = "none")
-
-# TP, TN, FP, FN values from confusion matrix
-TP <- cm_df %>% 
-  filter(Truth == 1, Prediction == 1) %>%
-  pull(Freq)
-TN <- cm_df %>%
-  filter(Truth == 0, Prediction == 0) %>%
-  pull(Freq)
-FP <- cm_df %>%
-  filter(Truth == 0, Prediction == 1) %>%
-  pull(Freq)
-FN <- cm_df %>%
-  filter(Truth == 1, Prediction == 0) %>%
-  pull(Freq)
+# Extract TP, TN, FP, FN
+TP <- cm_df %>% filter(Truth == 1, Prediction == 1) %>% pull(Freq)
+TN <- cm_df %>% filter(Truth == 0, Prediction == 0) %>% pull(Freq)
+FP <- cm_df %>% filter(Truth == 0, Prediction == 1) %>% pull(Freq)
+FN <- cm_df %>% filter(Truth == 1, Prediction == 0) %>% pull(Freq)
 
 recall_calc <- TP / (TP + FN)
 fnr_calc <- FN / (TP + FN)
