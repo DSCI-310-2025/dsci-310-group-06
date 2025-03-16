@@ -25,6 +25,7 @@ index.html: work/output/checking_raw_df.csv \
 	work/output/lasso_metrics.csv \
 	work/output/roc_curve.png \
 	work/output/cm_plot.png \
+	cm_df.csv \
 	work/reports/diabetes_classification_report.html \
 	work/reports/diabetes_classification_report.pdf
 	cp work/reports/diabetes_classification_report.html work/docs/index.html
@@ -56,13 +57,14 @@ work/output/lasso_tuned_wflow.RDS: work/src/03-model.R work/data/processed/diabe
 	--output_path=work/output/lasso_tuned_wflow.RDS
 
 # From 04-analysis.R
-work/output/lasso_metrics.csv work/output/roc_curve.png work/output/cm_plot.png: work/src/04-analysis.R work/data/processed/diabetes_test.csv work/output/lasso_tuned_wflow.RDS 
+work/output/lasso_metrics.csv work/output/roc_curve.png work/output/cm_plot.png cm_df.csv: work/src/04-analysis.R work/data/processed/diabetes_test.csv work/output/lasso_tuned_wflow.RDS 
 	Rscript work/src/04-analysis.R \
   --file_path_test=work/data/processed/diabetes_test.csv \
   --file_path_wflow=work/output/lasso_tuned_wflow.RDS \
   --output_path_lasso=work/output/lasso_metrics.csv \
   --output_path_roc=work/output/roc_curve.png \
-  --output_path_cm=work/output/cm_plot.png
+  --output_path_cm=work/output/cm_plot.png \
+  --output_path_cm_df=work/output/cm_df.csv
 
 # render quarto report in HTML and PDF using work/output work/reports/diabetes_classification_report.qmd
 work/reports/diabetes_classification_report.html: work/output work/reports/diabetes_classification_report.qmd
