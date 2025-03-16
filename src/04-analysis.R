@@ -1,12 +1,13 @@
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
-Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm>
+Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm> --output_path_cm_df=<output_path_cm_df>
 Options: 
---file_path_test=<file_path_test>       Path to obtain the raw dataset CSV file
---file_path_wflow=<file_path_wflow>     Path to obtain the lasso_tuned_wflow
---output_path_lasso=<output_path_lasso> Path to save the lasso_metrics
---output_path_roc=<output_path_roc>     Path to save the ROC curve
---output_path_cm=<output_path_cm>       Path to save the confusion matrix
+--file_path_test=<file_path_test>           Path to obtain the raw dataset CSV file
+--file_path_wflow=<file_path_wflow>         Path to obtain the lasso_tuned_wflow
+--output_path_lasso=<output_path_lasso>     Path to save the lasso_metrics
+--output_path_roc=<output_path_roc>         Path to save the ROC curve
+--output_path_cm=<output_path_cm>           Path to save the confusion matrix
+--output_path_cm_df=work/output/cm_df.csv   Path to save values from the confusion matrix
 " -> doc
 
 library(tidyverse)  
@@ -94,3 +95,6 @@ cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill =
 
 # WRITE cm_plot
 ggplot2::ggsave(opt$output_path_cm, cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+
+# WRITE cm_df
+readr::write_csv(cm_df, opt$output_path_cm_df)
