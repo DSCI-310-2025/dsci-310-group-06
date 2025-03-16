@@ -76,9 +76,8 @@ docker-compose up
 
 ### R version 4.2.1 and R packages
 
-- `reticulate` (v1.25)  
 - `tidyverse` (v2.0.0)  
-- `tidymodels` (v1.1.1)  
+- `tidymodels` (v1.2.0)  
 - `glmnet` (v4.1-8)  
 - `patchwork` (v1.3.0)  
 - `ROSE` (v0.0-4)  
