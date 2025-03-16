@@ -15,7 +15,7 @@ clean:
 	rm -rf work/reports/diabetes_classification_report.html \
 		work/reports/diabetes_classification_report.pdf
 
-index.html: work/output/checking_raw_df.csv \
+index.html: work/output/checking_raw_matrix.RDS \
 	work/output/target_result.csv \
 	work/output/balanced_target_result.csv \
 	work/output/balanced_raw_comparision_df.csv \
@@ -31,12 +31,12 @@ index.html: work/output/checking_raw_df.csv \
 	cp work/reports/diabetes_classification_report.html work/docs/index.html
 
 # From 01-load_clean.R
-work/output/checking_raw_df.csv work/output/target_result.csv work/output/balanced_target_result.csv work/output/balanced_raw_comparision_df.csv work/data/processed/diabetes_train.csv work/data/processed/diabetes_test.csv: work/src/01-load_clean.R /venv/bin/python work/src/dataset_download.py
+work/output/checking_raw_matrix.RDS work/output/target_result.csv work/output/balanced_target_result.csv work/output/balanced_raw_comparision_df.csv work/data/processed/diabetes_train.csv work/data/processed/diabetes_test.csv: work/src/01-load_clean.R /venv/bin/python work/src/dataset_download.py
 	Rscript work/src/01-load_clean.R \
 	--python_path=/venv/bin/python \
 	--extract_path=work/src/dataset_download.py \
 	--file_path=work/data/raw/cdc_diabetes_health_indicators.csv \
-	--output_path_raw=work/output/checking_raw_df.csv \
+	--output_path_raw=work/output/checking_raw_matrix.RDS \
 	--output_path_target=work/output/target_result.csv \
 	--output_path_bal=work/output/balanced_target_result.csv \
 	--output_path_df=work/output/balanced_raw_comparision_df.csv \

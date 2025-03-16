@@ -1,4 +1,4 @@
-"This script loads, cleans, saves diabetes_train, diabetes_test
+"This script loads, cleans, and saves diabetes_train, diabetes_test
 
 Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
 
@@ -17,7 +17,8 @@ Options:
 library(tidyverse)  
 library(tidymodels) 
 library(ROSE)    
-library(docopt)   
+library(docopt)
+# Setting the seed for consistent results
 set.seed(6)
 
 opt <- docopt::docopt(doc)
@@ -26,20 +27,17 @@ opt <- docopt::docopt(doc)
 system(paste(opt$python_path, opt$extract_path))
 
 # Reads the downloaded dataset into a variable named raw_diabetes_df
-raw_diabetes_df <- readr::read_csv(
-  opt$file_path,
-  show_col_types = FALSE
-)
+raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
+# Checking for NA values, distinct counts of each variable, and the current data type
 checking_raw_matrix <- rbind(
   NA_Count = sapply(raw_diabetes_df, function(x) sum(is.na(x))),
-  Distinct_Count = sapply(raw_diabetes_df, function(x) dplyr::n_distinct(x)),
+  Distinct_Count = sapply(raw_diabetes_df, function(x) n_distinct(x)),
   Current_Data_Type = sapply(raw_diabetes_df, typeof)
 )
-checking_raw_df <- as.data.frame(t(checking_raw_matrix))
 
-# WRITE checking_raw_df
-readr::write_csv(checking_raw_df, opt$output_path_raw)
+# WRITE checking_raw_matrix
+readr::write_rds(checking_raw_matrix, opt$output_path_raw)
 
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
@@ -55,7 +53,6 @@ target_result <- raw_diabetes_df %>%
 readr::write_csv(target_result, opt$output_path_target)
 
 # Using ROSE to balance data by oversampling
-# Setting the seed for consistent results
 balanced_raw_diabetes_df <- ROSE::ROSE(Diabetes_binary ~ ., data = raw_diabetes_df, seed = 123)$data
 balanced_target_result <- balanced_raw_diabetes_df %>%
   dplyr::group_by(Diabetes_binary) %>%
@@ -78,7 +75,6 @@ balanced_raw_comparision_df <- data.frame(
 readr::write_csv(balanced_raw_comparision_df, opt$output_path_df)
 
 # Split data into 75% train, 25% test for machine learning
-# Setting the seed for consistent results
 diabetes_split <- rsample::initial_split(balanced_raw_diabetes_df, prop = 0.75, strata = Diabetes_binary)
 diabetes_train <- rsample::training(diabetes_split)
 diabetes_test <- rsample::testing(diabetes_split)

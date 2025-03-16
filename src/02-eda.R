@@ -11,6 +11,7 @@ library(tidyverse)
 library(patchwork)  
 library(vcd)        
 library(docopt)
+# Setting the seed for consistent results
 set.seed(6)
 
 opt <- docopt::docopt(doc)
