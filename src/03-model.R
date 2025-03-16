@@ -9,6 +9,7 @@ Options:
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
+set.seed(6)
 
 opt <- docopt::docopt(doc)
 

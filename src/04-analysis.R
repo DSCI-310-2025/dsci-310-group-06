@@ -12,7 +12,8 @@ Options:
 library(tidyverse)  
 library(tidymodels) 
 library(glmnet)    
-library(docopt)    
+library(docopt)
+set.seed(6)
 
 opt <- docopt::docopt(doc)
 
@@ -51,9 +52,7 @@ options(repr.plot.width = 8, repr.plot.height = 8)
 
 # Creating the ROC curve
 roc_plot <- tune::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
-  ggplot2::ggtitle("Figure 2. ROC Curve for Lasso Model") +
   ggplot2::labs(
-    subtitle = "Performance of the Lasso Model in Predicting Diabetes State.",
     x = "False Positive Rate (1 - Specificity)",
     y = "True Positive Rate (Sensitivity)"
   ) +
@@ -78,9 +77,7 @@ cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill =
   ggplot2::geom_tile() +
   ggplot2::geom_text(ggplot2::aes(label = Freq), color = "black", size = 5) +
   ggplot2::scale_fill_gradient(low = "white", high = "#66B2FF") +
-  ggplot2::ggtitle("Figure 3. Confusion Matrix for Lasso Model") +
   ggplot2::labs(
-    subtitle = "Performance of the Lasso Model in Predicting diabetic (1) or non-diabetic (0).",
     x = "Predicted Class",
     y = "True Class",
     fill = "Count"

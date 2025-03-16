@@ -10,7 +10,8 @@ Options:
 library(tidyverse)  
 library(patchwork)  
 library(vcd)        
-library(docopt)    
+library(docopt)
+set.seed(6)
 
 opt <- docopt::docopt(doc)
 
@@ -40,9 +41,9 @@ for (var in categorical_vars) {
     ggplot2::geom_bar(position = "fill") + 
     ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
     ggplot2::labs(title = paste("Diabetes Binary by", var),
-         x = var,
-         y = "Proportion",
-         fill = "Diabetes Binary") +
+                  x = var,
+                  y = "Proportion",
+                  fill = "Diabetes Binary") +
     ggplot2::theme_minimal() + 
     ggplot2::theme(
       axis.text = ggplot2::element_text(size = 30),  
@@ -59,9 +60,9 @@ for (var in noncat_var) {
     ggplot2::geom_density(alpha = 0.5) +
     ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
     ggplot2::labs(title = paste("Diabetes Binary by", var),
-         x = var,
-         y = "Density",
-         fill = "Diabetes Binary") +
+                  x = var,
+                  y = "Density",
+                  fill = "Diabetes Binary") +
     ggplot2::theme_minimal() + 
     ggplot2::theme(
       axis.text = ggplot2::element_text(size = 30),  
@@ -78,15 +79,13 @@ num_cols = 3
 combined_plots <- patchwork::wrap_plots(c(bar_plots, density_plots), ncol = num_cols) + 
   patchwork::plot_layout(guides = "collect") +
   patchwork::plot_annotation(
-    title = "Figure 1. Distribution of Diabetes Binary by Various Variables",
-    subtitle = "This figure shows the distribution of the binary diabetes outcome across different variables, including binary and continuous variables.",
     theme = ggplot2::theme(
       plot.title = ggplot2::element_text(size = 50, face = "bold"),
       plot.subtitle = ggplot2::element_text(size = 40),
       axis.title = ggplot2::element_text(size = 30),
       axis.text = ggplot2::element_text(size = 30)
-      )
     )
+  )
 
 # WRITE combined_plots
 ggplot2::ggsave(opt$output_path_plots, combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
