@@ -7,9 +7,9 @@ Options:
 --output_path_cramers=<output_path_cramers> Path to save the comparison data frame of target variable class distribution before and after balancing
 " -> doc
 
-library(tidyverse)  
-library(patchwork)  
-library(vcd)        
+library(tidyverse)
+library(patchwork)
+library(vcd)
 library(docopt)
 # Setting the seed for consistent results
 set.seed(6)
@@ -36,7 +36,7 @@ bar_plots <- list()
 density_plots <- list()
 
 # --------------------------------------------------
-# Creating bar plots for each categorical variable in the dataset
+# Creating bar plots for each categorical variable in the dataset # CONVERT TO FUNCTION (40-55)
 for (var in categorical_vars) {
   p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
     ggplot2::geom_bar(position = "fill") + 
@@ -55,29 +55,29 @@ for (var in categorical_vars) {
 }
 
 # --------------------------------------------------
-# Density plot for BMI
+# Density plot for BMI # CONVERT TO FUNCTION (58-74)
 for (var in noncat_var) {
   p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
     ggplot2::geom_density(alpha = 0.5) +
-    ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
+    ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) +
     ggplot2::labs(title = paste("Diabetes Binary by", var),
                   x = var,
                   y = "Density",
                   fill = "Diabetes Binary") +
     ggplot2::theme_minimal() + 
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = 30),  
-      axis.title = ggplot2::element_text(size = 30), 
+      axis.text = ggplot2::element_text(size = 30),
+      axis.title = ggplot2::element_text(size = 30),
       plot.title = ggplot2::element_text(size = 35, face = "bold")
     )
   density_plots[[var]] <- p
 }
 
-all_plots = c(bar_plots, density_plots)
-num_cols = 3
+all_plots <- c(bar_plots, density_plots)
+num_cols <- 3
 
-# Combining all of the plots into a 3 x 7 grid
-combined_plots <- patchwork::wrap_plots(c(bar_plots, density_plots), ncol = num_cols) + 
+# Combining all of the plots into a 3 x 7 grid # CONVERT TO FUNCTION (76-89)
+combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) + 
   patchwork::plot_layout(guides = "collect") +
   patchwork::plot_annotation(
     theme = ggplot2::theme(

@@ -11,9 +11,9 @@ Options:
 
 " -> doc
 
-library(tidyverse)  
-library(tidymodels) 
-library(glmnet)    
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
 library(docopt)
 set.seed(6)
 
@@ -32,11 +32,11 @@ lasso_modelOutputs <- cbind(diabetes_test, lasso_preds, lasso_probs)
 lasso_modelOutputs$Diabetes_binary <- as.factor(lasso_modelOutputs$Diabetes_binary)
 
 classificationMetrics <- metrics <- yardstick::metric_set(
-  sens, 
-  ppv, 
-  npv, 
-  accuracy, 
-  recall, 
+  sens,
+  ppv,
+  npv,
+  accuracy,
+  recall,
   f_meas
 )
 
