@@ -36,7 +36,7 @@ bar_plots <- list()
 density_plots <- list()
 
 # --------------------------------------------------
-# Creating bar plots for each categorical variable in the dataset # CONVERT TO FUNCTION (40-55)
+# Creating bar plots for each categorical variable in the dataset # CONVERT TO FUNCTION categorical_bars (40-55)
 for (var in categorical_vars) {
   p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
     ggplot2::geom_bar(position = "fill") + 
@@ -55,7 +55,7 @@ for (var in categorical_vars) {
 }
 
 # --------------------------------------------------
-# Density plot for BMI # CONVERT TO FUNCTION (58-74)
+# Density plot for BMI # CONVERT TO FUNCTION quantitative_density (58-74)
 for (var in noncat_var) {
   p <- ggplot2::ggplot(diabetes_train, ggplot2::aes(x = !!rlang::sym(var), fill = as.factor(Diabetes_binary))) +
     ggplot2::geom_density(alpha = 0.5) +
@@ -76,7 +76,7 @@ for (var in noncat_var) {
 all_plots <- c(bar_plots, density_plots)
 num_cols <- 3
 
-# Combining all of the plots into a 3 x 7 grid # CONVERT TO FUNCTION (76-89)
+# Combining all of the plots into a 3 x 7 grid # CONVERT TO FUNCTION plots_grid (76-89)
 combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) + 
   patchwork::plot_layout(guides = "collect") +
   patchwork::plot_annotation(

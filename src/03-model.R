@@ -22,7 +22,7 @@ diabetes_train_filtered <- diabetes_train %>%
   dplyr::select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk) %>%
   dplyr::mutate(Diabetes_binary = as.factor(Diabetes_binary))
 
-# Pipeline for logistic regression # CONVERT TO FUNCTION (25-45)
+# Pipeline for logistic regression # CONVERT TO FUNCTION lr_pipeline (25-45)
 lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>%
   parsnip::set_engine("glmnet") %>%
   parsnip::set_mode("classification")
