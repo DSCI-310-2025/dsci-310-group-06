@@ -11,9 +11,9 @@ Options:
 
 " -> doc
 
-library(tidyverse)  
-library(tidymodels) 
-library(glmnet)    
+library(tidyverse)
+library(tidymodels)
+library(glmnet)
 library(docopt)
 set.seed(6)
 
@@ -32,11 +32,11 @@ lasso_modelOutputs <- cbind(diabetes_test, lasso_preds, lasso_probs)
 lasso_modelOutputs$Diabetes_binary <- as.factor(lasso_modelOutputs$Diabetes_binary)
 
 classificationMetrics <- metrics <- yardstick::metric_set(
-  sens, 
-  ppv, 
-  npv, 
-  accuracy, 
-  recall, 
+  sens,
+  ppv,
+  npv,
+  accuracy,
+  recall,
   f_meas
 )
 
@@ -52,7 +52,7 @@ readr::write_csv(lasso_metrics, opt$output_path_lasso)
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
-# Creating the ROC curve
+# Creating the ROC curve # CONVERT TO FUNCTION roc_plot (55-67)
 roc_plot <- tune::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
   ggplot2::labs(
     x = "False Positive Rate (1 - Specificity)",
@@ -71,7 +71,7 @@ ggplot2::ggsave(opt$output_path_roc, roc_plot, width = 8, height = 8, dpi = 300,
 
 options(repr.plot.width = 8, repr.plot.height = 8)
 
-# Creating the confusion matrix
+# Creating the confusion matrix # CONVERT TO FUNCTION cm_plot (55-67)
 cm <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")
 cm_df <- as.data.frame(cm$table)
 

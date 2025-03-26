@@ -22,10 +22,10 @@ diabetes_train_filtered <- diabetes_train %>%
   dplyr::select(Diabetes_binary, GenHlth, HighBP, Age, HighChol, DiffWalk) %>%
   dplyr::mutate(Diabetes_binary = as.factor(Diabetes_binary))
 
-# Pipeline for logistic regression 
-lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>% 
-    parsnip::set_engine("glmnet") %>%
-    parsnip::set_mode("classification")
+# Pipeline for logistic regression # CONVERT TO FUNCTION lr_pipeline (25-45)
+lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>%
+  parsnip::set_engine("glmnet") %>%
+  parsnip::set_mode("classification")
 
 folds <- rsample::vfold_cv(diabetes_train_filtered, v = 5)
 
@@ -48,7 +48,7 @@ lasso_grid <- tune::tune_grid(lr_workflow %>% workflows::add_model(lr_mod),
 highest_auc <- lasso_grid %>% tune::select_best(metric = "recall")
 
 lasso_dialsd_wflow <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), highest_auc) %>%
-                           parsnip::fit(data = diabetes_train_filtered)
+  parsnip::fit(data = diabetes_train_filtered)
 
 # WRITE lasso_dialsd_wflow
 readr::write_rds(lasso_dialsd_wflow, opt$output_path)

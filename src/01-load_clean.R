@@ -14,9 +14,9 @@ Options:
 --output_path_test=<output_path_test>       Path to save the test dataset
 " -> doc
 
-library(tidyverse)  
-library(tidymodels) 
-library(ROSE)    
+library(tidyverse)
+library(tidymodels)
+library(ROSE)
 library(docopt)
 # Setting the seed for consistent results
 set.seed(6)
@@ -29,7 +29,7 @@ system(paste(opt$python_path, opt$extract_path))
 # Reads the downloaded dataset into a variable named raw_diabetes_df
 raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
-# Checking for NA values, distinct counts of each variable, and the current data type
+# Checking for NA values, distinct counts of each variable, and the current data type # CONVERT TO FUNCTION na_count_type (33-37)
 checking_raw_matrix <- rbind(
   NA_Count = sapply(raw_diabetes_df, function(x) sum(is.na(x))),
   Distinct_Count = sapply(raw_diabetes_df, function(x) n_distinct(x)),
@@ -39,11 +39,11 @@ checking_raw_matrix <- rbind(
 # WRITE checking_raw_matrix
 readr::write_rds(checking_raw_matrix, opt$output_path_raw)
 
-# Converting categorical/binary variables into factors
+# Converting categorical/binary variables into factors # CONVERT TO FUNCTION col_to_factor() (43-44)
 raw_diabetes_df <- raw_diabetes_df %>%
   dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
 
-# Checking to see how unbalanced the dataset is with respect to the target variable
+# Checking to see how unbalanced the dataset is with respect to the target variable # CONVERT TO FUNCTION imabalance_target (47-50)
 target_result <- raw_diabetes_df %>%
   dplyr::group_by(Diabetes_binary) %>%
   dplyr::summarise(Count = dplyr::n(), Proportion = dplyr::n() / nrow(raw_diabetes_df)) %>%
