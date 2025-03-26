@@ -47,8 +47,8 @@ for (var in categorical_vars) {
                   fill = "Diabetes Binary") +
     ggplot2::theme_minimal() + 
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = 30),  
-      axis.title = ggplot2::element_text(size = 30), 
+      axis.text = ggplot2::element_text(size = 30),
+      axis.title = ggplot2::element_text(size = 30),
       plot.title = ggplot2::element_text(size = 35, face = "bold")
     )
   bar_plots[[var]] <- p
@@ -76,8 +76,8 @@ for (var in noncat_var) {
 all_plots <- c(bar_plots, density_plots)
 num_cols <- 3
 
-# Combining all of the plots into a 3 x 7 grid # CONVERT TO FUNCTION plots_grid (76-89)
-combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) + 
+# Combining all of the plots into a facet of plots # CONVERT TO FUNCTION plots_grid (76-89) (Input number of columns)
+combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) +
   patchwork::plot_layout(guides = "collect") +
   patchwork::plot_annotation(
     theme = ggplot2::theme(
