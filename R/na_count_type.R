@@ -1,0 +1,24 @@
+library(dplyr)
+#' Summarise dataframe columns.
+#' 
+#' Given input dataframe, for each column, check for NA values, distinct
+#' counts of each variable, and the current data types.
+#'
+#' @param data_frame A data frame or data frame extension (e.g. a tibble).
+#'
+#' @return Data frame with 1 row per variable and 3 columns:
+#'    - NA_Count: Number of "NA" values within each variable.
+#'    - Distinct_Count: Number of distinct values for each variable.
+#'    - Current_Data_Type: Current data type for each variable.
+#' @export
+#' @examples
+#' na_count_type(mtcars)
+na_count_type <- function(data_frame) {
+  return(
+    rbind(
+      NA_Count = sapply(data_frame, function(x) sum(is.na(x))),
+      Distinct_Count = sapply(data_frame, function(x) n_distinct(x)),
+      Current_Data_Type = sapply(data_frame, typeof)
+    )
+  )
+}
