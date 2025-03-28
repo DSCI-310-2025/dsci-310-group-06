@@ -64,10 +64,11 @@ readr::write_csv(target_result, opt$output_path_target)
 
 # Using ROSE to balance data by oversampling
 balanced_raw_diabetes_df <- ROSE::ROSE(Diabetes_binary ~ ., data = raw_diabetes_df, seed = 123)$data
-balanced_target_result <- balanced_raw_diabetes_df %>%
-  dplyr::group_by(Diabetes_binary) %>%
-  dplyr::summarise(Count = dplyr::n(), Proportion = dplyr::n() / nrow(balanced_raw_diabetes_df)) %>%
-  dplyr::ungroup()
+# balanced_target_result <- balanced_raw_diabetes_df %>%
+#   dplyr::group_by(Diabetes_binary) %>%
+#   dplyr::summarise(Count = dplyr::n(), Proportion = dplyr::n() / nrow(balanced_raw_diabetes_df)) %>%
+#   dplyr::ungroup()
+balanced_target_result <- category_target(balanced_raw_diabetes_df, Diabetes_binary)
 
 # WRITE balanced_target_result
 readr::write_csv(balanced_target_result, opt$output_path_bal)

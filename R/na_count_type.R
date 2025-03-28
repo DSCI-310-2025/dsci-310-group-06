@@ -2,7 +2,8 @@ library(dplyr)
 #' Summarise dataframe columns.
 #' 
 #' Given input dataframe, for each column, check for NA values, distinct
-#' counts of each variable, and the current data types.
+#' counts of each variable, and the current data types. For each variable,
+#' NULL with be treated as a column of NA
 #'
 #' @param data_frame A data frame or data frame extension (e.g. a tibble).
 #'
@@ -14,6 +15,7 @@ library(dplyr)
 #' @examples
 #' na_count_type(mtcars)
 na_count_type <- function(data_frame) {
+  data_frame <- as.data.frame(data_frame)
   return(
     rbind(
       NA_Count = sapply(data_frame, function(x) sum(is.na(x))),
