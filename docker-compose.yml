@@ -11,6 +11,9 @@ services:
       - "./output:/home/rstudio/work/output"
       - "./docs:/home/rstudio/work/docs"
       - "./Makefile:/home/rstudio/Makefile"
+      - "./R:/home/rstudio/work/R"
+
     environment:
       DISABLE_AUTH: true
     working_dir: /home/rstudio
+
