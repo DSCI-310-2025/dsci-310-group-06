@@ -1,5 +1,3 @@
-library(dplyr)
-library(vcd)
 #' Table of chi-squared test results
 #' 
 #' Run chi-squared tests and calculate Cramer's V independently for each feature
@@ -17,6 +15,9 @@ library(vcd)
 #' @export
 #' @examples
 #' cramer_chi_results(mtcars, c("cyl", "gear"), "mpg")
+library(dplyr)
+library(vcd)
+
 cramer_chi_results <- function(df, categorical_vars, target_col) {
   cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
     tbl <- table(df[[target_col]], df[[var]])
