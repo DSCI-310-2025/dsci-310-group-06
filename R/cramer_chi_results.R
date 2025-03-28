@@ -19,13 +19,29 @@ library(dplyr)
 library(vcd)
 
 cramer_chi_results <- function(df, categorical_vars, target_col) {
+  if (nrow(df) == 0) {
+    stop("Insufficient data: the dataframe is empty.")
+  }
+  
+  if (!is.character(categorical_vars)) {
+    stop("categorical_vars must be a character vector of column names.")
+  }
+
+  missing_vars <- setdiff(categorical_vars, colnames(df))
+  if (length(missing_vars) > 0) {
+    stop(paste("The following variables are not present in the dataframe:", paste(missing_vars, collapse = ", ")))
+  }
+
+  non_categorical_vars <- categorical_vars[!sapply(categorical_vars, function(var) {
+    is.factor(df[[var]]) || is.character(df[[var]])
+  })]
+
+  if (length(non_categorical_vars) > 0) {
+    stop(paste("The following variables are not categorical:", paste(non_categorical_vars, collapse = ", ")))
+  }
+
   cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
-    tbl <- table(df[[target_col]], df[[var]])
-
-    if (all(tbl == 0)) {
-      stop(paste("Insufficient data"))
-    }
-
+    tbl <- table(df[[var]], df[[target_col]])
     test_result <- stats::chisq.test(tbl)
     cv <- vcd::assocstats(tbl)$cramer
     tibble::tibble(
