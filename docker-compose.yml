@@ -7,6 +7,7 @@ services:
       - "./reports:/home/rstudio/work/reports"
       - "./data:/home/rstudio/work/data"
       - "./src:/home/rstudio/work/src"
+      - "./R:/home/rstudio/work/R"
       - "./output:/home/rstudio/work/output"
       - "./docs:/home/rstudio/work/docs"
       - "./Makefile:/home/rstudio/Makefile"

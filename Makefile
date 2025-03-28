@@ -35,6 +35,9 @@ work/output/checking_raw_matrix.RDS work/output/target_result.csv work/output/ba
 	Rscript work/src/01-load_clean.R \
 	--python_path=/venv/bin/python \
 	--extract_path=work/src/dataset_download.py \
+	--r_na_count_type_path=work/R/na_count_type.R \
+	--r_col_to_factor_path=work/R/col_to_factor.R \
+	--r_category_target_path=work/R/category_target.R \
 	--file_path=work/data/raw/cdc_diabetes_health_indicators.csv \
 	--output_path_raw=work/output/checking_raw_matrix.RDS \
 	--output_path_target=work/output/target_result.csv \
