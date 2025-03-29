@@ -15,6 +15,7 @@ library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(docopt)
+source("work/R/roc_plot.R")
 set.seed(6)
 
 opt <- docopt::docopt(doc)
@@ -24,14 +25,13 @@ diabetes_test <- readr::read_csv(opt$file_path_test)
 lasso_tuned_wflow <- readr::read_rds(opt$file_path_wflow)
 
 # Applying to the test set
-lasso_preds <- lasso_tuned_wflow %>% stats::predict(diabetes_test)
-lasso_probs <- lasso_tuned_wflow %>% stats::predict(diabetes_test, type = "prob")
-lasso_modelOutputs <- cbind(diabetes_test, lasso_preds, lasso_probs)
+lasso_modelOutputs <- diabetes_test %>%
+  cbind(lasso_tuned_wflow %>% predict(diabetes_test), 
+        lasso_tuned_wflow %>% predict(diabetes_test, type = "prob")) %>%
+  mutate(Diabetes_binary = as.factor(Diabetes_binary))
 
-# Convert Diabetes_binary to a factor
-lasso_modelOutputs$Diabetes_binary <- as.factor(lasso_modelOutputs$Diabetes_binary)
-
-classificationMetrics <- metrics <- yardstick::metric_set(
+# classification metrics
+classificationMetrics <- yardstick::metric_set(
   sens,
   ppv,
   npv,
@@ -40,38 +40,28 @@ classificationMetrics <- metrics <- yardstick::metric_set(
   f_meas
 )
 
-roc_auc_value <- yardstick::roc_auc(lasso_modelOutputs, truth = Diabetes_binary, .pred_1, event_level = "second")
-
-lasso_metrics <- rbind(
-  classificationMetrics(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second"),
-  roc_auc_value
+lasso_metrics <- list(
+  classification = classificationMetrics(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second"),
+  roc_auc = yardstick::roc_auc(lasso_modelOutputs, truth = Diabetes_binary, .pred_1, event_level = "second")
 )
 
 # WRITE lasso_metrics
 readr::write_csv(lasso_metrics, opt$output_path_lasso)
 
+
+# Creating the ROC curve # CONVERT TO FUNCTION roc_plot
+roc_plot(
+  model_outputs=lasso_modelOutputs, 
+  true_class="Diabetes_binary", 
+  predicted_probs=".pred_1", 
+  roc_auc_value=lasso_metrics$roc_auc$.estimate, 
+  output_path=opt$output_path_roc
+)
+
+
+# Creating the confusion matrix # CONVERT TO FUNCTION cm_plot
 options(repr.plot.width = 8, repr.plot.height = 8)
 
-# Creating the ROC curve # CONVERT TO FUNCTION roc_plot (55-67)
-roc_plot <- tune::autoplot(yardstick::roc_curve(lasso_modelOutputs, Diabetes_binary, .pred_1, event_level = "second")) +
-  ggplot2::labs(
-    x = "False Positive Rate (1 - Specificity)",
-    y = "True Positive Rate (Sensitivity)"
-  ) +
-  ggplot2::annotate("text", x = 0.7, y = 0.2, label = paste("AUC =", round(roc_auc_value$.estimate, 3)), size = 5, color = "blue") +
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 16, face = "bold"),
-    plot.subtitle = ggplot2::element_text(size = 12),
-    axis.title = ggplot2::element_text(size = 12),
-    axis.text = ggplot2::element_text(size = 10)
-  )
-
-# WRITE roc_plot
-ggplot2::ggsave(opt$output_path_roc, roc_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
-
-options(repr.plot.width = 8, repr.plot.height = 8)
-
-# Creating the confusion matrix # CONVERT TO FUNCTION cm_plot (55-67)
 cm <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")
 cm_df <- as.data.frame(cm$table)
 
