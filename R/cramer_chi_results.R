@@ -15,8 +15,6 @@
 #' @export
 #' @examples
 #' cramer_chi_results(mtcars, c("cyl", "gear"), "mpg")
-library(dplyr)
-library(vcd)
 
 cramer_chi_results <- function(df, categorical_vars, target_col) {
   if (nrow(df) == 0) {
@@ -55,5 +53,5 @@ cramer_chi_results <- function(df, categorical_vars, target_col) {
     )
   })
 
-  return(cramer_chi_results %>% arrange(desc(CramersV)))
+  return(dplyr::arrange(cramer_chi_results, dplyr::desc(CramersV)))
 }

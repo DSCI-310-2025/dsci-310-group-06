@@ -1,5 +1,3 @@
-# cm_plot.R
-
 #' cm_plot
 #'
 #' Plot a confusion matrix from a \code{yardstick::conf_mat()} (or from 

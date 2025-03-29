@@ -1,6 +1,6 @@
 library(testthat)
 
-source("R/category_target.R")
+source("work/R/category_target.R")
 
 case_1 <- data.frame(
   a = c(1, 2, 3, 4, 5),
@@ -66,7 +66,7 @@ test_that("NA", {
 
 test_that("Mixed, 1 in multiple types", {
   result_1 <- category_target(case_1, h)
-  expect_equal(result_1[["h"]], c(1, TRUE, NA))
+  expect_equal(result_1[["h"]], c("1", TRUE, NA))
   expect_equal(result_1[["Count"]], c(3, 1, 1))
   expect_equal(result_1[["Proportion"]], c(0.6, 0.2, 0.2))
 })

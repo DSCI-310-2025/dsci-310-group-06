@@ -1,6 +1,6 @@
 library(testthat)
 
-source("R/na_count_type.R")
+source("work/R/na_count_type.R")
 
 case_0 <- data.frame(
   a = c(1, 2, 2, NA, 5),

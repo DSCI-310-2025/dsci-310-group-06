@@ -1,10 +1,7 @@
 library(testthat)
-library(dplyr)
-library(purrr)
-library(vcd)
 library(tibble)
 
-source("R/cramer_chi_results.R")
+source("work/R/cramer_chi_results.R")
 
 set.seed(100)
 df <- tibble::tibble(
@@ -47,6 +44,8 @@ test_that("cramer_chi_results handles incorrect input gracefully", {
 })
 
 test_that("cramer_chi_results returns consistent results with fixed seed", {
+  categorical_vars <- c("Category1", "Category2")
+  
   set.seed(100)
   result1 <- cramer_chi_results(df, categorical_vars, "Target")
   

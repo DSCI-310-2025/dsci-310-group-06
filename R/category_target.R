@@ -1,4 +1,3 @@
-library(dplyr)
 #' Counts and proportions of categorisation.
 #' 
 #' Given input dataframe with a categorical variable, return the number and
