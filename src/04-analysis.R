@@ -31,19 +31,24 @@ lasso_modelOutputs <- diabetes_test %>%
   mutate(Diabetes_binary = as.factor(Diabetes_binary))
 
 # classification metrics
-classificationMetrics <- yardstick::metric_set(
-  sens,
-  ppv,
-  npv,
-  accuracy,
-  recall,
-  f_meas
-)
+lasso_metrics <- bind_rows(
+  metric_set(sens, ppv, npv, accuracy, recall, f_meas)(
+    lasso_modelOutputs,
+    truth = Diabetes_binary,
+    estimate = .pred_class,
+    event_level = "second"
+  ),
+  roc_auc(
+    lasso_modelOutputs,
+    truth = Diabetes_binary,
+    .pred_1,
+    event_level = "second"
+  ) %>%
+    as_tibble() %>%
+    mutate(.metric = "roc_auc") 
+) %>%
+  select(.metric, .estimator, .estimate)
 
-lasso_metrics <- list(
-  classification = classificationMetrics(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second"),
-  roc_auc = yardstick::roc_auc(lasso_modelOutputs, truth = Diabetes_binary, .pred_1, event_level = "second")
-)
 
 # WRITE lasso_metrics
 readr::write_csv(lasso_metrics, opt$output_path_lasso)
@@ -54,7 +59,7 @@ roc_plot(
   model_outputs=lasso_modelOutputs, 
   true_class="Diabetes_binary", 
   predicted_probs=".pred_1", 
-  roc_auc_value=lasso_metrics$roc_auc$.estimate, 
+  roc_auc_value=lasso_metrics$.estimate[lasso_metrics$.metric == "roc_auc"], 
   output_path=opt$output_path_roc
 )
 
@@ -73,7 +78,7 @@ cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill =
     x = "Predicted Class",
     y = "True Class",
     fill = "Count"
-  ) + 
+  ) +
   ggplot2::theme(
     plot.title = ggplot2::element_text(size = 16, face = "bold"),
     plot.subtitle = ggplot2::element_text(size = 12),
