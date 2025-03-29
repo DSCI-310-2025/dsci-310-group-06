@@ -51,7 +51,7 @@ work/output/combined_plots.png work/output/cramer_chi_results_sorted.csv: work/s
 	Rscript work/src/02-eda.R \
 	--file_path=work/data/processed/diabetes_train.csv \
 	--output_path_plots=work/output/combined_plots.png \
-	--output_path_cramers=work/output/cramer_chi_results_sorted.csv
+	--output_path_cramers=work/output/cramer_chi_results_sorted.csv 
 
 # From 03-model.R
 work/output/lasso_tuned_wflow.RDS: work/src/03-model.R work/data/processed/diabetes_train.csv 

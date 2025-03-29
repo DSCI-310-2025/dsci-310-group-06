@@ -12,6 +12,7 @@ services:
       - "./docs:/home/rstudio/work/docs"
       - "./Makefile:/home/rstudio/Makefile"
       - "./R:/home/rstudio/work/R"
+      - "./tests:/home/rstudio/work/tests"
 
     environment:
       DISABLE_AUTH: true
