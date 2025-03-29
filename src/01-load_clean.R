@@ -48,9 +48,8 @@ checking_raw_matrix <- na_count_type(raw_diabetes_df)
 readr::write_rds(checking_raw_matrix, opt$output_path_raw)
 
 # Converting categorical/binary variables into factors # CONVERT TO FUNCTION col_to_factor() (43-44)
-# raw_diabetes_df <- raw_diabetes_df %>%
-#   dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
-raw_diabetes_df <- col_to_factor(raw_diabetes_df)
+raw_diabetes_df <- raw_diabetes_df %>%
+  dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
 
 # Checking to see how unbalanced the dataset is with respect to the target variable # CONVERT TO FUNCTION category_target (47-50)
 # target_result <- raw_diabetes_df %>%
