@@ -91,7 +91,7 @@ combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) +
 # WRITE combined_plots
 ggplot2::ggsave(opt$output_path_plots, combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE)
 
-# Run chi-squared tests independently for each feature
+# Run chi-squared tests independently for each feature # CONVERT TO FUNCTION cramer_chi_results (94-108)
 cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
   tbl <- table(diabetes_train$Diabetes_binary, diabetes_train[[var]])
   test_result <- stats::chisq.test(tbl)
