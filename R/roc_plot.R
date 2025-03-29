@@ -45,6 +45,9 @@ roc_plot <- function(model_outputs, true_class, predicted_probs, roc_auc_value, 
     stop("Error: Output file path cannot be empty.")
   }
   
+  # solve interactive issue
+  if(!interactive()) pdf(NULL)
+  
   # Create the ROC plot
   roc_curve_data <- yardstick::roc_curve(
     model_outputs, 
