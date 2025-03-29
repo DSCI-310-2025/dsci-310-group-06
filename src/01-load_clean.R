@@ -1,13 +1,12 @@
 "This script loads, cleans, and saves diabetes_train, diabetes_test
 
-Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_na_count_type_path=<r_na_count_type_path> --r_col_to_factor_path=<r_col_to_factor_path> --r_category_target_path=<r_category_target_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_na_count_type_path=<r_na_count_type_path> --r_category_target_path=<r_category_target_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
 
 Options:
 --python_path=<python_path>                   Path to python executable
 --extract_path=<extract_path>                 Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
 --file_path=<file_path>                       Path to save the raw dataset CSV file
 --r_na_count_type_path=<r_na_count_type_path> Path to R script for na_count_type
---r_col_to_factor_path=<r_col_to_factor_path> Path to R script for col_to_factor
 --r_category_target_path=<r_category_target_path> Path to R script for category_target
 --output_path_raw=<output_path_raw>           Path to save the raw dataset checking results
 --output_path_target=<output_path_target>     Path to save the summary statistics of the target variable before balancing
@@ -33,7 +32,6 @@ system(paste(opt$python_path, opt$extract_path))
 raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
 source(opt$r_na_count_type_path)
-source(opt$r_col_to_factor_path)
 source(opt$r_category_target_path)
 
 # Checking for NA values, distinct counts of each variable, and the current data type # CONVERT TO FUNCTION na_count_type (33-37)
@@ -47,7 +45,7 @@ checking_raw_matrix <- na_count_type(raw_diabetes_df)
 # WRITE checking_raw_matrix
 readr::write_rds(checking_raw_matrix, opt$output_path_raw)
 
-# Converting categorical/binary variables into factors # CONVERT TO FUNCTION col_to_factor() (43-44)
+# Converting categorical/binary variables into factors 
 raw_diabetes_df <- raw_diabetes_df %>%
   dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
 
