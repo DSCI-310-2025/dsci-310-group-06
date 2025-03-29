@@ -1,4 +1,3 @@
-library(dplyr)
 #' Convert categorical/binary variable columns into factors
 #'
 #' @param data_frame A data frame or data frame extension (e.g. a tibble)

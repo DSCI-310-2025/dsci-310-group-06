@@ -1,7 +1,7 @@
 library(testthat)
 
-source("R/col_to_factor.R")
-source("R/na_count_type.R")
+source("work/R/col_to_factor.R")
+source("work/R/na_count_type.R")
 
 case_1 <- data.frame(
   a = c(1, 2, 3, NA, 5),

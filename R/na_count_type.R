@@ -1,4 +1,3 @@
-library(dplyr)
 #' Summarise dataframe columns.
 #' 
 #' Given input dataframe, for each column, check for NA values, distinct
@@ -19,7 +18,7 @@ na_count_type <- function(data_frame) {
   return(
     rbind(
       NA_Count = sapply(data_frame, function(x) sum(is.na(x))),
-      Distinct_Count = sapply(data_frame, function(x) n_distinct(x)),
+      Distinct_Count = sapply(data_frame, function(x) dplyr::n_distinct(x)),
       Current_Data_Type = sapply(data_frame, typeof)
     )
   )
