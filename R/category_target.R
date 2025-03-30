@@ -13,7 +13,13 @@
 #' @export
 #' @examples
 #' category_target(ToothGrowth, supp),
+
 category_target <- function(data_frame, cat_var) {
+  
+  if (is.null(data_frame) || nrow(data_frame) == 0) {
+    stop("Input data cannot be empty")
+  }
+  
   return(
     target_result <- data_frame %>%
       dplyr::group_by({{cat_var}}) %>%
