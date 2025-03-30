@@ -23,7 +23,7 @@
 #'   cramer_chi_results(mtcars, c("cyl", "gear"), "mpg")
 #' }
 #' 
-cramer_chi_results <- function(df, cat_vars, target_col) {
+cramer_chi_results <- function(df, categorical_vars, target_col) {
   if (nrow(df) == 0) {
     stop("Insufficient data: the dataframe is empty.")
   }
