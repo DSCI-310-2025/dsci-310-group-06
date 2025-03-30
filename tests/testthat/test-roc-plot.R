@@ -15,8 +15,6 @@ model_outputs_extreme <- data.frame(
   .pred_1 = c(1, 0, 1, 1, 0)  # Extreme values: 1 and 0
 )
 
-# Expected cases ---------------------------------------------------------------
-
 # Test 1: Check if roc_plot returns a valid ggplot object
 test_that("roc_plot returns a ggplot object", {
   output_plot <- roc_plot(
@@ -24,9 +22,8 @@ test_that("roc_plot returns a ggplot object", {
     "Diabetes_binary", 
     ".pred_1", 
     0.85, 
-    tempfile(fileext = ".png")
+    tempfile(fileext = ".png")  # This doesn't create an actual file
   )
-  
   expect_s3_class(output_plot, "gg")
 })
 
@@ -38,7 +35,6 @@ test_that("roc_plot returns a ggplot2 object", {
     0.85, 
     tempfile(fileext = ".png")
   )
-  
   expect_s3_class(output_plot, "ggplot")
 })
 

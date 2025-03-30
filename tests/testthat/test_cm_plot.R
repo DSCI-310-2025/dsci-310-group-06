@@ -12,7 +12,7 @@ test_that("cm_plot has the correct layers", {
   )
   
   plot <- cm_plot(conf_matrix_df, tempfile(fileext = ".png"))
-
+  
   expect_true(inherits(plot$layers[[1]]$geom, "GeomTile"))
   expect_true(inherits(plot$layers[[2]]$geom, "GeomText"))
   

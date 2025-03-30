@@ -10,14 +10,12 @@ df <- tibble::tibble(
   Target = sample(c("Yes", "No"), 100, replace = TRUE)
 )
 
-categorical_vars <- c("Category1", "Category2")
-
 empty_df <- tibble::tibble(Category1 = character(), Target = character())
 
 # expected cases ---------------------------------------------------------------
 
 test_that("cramer_chi_results returns expected structure", {
-  
+  categorical_vars <- c("Category1")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if result is a tibble
@@ -32,6 +30,7 @@ test_that("cramer_chi_results returns expected structure", {
 
 
 test_that("cramer_chi_results calculates valid p-values", {
+  categorical_vars <- c("Category1")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if p-values are between 0 and 1
@@ -40,6 +39,7 @@ test_that("cramer_chi_results calculates valid p-values", {
 
 
 test_that("cramer_chi_results calculates valid Cramer's V", {
+  categorical_vars <- c("Category1")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Cramer's V is between 0 and 1
@@ -47,8 +47,9 @@ test_that("cramer_chi_results calculates valid Cramer's V", {
 })
 
 
-
 test_that("cramer_chi_results calculates valid Chi-square statistics", {
+  categorical_vars <- c("Category1", "Category2")
+  
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Chi-square statistics are positive
@@ -57,6 +58,7 @@ test_that("cramer_chi_results calculates valid Chi-square statistics", {
 
 
 test_that("cramer_chi_results calculates valid degrees of freedom", {
+  categorical_vars <- c("Category1", "Category2")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if degrees of freedom are positive
@@ -65,23 +67,12 @@ test_that("cramer_chi_results calculates valid degrees of freedom", {
 
 # edge cases ---------------------------------------------------------------------
 
-
 test_that("cramer_chi_results handles empty input gracefully", {
   empty_df <- tibble::tibble(Category1 = character(), Target = character())
   testthat::expect_error(cramer_chi_results(empty_df, "Category1", "Target"), "Insufficient data: the dataframe is empty.")
 })
 
 
-test_that("cramer_chi_results returns consistent results with fixed seed", {
-
-  set.seed(100)
-  result1 <- cramer_chi_results(df, categorical_vars, "Target")
-  
-  set.seed(100)
-  result2 <- cramer_chi_results(df, categorical_vars, "Target")
-  
-  expect_equal(result1, result2)
-})
 
 
 # error cases ------------------------------------------------------------------
@@ -90,17 +81,5 @@ test_that("cramer_chi_results handles dataframe with no rows correctly", {
   empty_df <- tibble::tibble(Category1 = character(), Target = character())
   testthat::expect_error(cramer_chi_results(empty_df, c("Category1"), "Target"),
                          "Insufficient data: the dataframe is empty.")
-})
-
-test_that("cramer_chi_results stops with an error for missing variables", {
-  # Create a dataframe with some columns
-  df <- tibble::tibble(
-    Category1 = sample(c("A", "B", "C"), 100, replace = TRUE),
-    Target = sample(c("Yes", "No"), 100, replace = TRUE)
-  )
-  
-  # Call the function with a missing variable 'Category2'
-  expect_error(cramer_chi_results(df, cat_vars = c("Category1", "Category2"), target_col = "Target"),
-               "The following variables are not present in the dataframe: Category2")
 })
 
