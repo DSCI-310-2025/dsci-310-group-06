@@ -15,8 +15,8 @@ empty_df <- tibble::tibble(Category1 = character(), Target = character())
 # expected cases ---------------------------------------------------------------
 
 test_that("cramer_chi_results returns expected structure", {
-  cat_vars <- c("Category1")
-  result <- cramer_chi_results(df, cat_vars, "Target")
+  categorical_vars <- c("Category1")
+  result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if result is a tibble
   testthat::expect_s3_class(result, "tbl_df")
@@ -25,13 +25,13 @@ test_that("cramer_chi_results returns expected structure", {
   testthat::expect_true(all(c("Variable", "Statistic", "DF", "p_value", "Expected_Min", "Expected_Max", "CramersV") %in% colnames(result)))
   
   # Check if the number of rows matches the number of categorical variables
-  testthat::expect_equal(nrow(result), length(cat_vars))
+  testthat::expect_equal(nrow(result), length(categorical_vars))
 })
 
 
 test_that("cramer_chi_results calculates valid p-values", {
-  cat_vars <- c("Category1")
-  result <- cramer_chi_results(df, cat_vars, "Target")
+  categorical_vars <- c("Category1")
+  result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if p-values are between 0 and 1
   testthat::expect_true(all(result$p_value >= 0 & result$p_value <= 1))
@@ -39,8 +39,8 @@ test_that("cramer_chi_results calculates valid p-values", {
 
 
 test_that("cramer_chi_results calculates valid Cramer's V", {
-  cat_vars <- c("Category1")
-  result <- cramer_chi_results(df, cat_vars, "Target")
+  categorical_vars <- c("Category1")
+  result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Cramer's V is between 0 and 1
   testthat::expect_true(all(result$CramersV >= 0 & result$CramersV <= 1))
@@ -48,9 +48,9 @@ test_that("cramer_chi_results calculates valid Cramer's V", {
 
 
 test_that("cramer_chi_results calculates valid Chi-square statistics", {
-  cat_vars <- c("Category1", "Category2")
+  categorical_vars <- c("Category1", "Category2")
   
-  result <- cramer_chi_results(df, cat_vars, "Target")
+  result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Chi-square statistics are positive
   testthat::expect_true(all(result$Statistic > 0))
@@ -58,8 +58,8 @@ test_that("cramer_chi_results calculates valid Chi-square statistics", {
 
 
 test_that("cramer_chi_results calculates valid degrees of freedom", {
-  cat_vars <- c("Category1", "Category2")
-  result <- cramer_chi_results(df, cat_vars, "Target")
+  categorical_vars <- c("Category1", "Category2")
+  result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if degrees of freedom are positive
   testthat::expect_true(all(result$DF > 0))
