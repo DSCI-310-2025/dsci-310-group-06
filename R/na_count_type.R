@@ -12,7 +12,9 @@
 #'    - Current_Data_Type: Current data type for each variable.
 #' @export
 #' @examples
-#' na_count_type(mtcars)
+#' \dontrun{
+#'   na_count_type(mtcars)
+#' }
 na_count_type <- function(data_frame) {
   data_frame <- as.data.frame(data_frame)
   return(

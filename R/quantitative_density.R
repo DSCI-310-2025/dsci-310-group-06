@@ -1,5 +1,3 @@
-# quantitative_density.R
-
 #' quantitative_density
 #'
 #' Create a density plot of a numeric variable, filled by another variable.

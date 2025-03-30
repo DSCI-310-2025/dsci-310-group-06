@@ -1,19 +1,19 @@
 "This script loads, cleans, and saves diabetes_train, diabetes_test
 
-Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_na_count_type_path=<r_na_count_type_path> --r_category_target_path=<r_category_target_path> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_path_na_count_type=<r_path_na_count_type> --r_path_category_target=<r_path_category_target> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
 
 Options:
---python_path=<python_path>                   Path to python executable
---extract_path=<extract_path>                 Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
---file_path=<file_path>                       Path to save the raw dataset CSV file
---r_na_count_type_path=<r_na_count_type_path> Path to R script for na_count_type
---r_category_target_path=<r_category_target_path> Path to R script for category_target
---output_path_raw=<output_path_raw>           Path to save the raw dataset checking results
---output_path_target=<output_path_target>     Path to save the summary statistics of the target variable before balancing
---output_path_bal=<output_path_bal>           Path to save the summary statistics of the target variable after balancing
---output_path_df=<output_path_df>             Path to save the comparison data frame of target variable class distribution before and after balancing
---output_path_train=<output_path_train>       Path to save the training dataset
---output_path_test=<output_path_test>         Path to save the test dataset
+--python_path=<python_path>                       Path to python executable
+--extract_path=<extract_path>                     Path to python script that fetch CDC Diabetes Health Indicators dataset from the UCI Machine Learning Repository
+--file_path=<file_path>                           Path to save the raw dataset CSV file
+--r_path_na_count_type=<r_path_na_count_type>     Path to R script for na_count_type
+--r_path_category_target=<r_path_category_target> Path to R script for category_target
+--output_path_raw=<output_path_raw>               Path to save the raw dataset checking results
+--output_path_target=<output_path_target>         Path to save the summary statistics of the target variable before balancing
+--output_path_bal=<output_path_bal>               Path to save the summary statistics of the target variable after balancing
+--output_path_df=<output_path_df>                 Path to save the comparison data frame of target variable class distribution before and after balancing
+--output_path_train=<output_path_train>           Path to save the training dataset
+--output_path_test=<output_path_test>             Path to save the test dataset
 " -> doc
 
 library(tidyverse)
@@ -31,8 +31,8 @@ system(paste(opt$python_path, opt$extract_path))
 # Reads the downloaded dataset into a variable named raw_diabetes_df
 raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
-source(opt$r_na_count_type_path)
-source(opt$r_category_target_path)
+source(opt$r_path_na_count_type)
+source(opt$r_path_category_target)
 
 # Checking for NA values, distinct counts of each variable, and the current data type # CONVERT TO FUNCTION na_count_type (33-37)
 # checking_raw_matrix <- rbind(
@@ -45,7 +45,7 @@ checking_raw_matrix <- na_count_type(raw_diabetes_df)
 # WRITE checking_raw_matrix
 readr::write_rds(checking_raw_matrix, opt$output_path_raw)
 
-# Converting categorical/binary variables into factors 
+# Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
   dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
 
@@ -88,5 +88,7 @@ diabetes_train <- rsample::training(diabetes_split)
 diabetes_test <- rsample::testing(diabetes_split)
 
 # WRITE diabetes_train, diabetes_test
-readr::write_csv(diabetes_train, opt$output_path_train)
-readr::write_csv(diabetes_test, opt$output_path_test)
+readr::write_rds(diabetes_train, opt$output_path_train)
+readr::write_rds(diabetes_test, opt$output_path_test)
+# readr::write_csv(diabetes_train, opt$output_path_train)
+# readr::write_csv(diabetes_test, opt$output_path_test)
