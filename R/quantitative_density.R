@@ -58,18 +58,18 @@ quantitative_density <- function(data_frame, noncat_vars, target_col, title_size
   # ...then proceed with your ggplot loop
   density_plots <- list()
   for (var in noncat_vars) {
-    p <- ggplot2::ggplot(data_frame, aes(x = !!sym(var), fill = as.factor(!!sym(target_col)))) +
-      geom_density(alpha = 0.5) +
-      scale_fill_manual(values = c("#FF9999", "#66B2FF")) +
-      labs(title = paste("Diabetes Binary by", var),
+    p <- ggplot2::ggplot(data_frame, ggplot2::aes(x = !!ggplot2::sym(var), fill = as.factor(!!ggplot2::sym(target_col)))) +
+      ggplot2::geom_density(alpha = 0.5) +
+      ggplot2::scale_fill_manual(values = c("#FF9999", "#66B2FF")) +
+      ggplot2::labs(title = paste("Diabetes Binary by", var),
            x = var,
            y = "Density",
            fill = "Diabetes Binary") +
-      theme_minimal() + 
-      theme(
-        axis.text = element_text(size = axis_size),
-        axis.title = element_text(size = axis_size),
-        plot.title = element_text(size = title_size, face = "bold")
+      ggplot2::theme_minimal() + 
+      ggplot2::theme(
+        axis.text = ggplot2::element_text(size = axis_size),
+        axis.title = ggplot2::element_text(size = axis_size),
+        plot.title = ggplot2::element_text(size = title_size, face = "bold")
       )
     density_plots[[var]] <- p
   }
