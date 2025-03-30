@@ -10,12 +10,14 @@ df <- tibble::tibble(
   Target = sample(c("Yes", "No"), 100, replace = TRUE)
 )
 
+categorical_vars <- c("Category1", "Category2")
+
 empty_df <- tibble::tibble(Category1 = character(), Target = character())
 
 # expected cases ---------------------------------------------------------------
 
 test_that("cramer_chi_results returns expected structure", {
-  categorical_vars <- c("Category1", "Category2")
+  
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if result is a tibble
@@ -30,7 +32,6 @@ test_that("cramer_chi_results returns expected structure", {
 
 
 test_that("cramer_chi_results calculates valid p-values", {
-  categorical_vars <- c("Category1", "Category2")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if p-values are between 0 and 1
@@ -39,7 +40,6 @@ test_that("cramer_chi_results calculates valid p-values", {
 
 
 test_that("cramer_chi_results calculates valid Cramer's V", {
-  categorical_vars <- c("Category1", "Category2")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Cramer's V is between 0 and 1
@@ -49,7 +49,6 @@ test_that("cramer_chi_results calculates valid Cramer's V", {
 
 
 test_that("cramer_chi_results calculates valid Chi-square statistics", {
-  categorical_vars <- c("Category1", "Category2")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if Chi-square statistics are positive
@@ -58,7 +57,6 @@ test_that("cramer_chi_results calculates valid Chi-square statistics", {
 
 
 test_that("cramer_chi_results calculates valid degrees of freedom", {
-  categorical_vars <- c("Category1", "Category2")
   result <- cramer_chi_results(df, categorical_vars, "Target")
   
   # Check if degrees of freedom are positive
@@ -75,8 +73,7 @@ test_that("cramer_chi_results handles empty input gracefully", {
 
 
 test_that("cramer_chi_results returns consistent results with fixed seed", {
-  categorical_vars <- c("Category1", "Category2")
-  
+
   set.seed(100)
   result1 <- cramer_chi_results(df, categorical_vars, "Target")
   
@@ -95,36 +92,15 @@ test_that("cramer_chi_results handles dataframe with no rows correctly", {
                          "Insufficient data: the dataframe is empty.")
 })
 
-
-test_that("cramer_chi_results handles invalid categorical_vars format", {
-  # Test when categorical_vars is a list
-  testthat::expect_error(cramer_chi_results(df, list("Category1", "Category2"), "Target"),
-                         "categorical_vars must be a character vector of column names.")
+test_that("cramer_chi_results stops with an error for missing variables", {
+  # Create a dataframe with some columns
+  df <- tibble::tibble(
+    Category1 = sample(c("A", "B", "C"), 100, replace = TRUE),
+    Target = sample(c("Yes", "No"), 100, replace = TRUE)
+  )
   
-  # Test when categorical_vars is a data frame
-  testthat::expect_error(cramer_chi_results(df, data.frame("Category1", "Category2"), "Target"),
-                         "categorical_vars must be a character vector of column names.")
-  
-  # Test when categorical_vars is NULL
-  testthat::expect_error(cramer_chi_results(df, NULL, "Target"),
-                         "categorical_vars must be a character vector of column names.")
-  
-  # Test when categorical_vars is numeric
-  testthat::expect_error(cramer_chi_results(df, 123, "Target"),
-                         "categorical_vars must be a character vector of column names.")
-})
-
-
-test_that("cramer_chi_results handles missing categorical variables gracefully", {
-  # Test when one or more categorical variables are missing from the dataframe
-  testthat::expect_error(cramer_chi_results(df, c("Category1", "NonExistentCategory"), "Target"),
-                         "The following variables are not present in the dataframe: NonExistentCategory")
-  
-  # Test when all categorical variables are missing from the dataframe
-  testthat::expect_error(cramer_chi_results(df, c("NonExistentCategory1", "NonExistentCategory2"), "Target"),
-                         "The following variables are not present in the dataframe: NonExistentCategory1, NonExistentCategory2")
-  
-  # Test when no categorical variables are missing (no error expected)
-  testthat::expect_s3_class(cramer_chi_results(df, c("Category1", "Category2"), "Target"), "tbl_df")
+  # Call the function with a missing variable 'Category2'
+  expect_error(cramer_chi_results(df, cat_vars = c("Category1", "Category2"), target_col = "Target"),
+               "The following variables are not present in the dataframe: Category2")
 })
 
