@@ -6,16 +6,15 @@ library(tidymodels)
 #' @param vfolds The number of folds used in k-fold cross-validation.
 #' @param grid_size Number of penalty values to test during model tuning.
 #' @param tuning_metric Metric used to select for the most optimal model (recall, etc.).
-#' @param output_path The specific path to save the model object.
 #' 
 #' @return An RDS object
 #'
 #' @export
 #' @examples
 #' # Example usage:
-#' lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", "lasso_dialsd_wflow.RDS")
+#' lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall")
 
-lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, output_path) {
+lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric) {
   lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>%
     parsnip::set_engine("glmnet") %>%
     parsnip::set_mode("classification")
@@ -46,9 +45,6 @@ lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, outp
   # Finalize and fit the workflow
   final_model <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), best_params) %>%
     parsnip::fit(data = data)
-  
-  # Save the fitted model
-  readr::write_rds(final_model, output_path)
   
   return(final_model)
 }
