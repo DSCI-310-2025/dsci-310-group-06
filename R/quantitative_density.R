@@ -12,22 +12,7 @@
 #'
 #' @return A list containing \code{ggplot2} object(s) (density plots).
 #' 
-#' @export
-#'
-#' @examples
-#' \dontrun{
-#'   # Generate density plots for non-categorical variables from the mtcars dataset
-#'   density_plots <- quantitative_density(
-#'     data_frame = mtcars,
-#'     noncat_vars = c("mpg", "hp", "wt"),
-#'     target_col = "am",
-#'     title_size = 25,
-#'     axis_size = 20
-#'   )
-#'   # Display the first density plot
-#'   print(density_plots[["mpg"]])
-#' }
-#'   
+
 quantitative_density <- function(data_frame, noncat_vars, target_col, title_size = 35, axis_size = 30) {
   density_plots <- list()
 
