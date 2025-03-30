@@ -1,21 +1,22 @@
-#' Create and save an ROC curve plot
+#' Creates and saves an ROC curve plot
 #'
 #' This function creates an ROC curve plot and saves it to the specified file path.
 #'
-#' @param model_outputs A data frame or tibble containing the model outputs
-#' @param true_class A character string specifying the column with actual class labels
-#' @param predicted_probs A character string specifying the column with predicted probabilities
-#' @param roc_auc_value A numeric value representing the AUC from model evaluation
-#' @param output_path A character string specifying the file path to save the ROC plot
+#' @param model_outputs A data frame or tibble containing the model outputs.
+#' @param true_class A character string specifying the column with actual class labels.
+#' @param predicted_probs A character string specifying the column with predicted probabilities.
+#' @param roc_auc_value A numeric value representing the AUC from model evaluation.
+#' @param output_path A character string specifying the file path to save the ROC plot.
 #'
 #' @return A ggplot2 object of the ROC curve.
 #'
 #' @export
+#' 
 #' @examples
 #' # Example usage:
 #' # Assuming you have model outputs, true labels, predicted probabilities, and AUC value
 #' roc_plot(lasso_model_outputs, "Diabetes_binary", ".pred_1", lasso_metrics$.estimate[lasso_metrics$.metric == "roc_auc"], "roc_curve_plot.png")
-
+#' 
 roc_plot <- function(model_outputs, true_class, predicted_probs, roc_auc_value, output_path) {
   
   # Check for missing or empty inputs

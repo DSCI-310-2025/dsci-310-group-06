@@ -1,18 +1,23 @@
-#' Counts and proportions of categorisation.
+#' Counts and Proportions of Categorical Variables
 #' 
-#' Given input dataframe with a categorical variable, return the number and
+#' Given an input dataframe with a categorical variable, return the number and
 #' proportion of instances with each category value, in alphabetical
 #' (for characters and logical) or numerical (for integers) order
 #'
 #' @param data_frame A data frame or data frame extension (e.g. a tibble).
-#' @param cat_var String, name of categorical variable within data_frame
+#' @param cat_var A categorical variable (object) within data_frame.
 #'
-#' @return @return Data frame with 1 rows per category and 2 columns:
-#'    - Count: Number of corresponding cat_var values.
-#'    - Proportion: Proportion of corresponding cat_var values among all instances.
+#' @return A data frame with 1 rows per category and 2 columns:
+#'    - Count: Number of occurrances of each category in cat_var.
+#'    - Proportion: Proportion of each category relative to the total number of rows in the data frame.
+#'    
 #' @export
+#' 
 #' @examples
-#' category_target(ToothGrowth, supp),
+#' \dontrun{
+#'   category_target(ToothGrowth, ToothGrowth$supp)
+#' }
+#' 
 category_target <- function(data_frame, cat_var) {
   return(
     target_result <- data_frame %>%

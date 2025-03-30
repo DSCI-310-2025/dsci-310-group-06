@@ -1,22 +1,38 @@
-#' categorical_bars
+#' List of Bar Plots
 #'
-#' Create a bar plot of a categorical variable showing proportions grouped by a fill variable.
+#' Create a list of bar plots for each categorical variable in a data frame. 
+#' The proportions for each categorical variable are grouped by a different fill 
+#' color.
 #'
-#' @param data A data frame containing the variables of interest.
-#' @param categorical_vars A character string specifying the name of the **categorical** column to plot on the x-axis.
-#' @param target_col Column of interest to plot each categorical variable against
-#' @param title_size Size of each plot's title (Default = 30)
-#' @param axis_size Size of each plot's axes (Default = 35)
+#' @param data_frame A data frame or data frame extension (e.g. a tibble).
+#' @param cat_vars A vector containing the string name(s) of each **categorical** variable to plot on the x-axis.
+#' @param target_col Column of interest to plot each variable against (object).
+#' @param title_size Size of each plot's title (Default = 30).
+#' @param axis_size Size of each plot's axes (Default = 35).
 #'
-#' @return A \code{ggplot2} object (bar plot).
+#' @return A list containing \code{ggplot2} object(s) (bar plots).
+#' 
+#' @export
 #'
 #' @examples
-
-categorical_bars <- function(data, categorical_vars, target_col, title_size = 30, axis_size = 35) {
+#' \dontrun{
+#'   # Generate bar plots for categorical variables from the mtcars dataset
+#'   bar_plots <- categorical_bars(
+#'     data_frame = mtcars,
+#'     cat_vars = c("cyl", "gear"),
+#'     target_col = "am",
+#'     title_size = 25,
+#'     axis_size = 20
+#'   )
+#'   # Display the first bar plot
+#'   print(bar_plots[["cyl"]])
+#' }
+#' 
+categorical_bars <- function(data_frame, cat_vars, target_col, title_size = 30, axis_size = 35) {
   bar_plots <- list()
   
-  for (var in categorical_vars) {
-    p <- ggplot2::ggplot(data, aes(x = !!sym(var), fill = as.factor(!!sym(target_col)))) +
+  for (var in cat_vars) {
+    p <- ggplot2::ggplot(data_frame, aes(x = !!sym(var), fill = as.factor(!!sym(target_col)))) +
       geom_bar(position = "fill") + 
       scale_fill_manual(values = c("#FF9999", "#66B2FF")) + 
       labs(title = paste("Diabetes Binary by", var),
@@ -31,6 +47,5 @@ categorical_bars <- function(data, categorical_vars, target_col, title_size = 30
       )
     bar_plots[[var]] <- p
   }
-  
   return(bar_plots)
 }

@@ -25,35 +25,25 @@ set.seed(6)
 
 opt <- docopt::docopt(doc)
 
+# Sourcing required functions
+source(opt$r_path_na_count_type)
+source(opt$r_path_category_target)
+
 # This runs the Python script to extract file from UCI
 system(paste(opt$python_path, opt$extract_path))
 
 # Reads the downloaded dataset into a variable named raw_diabetes_df
 raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
-source(opt$r_path_na_count_type)
-source(opt$r_path_category_target)
-
-# Checking for NA values, distinct counts of each variable, and the current data type # CONVERT TO FUNCTION na_count_type (33-37)
-# checking_raw_matrix <- rbind(
-#   NA_Count = sapply(raw_diabetes_df, function(x) sum(is.na(x))),
-#   Distinct_Count = sapply(raw_diabetes_df, function(x) n_distinct(x)),
-#   Current_Data_Type = sapply(raw_diabetes_df, typeof)
-# )
+# Checking for NA values, distinct counts of each variable, and the current data type
 checking_raw_matrix <- na_count_type(raw_diabetes_df)
-
-# WRITE checking_raw_matrix
-readr::write_rds(checking_raw_matrix, opt$output_path_raw)
+readr::write_rds(checking_raw_matrix, opt$output_path_raw) # WRITE checking_raw_matrix
 
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
   dplyr::mutate(dplyr::across(!BMI, ~ factor(.)))
 
-# Checking to see how unbalanced the dataset is with respect to the target variable # CONVERT TO FUNCTION category_target (47-50)
-# target_result <- raw_diabetes_df %>%
-#   dplyr::group_by(Diabetes_binary) %>%
-#   dplyr::summarise(Count = dplyr::n(), Proportion = dplyr::n() / nrow(raw_diabetes_df)) %>%
-#   dplyr::ungroup()
+# Checking to see how unbalanced the dataset is with respect to the target variable
 target_result <- category_target(raw_diabetes_df, Diabetes_binary)
 
 # WRITE target_result
@@ -61,14 +51,8 @@ readr::write_csv(target_result, opt$output_path_target)
 
 # Using ROSE to balance data by oversampling
 balanced_raw_diabetes_df <- ROSE::ROSE(Diabetes_binary ~ ., data = raw_diabetes_df, seed = 123)$data
-# balanced_target_result <- balanced_raw_diabetes_df %>%
-#   dplyr::group_by(Diabetes_binary) %>%
-#   dplyr::summarise(Count = dplyr::n(), Proportion = dplyr::n() / nrow(balanced_raw_diabetes_df)) %>%
-#   dplyr::ungroup()
 balanced_target_result <- category_target(balanced_raw_diabetes_df, Diabetes_binary)
-
-# WRITE balanced_target_result
-readr::write_csv(balanced_target_result, opt$output_path_bal)
+readr::write_csv(balanced_target_result, opt$output_path_bal) # WRITE balanced_target_result
 
 # Comparing class distribution before and after balancing
 balanced_raw_comparision_df <- data.frame(
@@ -78,9 +62,7 @@ balanced_raw_comparision_df <- data.frame(
   Balanced_Count = balanced_target_result$Count,
   Balanced_Proportion = balanced_target_result$Proportion
 )
-
-# WRITE balanced_raw_comparision_df
-readr::write_csv(balanced_raw_comparision_df, opt$output_path_df)
+readr::write_csv(balanced_raw_comparision_df, opt$output_path_df) # WRITE balanced_raw_comparison_df
 
 # Split data into 75% train, 25% test for machine learning
 diabetes_split <- rsample::initial_split(balanced_raw_diabetes_df, prop = 0.75, strata = Diabetes_binary)
@@ -90,5 +72,3 @@ diabetes_test <- rsample::testing(diabetes_split)
 # WRITE diabetes_train, diabetes_test
 readr::write_rds(diabetes_train, opt$output_path_train)
 readr::write_rds(diabetes_test, opt$output_path_test)
-# readr::write_csv(diabetes_train, opt$output_path_train)
-# readr::write_csv(diabetes_test, opt$output_path_test)
