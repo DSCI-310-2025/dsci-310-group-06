@@ -1,45 +1,24 @@
-#' cm_plot
+#' Create and save a confusion matrix plot
 #'
-#' Plot a confusion matrix from a \code{yardstick::conf_mat()} (or from 
-#' \code{caret::confusionMatrix}, with minor modifications).
+#' This function creates a confusion matrix plot and saves it to the specified file path.
 #'
-#' @param conf_matrix A confusion matrix object. Typically from yardstick::conf_mat() 
-#'   (with columns "Prediction" and "Truth" in conf_matrix$table).
+#' @param conf_matrix_df A data frame or tibble containing the confusion matrix results. This would have columns "Prediction", "Truth" and "Freq".
+#' @param output_path A character string specifying the file path to save the confusion matrix plot.
 #'
-#' @return A \code{ggplot2} object displaying a tile heatmap of the confusion matrix.
+#' @return A ggplot2 object displaying a tile heatmap of the confusion matrix.
 #'
+#' @export
 #' @examples
-#' \dontrun{
-#'   library(yardstick)
-#'   df <- data.frame(
-#'     truth = factor(c(0, 0, 1, 1)),
-#'     estimate = factor(c(0, 1, 0, 1))
-#'   )
-#'   cm <- yardstick::conf_mat(df, truth = truth, estimate = estimate)
-#'   p <- cm_plot(cm)
-#'   print(p)
-#' }
-cm_plot <- function(conf_matrix) {
-  # conf_matrix$table is a data frame with columns "Prediction", "Truth", "Freq" for yardstick.
-  cm_df <- as.data.frame(conf_matrix$table)
+#' # Example usage:
+#' # Assuming you have a confusion matrix object from yardstick::conf_mat
+#' cm_plot(cm, "confusion_matrix_plot.png")
+
+cm_plot <- function(conf_matrix_df, output_path) {
   
-  # If using caret::confusionMatrix, you'd do something like:
-  # if (is.matrix(conf_matrix$table)) {
-  #   library(tibble)
-  #   library(tidyr)
-  #   cm_df <- as.data.frame(conf_matrix$table) %>%
-  #     tibble::rownames_to_column("Truth") %>%
-  #     tidyr::pivot_longer(
-  #       cols = -Truth,
-  #       names_to = "Prediction",
-  #       values_to = "Freq"
-  #     )
-  # } else {
-  #   cm_df <- as.data.frame(conf_matrix$table)
-  # }
+  if(!interactive()) pdf(NULL)
   
-  p <- ggplot2::ggplot(
-    cm_df,
+  output_plot <- ggplot2::ggplot(
+    conf_matrix_df,
     ggplot2::aes(
       x = Prediction,
       y = Truth,
@@ -49,22 +28,28 @@ cm_plot <- function(conf_matrix) {
     ggplot2::geom_tile() +
     ggplot2::geom_text(
       ggplot2::aes(label = Freq),
-      size = 10,
+      size = 5,
       color = "black"
     ) +
     ggplot2::scale_fill_gradient(low = "white", high = "blue") +
     ggplot2::labs(
-      title = "Confusion Matrix",
       x = "Predicted Class",
-      y = "True Class"
+      y = "True Class",
+      fill = "Count"
     ) +
-    ggplot2::theme_minimal() +
     ggplot2::theme(
-      axis.text = ggplot2::element_text(size = 15),
-      axis.title = ggplot2::element_text(size = 20)
-    )
+      plot.title = ggplot2::element_text(size = 16, face = "bold"),
+      plot.subtitle = ggplot2::element_text(size = 12),
+      axis.title = ggplot2::element_text(size = 12),
+      axis.text = ggplot2::element_text(size = 10),
+      plot.background = ggplot2::element_blank(),
+      panel.grid = ggplot2::element_blank()
+    ) +
+    ggplot2::guides(fill = "none")
   
-  return(p)
+  ggplot2::ggsave(output_path, output_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+  
+  return(output_plot)
 }
 
 

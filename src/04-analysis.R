@@ -7,7 +7,7 @@ Options:
 --output_path_lasso=<output_path_lasso>     Path to save the lasso_metrics
 --output_path_roc=<output_path_roc>         Path to save the ROC curve
 --output_path_cm=<output_path_cm>           Path to save the confusion matrix
---output_path_cm_df=work/output/cm_df.csv   Path to save values from the confusion matrix
+--output_path_cm_df=<output_path_cm_df>   Path to save values from the confusion matrix
 
 " -> doc
 
@@ -15,7 +15,10 @@ library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(docopt)
+source("work/R/cm_plot.R")
 source("work/R/roc_plot.R")
+options(repr.plot.width = 8, repr.plot.height = 8)
+
 set.seed(6)
 
 opt <- docopt::docopt(doc)
@@ -65,32 +68,12 @@ roc_plot(
 
 
 # Creating the confusion matrix # CONVERT TO FUNCTION cm_plot
-options(repr.plot.width = 8, repr.plot.height = 8)
+cm_df <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")$table |> 
+  as.data.frame()
 
-cm <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")
-cm_df <- as.data.frame(cm$table)
+# write as csv 
+readr::write_csv(cm_df,opt$output_path_cm_df)
 
-cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill = Freq)) +
-  ggplot2::geom_tile() +
-  ggplot2::geom_text(ggplot2::aes(label = Freq), color = "black", size = 5) +
-  ggplot2::scale_fill_gradient(low = "white", high = "#66B2FF") +
-  ggplot2::labs(
-    x = "Predicted Class",
-    y = "True Class",
-    fill = "Count"
-  ) +
-  ggplot2::theme(
-    plot.title = ggplot2::element_text(size = 16, face = "bold"),
-    plot.subtitle = ggplot2::element_text(size = 12),
-    axis.title = ggplot2::element_text(size = 12),
-    axis.text = ggplot2::element_text(size = 10),
-    plot.background = ggplot2::element_blank(),
-    panel.grid = ggplot2::element_blank()
-  ) +
-  ggplot2::guides(fill = "none")
-
-# WRITE cm_plot
-ggplot2::ggsave(opt$output_path_cm, cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
-
-# WRITE cm_df
-readr::write_csv(cm_df, opt$output_path_cm_df)
+# create confusion matrix and save as image
+confusion_matrix_plot <- cm_plot(cm_df, opt$output_path_cm)
+                                 
