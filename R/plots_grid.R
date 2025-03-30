@@ -31,6 +31,12 @@
 #' }
 #'
 plots_grid <- function(bar_plots, density_plots, num_cols = 3) {
+  
+  if (!is.list(bar_plots) || !all(sapply(bar_plots, inherits, "gg")) || 
+      !is.list(density_plots) || !all(sapply(density_plots, inherits, "gg"))) {
+    stop("Both 'bar_plots' and 'density_plots' must be lists of ggplot objects.")
+  }
+  
   all_plots <- c(bar_plots, density_plots)
   combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) +
     patchwork::plot_layout(guides = "collect") +
