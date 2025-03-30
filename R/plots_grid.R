@@ -1,5 +1,3 @@
-# plots_grid.R
-
 #' plots_grid
 #'
 #' Combine a list of \code{ggplot2} objects into a single grid layout using \code{patchwork}.

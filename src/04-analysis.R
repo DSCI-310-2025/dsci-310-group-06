@@ -1,27 +1,32 @@
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
-Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm> --output_path_cm_df=<output_path_cm_df>
+Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --r_path_roc_plot=<r_path_roc_plot> --r_path_cm_plot=<r_path_cm_plot> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm> --output_path_cm_df=<output_path_cm_df>
 Options: 
 --file_path_test=<file_path_test>           Path to obtain the raw dataset CSV file
 --file_path_wflow=<file_path_wflow>         Path to obtain the lasso_tuned_wflow
+--r_path_roc_plot=<r_path_roc_plot>         Path to R script for roc_plot
+--r_path_cm_plot=<r_path_cm_plot>           Path to R script for cm_plot
 --output_path_lasso=<output_path_lasso>     Path to save the lasso_metrics
 --output_path_roc=<output_path_roc>         Path to save the ROC curve
 --output_path_cm=<output_path_cm>           Path to save the confusion matrix
---output_path_cm_df=work/output/cm_df.csv   Path to save values from the confusion matrix
+--output_path_cm_df=<output_path_cm_df>   Path to save values from the confusion matrix
 
 " -> doc
+
+opt <- docopt::docopt(doc)
 
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(docopt)
-source("work/R/roc_plot.R")
+source(opt$r_path_roc_plot)
+source(opt$r_path_cm_plot)
 set.seed(6)
 
-opt <- docopt::docopt(doc)
+
 
 # READ diabetes_test, lasso_tuned_wflow
-diabetes_test <- readr::read_csv(opt$file_path_test)
+diabetes_test <- readr::read_rds(opt$file_path_test)
 lasso_tuned_wflow <- readr::read_rds(opt$file_path_wflow)
 
 # Applying to the test set
@@ -89,8 +94,11 @@ cm_plot <- ggplot2::ggplot(cm_df, ggplot2::aes(x = Prediction, y = Truth, fill =
   ) +
   ggplot2::guides(fill = "none")
 
+# confusion_matrix_plot <- cm_plot(cm, "lasso_modelOutputs", "Diabetes_binary", ".pred_class", "Confusion Matrix", "#66B2FF")
+
 # WRITE cm_plot
 ggplot2::ggsave(opt$output_path_cm, cm_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+# ggplot2::ggsave(opt$output_path_cm, confusion_matrix_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
 
 # WRITE cm_df
 readr::write_csv(cm_df, opt$output_path_cm_df)

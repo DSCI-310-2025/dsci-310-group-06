@@ -3,6 +3,8 @@
 #' Run chi-squared tests and calculate Cramer's V independently for each feature
 #'
 #' @param data_frame A data frame or data frame extension (e.g. a tibble).
+#' @param categorical_vars A character vector of categorical variable names.
+#' @target_col The target column for the chi-squared test.
 #'
 #' @return Data frame with 1 row per variable and 7 columns:
 #'    - Variable: Name of categorical variable.
@@ -14,7 +16,9 @@
 #'    - CramersV: Cramer's V statistic.
 #' @export
 #' @examples
-#' cramer_chi_results(mtcars, c("cyl", "gear"), "mpg")
+#' \dontrun{
+#'   cramer_chi_results(mtcars, c("cyl", "gear"), "mpg")
+#' }
 
 cramer_chi_results <- function(df, categorical_vars, target_col) {
   if (nrow(df) == 0) {

@@ -1,5 +1,3 @@
-# categorical_bars.R
-
 #' categorical_bars
 #'
 #' Create a bar plot of a categorical variable showing proportions grouped by a fill variable.
