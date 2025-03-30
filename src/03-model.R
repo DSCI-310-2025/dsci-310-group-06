@@ -10,6 +10,7 @@ Options:
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
+source("~/work/R/lr_pipeline.R")
 # Setting the seed for consistent results
 set.seed(6)
 

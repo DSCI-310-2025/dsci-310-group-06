@@ -46,9 +46,8 @@ lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, outp
   # Finalize and fit the workflow
   final_model <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), best_params) %>%
     parsnip::fit(data = data)
-
   readr::write_rds(final_model, output_path)
-  
+
   return(final_model)
 }
 
