@@ -1,21 +1,25 @@
-library(tidymodels)
-#' Trains a logistic regression model and cross-validates for optimal hyperparameter values
+#' Logistic Regression Pipeline
+#' 
+#' Trains and fits a logistic regression model and cross-validates for optimal 
+#' hyperparameter values
 #'
-#' @param data A data frame containing the variables of interest.
-#' @param target_col Column which contains the target variable.
-#' @param vfolds The number of folds used in k-fold cross-validation.
-#' @param grid_size Number of penalty values to test during model tuning.
-#' @param tuning_metric Metric used to select for the most optimal model (recall, etc.).
-#' @param output_path Path to save the model as an RDS object.
+#' @param data_frame A data frame or data frame extension (e.g. a tibble).
+#' @param target_col A string specifying the variable of interest.
+#' @param vfolds A number specifying the amount of folds used in k-fold cross-validation (Default = 5).
+#' @param grid_size A number specifying penalty values to test during model tuning (Default = 10).
+#' @param tuning_metric A string specifying the metric used to select for the most optimal model (e.g. "recall").
+#' @param output_path String path location to save the model as an RDS object.
 #' 
 #' @return An RDS object
 #'
 #' @export
+#' 
 #' @examples
-#' # Example usage:
-#' lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", "lasso_tuned_wflow.RDS")
-
-lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, output_path) {
+#' \dontrun{
+#'   lr_pipeline(mtcars, "am", vfolds = 5, grid_size = 10, tuning_metric = "recall", output_path = "lasso_tuned_wflow.RDS")
+#' }
+#' 
+lr_pipeline <- function(data, target_col, vfolds = 5, grid_size = 10, tuning_metric, output_path) {
   lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>%
     parsnip::set_engine("glmnet") %>%
     parsnip::set_mode("classification")
@@ -43,11 +47,8 @@ lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, outp
   # Select the best model based on specified tuning metric
   best_params <- lasso_grid %>% tune::select_best(metric = tuning_metric)
   
-  # Finalize and fit the workflow
   final_model <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), best_params) %>%
     parsnip::fit(data = data)
-  readr::write_rds(final_model, output_path)
 
   return(final_model)
 }
-

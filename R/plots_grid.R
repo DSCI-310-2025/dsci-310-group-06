@@ -30,7 +30,6 @@
 #'   grid_plot <- plots_grid(bar_plots, density_plots, num_cols = 2)
 #' }
 #'
-
 plots_grid <- function(bar_plots, density_plots, num_cols = 3) {
   
   if (!is.list(bar_plots) || !all(sapply(bar_plots, inherits, "gg")) || 
