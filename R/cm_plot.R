@@ -8,11 +8,12 @@
 #' @return A ggplot2 object displaying a tile heatmap of the confusion matrix.
 #'
 #' @export
+#' 
 #' @examples
 #' # Example usage:
 #' # Assuming you have a confusion matrix object from yardstick::conf_mat
 #' cm_plot(cm, "confusion_matrix_plot.png")
-
+#' 
 cm_plot <- function(conf_matrix_df, output_path) {
   
   # Check if required columns are present

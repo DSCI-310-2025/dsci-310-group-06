@@ -10,20 +10,20 @@ Options:
 --output_path_roc=<output_path_roc>         Path to save the ROC curve
 --output_path_cm=<output_path_cm>           Path to save the confusion matrix
 --output_path_cm_df=<output_path_cm_df>   Path to save values from the confusion matrix
-
 " -> doc
-
-opt <- docopt::docopt(doc)
 
 library(tidyverse)
 library(tidymodels)
 library(glmnet)
 library(docopt)
-source(opt$r_path_roc_plot)
-source(opt$r_path_cm_plot)
+# Setting the seed for consistent results
 set.seed(6)
 
+opt <- docopt::docopt(doc)
 
+# Sourcing required functions
+source(opt$r_path_roc_plot)
+source(opt$r_path_cm_plot)
 
 # READ diabetes_test, lasso_tuned_wflow
 diabetes_test <- readr::read_rds(opt$file_path_test)
@@ -53,13 +53,9 @@ lasso_metrics <- bind_rows(
     mutate(.metric = "roc_auc") 
 ) %>%
   select(.metric, .estimator, .estimate)
+readr::write_csv(lasso_metrics, opt$output_path_lasso) # WRITE lasso_metrics
 
-
-# WRITE lasso_metrics
-readr::write_csv(lasso_metrics, opt$output_path_lasso)
-
-
-# Creating the ROC curve # CONVERT TO FUNCTION roc_plot
+# Creating the ROC plot
 roc_plot(
   model_outputs=lasso_modelOutputs, 
   true_class="Diabetes_binary", 
@@ -68,14 +64,10 @@ roc_plot(
   output_path=opt$output_path_roc
 )
 
-
-# Creating the confusion matrix # CONVERT TO FUNCTION cm_plot
+# Creating the confusion matrix
 cm_df <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")$table |> 
   as.data.frame()
+readr::write_csv(cm_df, opt$output_path_cm_df) # WRITE matrix as csv 
 
-# write as csv 
-readr::write_csv(cm_df,opt$output_path_cm_df)
-
-# create matrix image
+# Create matrix image
 cm_plot(cm_df, opt$output_path_cm)
-                                 

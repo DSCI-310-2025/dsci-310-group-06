@@ -1,8 +1,8 @@
-#' Summarise dataframe columns.
+#' Summarise Data Frame Columns
 #' 
-#' Given input dataframe, for each column, check for NA values, distinct
-#' counts of each variable, and the current data types. For each variable,
-#' NULL with be treated as a column of NA
+#' Given an input data frame, this function checks for the number of missing values
+#' (NA), the number of distinct values, and the data type of each variable. `NULL`
+#' values will be treated as a column of `NA`
 #'
 #' @param data_frame A data frame or data frame extension (e.g. a tibble).
 #'
@@ -10,11 +10,15 @@
 #'    - NA_Count: Number of "NA" values within each variable.
 #'    - Distinct_Count: Number of distinct values for each variable.
 #'    - Current_Data_Type: Current data type for each variable.
+#'    
 #' @export
+#' 
 #' @examples
 #' \dontrun{
+#'   # Summarize columns in the mtcars dataset
 #'   na_count_type(mtcars)
 #' }
+#' 
 na_count_type <- function(data_frame) {
   data_frame <- as.data.frame(data_frame)
   return(
