@@ -1,7 +1,5 @@
 library(testthat)
-
-source("work/R/categorical_bars.R")
-# test-categorical_bars.R
+source("~/work/R/categorical_bars.R")
 
 test_that("categorical_bars returns a ggplot object", {
   # Minimal example data

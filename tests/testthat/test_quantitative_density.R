@@ -1,7 +1,5 @@
-# test-quantitative_density.R
 library(testthat)
-library(ggplot2)
-source("work/R/quantitative_density.R")
+source("~/work/R/quantitative_density.R")
 
 
 

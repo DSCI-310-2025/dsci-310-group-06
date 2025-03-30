@@ -1,5 +1,5 @@
 library(testthat)
-source("work/R/cm_plot.R")
+source("~/work/R/cm_plot.R")
 
 # expected cases ----------------------------------------------------------------
 
