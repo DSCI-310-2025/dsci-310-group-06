@@ -28,16 +28,16 @@ cramer_chi_results <- function(df, cat_vars, target_col) {
     stop("Insufficient data: the dataframe is empty.")
   }
   
-  if (!is.character(categorical_vars)) {
+  if (!is.character(cat_vars)) {
     stop("categorical_vars must be a character vector of column names.")
   }
   
-  missing_vars <- setdiff(categorical_vars, colnames(df))
+  missing_vars <- setdiff(cat_vars, colnames(df))
   if (length(missing_vars) > 0) {
     stop(paste("The following variables are not present in the dataframe:", paste(missing_vars, collapse = ", ")))
   }
   
-  cramer_chi_results <- purrr::map_dfr(categorical_vars, function(var) {
+  cramer_chi_results <- purrr::map_dfr(cat_vars, function(var) {
     tbl <- table(df[[var]], df[[target_col]])
     test_result <- stats::chisq.test(tbl)
     cv <- vcd::assocstats(tbl)$cramer
