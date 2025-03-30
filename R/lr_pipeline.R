@@ -34,20 +34,20 @@ lr_pipeline <- function(data, target_col, vfolds = 5, grid_size = 10, tuning_met
     workflows::add_recipe(lr_recipe)
   
   # Define a tuning grid for the penalty parameter
-  lambda_grid <- dials::grid_space_filling(penalty(), size = grid_size)
+  lambda_grid <- dials::grid_space_filling(dials::penalty(), size = grid_size)
   
   # Perform hyperparameter tuning
   lasso_grid <- tune::tune_grid(
     lr_workflow %>% workflows::add_model(lr_mod),
     resamples = folds,
     grid = lambda_grid,
-    metrics = metric_set(recall)
+    metrics = yardstick::metric_set(yardstick::recall)
   )
   
   # Select the best model based on specified tuning metric
   best_params <- lasso_grid %>% tune::select_best(metric = tuning_metric)
   
-  final_model <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), best_params) %>%
+  final_model <- tune::finalize_workflow(lr_workflow %>% workflows::add_model(lr_mod), best_params) %>%
     parsnip::fit(data = data)
 
   return(final_model)
