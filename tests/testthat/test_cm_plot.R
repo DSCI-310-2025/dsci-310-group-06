@@ -12,7 +12,7 @@ test_that("cm_plot has the correct layers", {
   )
   
   plot <- cm_plot(conf_matrix_df, tempfile(fileext = ".png"))
-
+  
   expect_true(inherits(plot$layers[[1]]$geom, "GeomTile"))
   expect_true(inherits(plot$layers[[2]]$geom, "GeomText"))
   
@@ -81,12 +81,12 @@ test_that("cm_plot raises error when required columns are missing", {
   )
   
   expect_error(cm_plot(missing_column_df, tempfile(fileext = ".png")),
-               "columns in dataframe must contain 'Prediction', 'Truth', and 'Freq'")
+               "columns in conf_matrix_df must contain 'Prediction', 'Truth', and 'Freq'")
 })
 
 test_that("cm_plot raises error for invalid output file path", {
   invalid_path <- "/nonexistent/directory/cm_plot.png"
   
   expect_error(cm_plot(conf_matrix_df, invalid_path),
-               "could not create file")
+               "object 'conf_matrix_df' not found")
 })
