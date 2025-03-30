@@ -20,6 +20,9 @@
 #' }
 #' 
 na_count_type <- function(data_frame) {
+  if (!is.data.frame(data_frame)) {
+    stop("The input must be a data frame")
+  }
   data_frame <- as.data.frame(data_frame)
   return(
     rbind(
