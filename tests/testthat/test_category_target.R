@@ -15,6 +15,7 @@ case_1 <- data.frame(
   stringsAsFactors = FALSE
 )
 
+# expected cases ---------------------------------------------------------------
 test_that("All distinct, doubles", {
   result_1 <- category_target(case_1, a)
   expect_equal(result_1[["a"]], c(1, 2, 3, 4, 5))
@@ -50,6 +51,8 @@ test_that("booleans, all TRUE", {
   expect_equal(result_1[["Proportion"]], c(1))
 })
 
+
+# edge cases -------------------------------------------------------------------
 test_that("NaN", {
   result_1 <- category_target(case_1, f)
   expect_equal(result_1[["f"]], c(NaN))
@@ -77,3 +80,11 @@ test_that("Mixed, more FALSE than TRUE", {
   expect_equal(result_1[["Count"]], c(2, 2, 1))
   expect_equal(result_1[["Proportion"]], c(0.4, 0.4, 0.2))
 })
+
+# error case -------------------------------------------------------------------
+
+test_that("empty data frame", {
+  empty_df <- data.frame()
+  expect_error(category_target(empty_df, "a"), "Input data cannot be empty")
+})
+
