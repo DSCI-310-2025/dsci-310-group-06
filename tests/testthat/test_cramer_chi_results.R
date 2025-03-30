@@ -1,6 +1,5 @@
 library(testthat)
-# source("~/work/R/cramer_chi_results.R")
-source("R/cramer_chi_results.R")
+source("~/work/R/cramer_chi_results.R")
 
 set.seed(100)
 df <- tibble::tibble(
