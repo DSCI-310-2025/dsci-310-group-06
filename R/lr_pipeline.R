@@ -13,7 +13,7 @@ library(tidymodels)
 #' @export
 #' @examples
 #' # Example usage:
-#' lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", "lasso_dialsd_wflow.RDS")
+#' lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", "lasso_tuned_wflow.RDS")
 
 lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, output_path) {
   lr_mod <- parsnip::logistic_reg(penalty = tune(), mixture = 1) %>%
@@ -46,9 +46,6 @@ lr_pipeline <- function(data, target_col, vfolds, grid_size, tuning_metric, outp
   # Finalize and fit the workflow
   final_model <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), best_params) %>%
     parsnip::fit(data = data)
-  
-  # Save the fitted model
-  readr::write_rds(final_model, output_path)
   
   return(final_model)
 }
