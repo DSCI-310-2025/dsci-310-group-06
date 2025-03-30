@@ -4,23 +4,19 @@
 #'
 #' Combine a list of \code{ggplot2} objects into a single grid layout using \code{patchwork}.
 #'
-#' @param plots A list of \code{ggplot2} objects.
-#' @param ncol The number of columns in the grid (default = 3).
+#' @param bar_plots A list of bar plot objects.
+#' @param density_plots A list of quantitative density plot objects.
+#' @param num_cols The number of columns in the grid (Default = 3).
 #'
 #' @return A \code{patchwork} / \code{ggplot2} object showing all input plots arranged.
 #'
 #' @examples
-#' \dontrun{
-#'   library(ggplot2)
-#'   p1 <- ggplot(mtcars, aes(x = hp)) + geom_histogram()
-#'   p2 <- ggplot(mtcars, aes(x = mpg)) + geom_histogram()
-#'
-#'   combined <- plots_grid(list(p1, p2), ncol = 2)
-#'   print(combined)
-#' }
-plots_grid <- function(plots, ncol = 3) {
-  # Use patchwork with double-colon
-  combined_plots <- patchwork::wrap_plots(plots, ncol = ncol) +
+
+plots_grid <- function(bar_plots, density_plots, num_cols = 3) {
+  all_plots <- c(bar_plots, density_plots)
+  
+  # Create the combined plot grid with specified number of columns
+  combined_plots <- patchwork::wrap_plots(all_plots, ncol = num_cols) +
     patchwork::plot_layout(guides = "collect") +
     patchwork::plot_annotation(
       theme = ggplot2::theme(
