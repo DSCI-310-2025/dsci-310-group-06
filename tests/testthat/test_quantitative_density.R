@@ -118,7 +118,7 @@ test_that("quantitative_density uses scale_fill_manual", {
 
 #Edge cases 
 
-test_that("Test 3: Zero rows (but correct columns) returns a plot (possibly empty)", {
+test_that("Test 5: Zero rows (but correct columns) returns a plot (possibly empty)", {
   plots <- quantitative_density(
     data = zero_rows_data,
     noncat_vars = "BMI",
@@ -131,7 +131,7 @@ test_that("Test 3: Zero rows (but correct columns) returns a plot (possibly empt
   expect_s3_class(plots[["BMI"]], "ggplot")
 })
 
-test_that("Test 4: Single row of data returns a plot", {
+test_that("Test 6: Single row of data returns a plot", {
   plots <- quantitative_density(
     data = single_row_data,
     noncat_vars = "BMI",
@@ -143,7 +143,7 @@ test_that("Test 4: Single row of data returns a plot", {
   expect_s3_class(plots[["BMI"]], "ggplot")
 })
 
-test_that("Test 5: Target column with only one level still produces a plot", {
+test_that("Test 7: Target column with only one level still produces a plot", {
   plots <- quantitative_density(
     data = one_level_data,
     noncat_vars = "BMI",
@@ -158,9 +158,8 @@ test_that("Test 5: Target column with only one level still produces a plot", {
 
 #Error  cases
 
-test_that("Test 6: Missing target_col in data", {
+test_that("Test 8: Missing target_col in data", {
   missing_target_data <- data.frame(BMI = rnorm(10, 25, 5))
-  
 
   expect_error(
     quantitative_density(
@@ -172,10 +171,8 @@ test_that("Test 6: Missing target_col in data", {
   )
 })
 
-test_that("Test 7: Missing column in noncat_vars", {
-  # "Weight" doesn't exist
-  # Your function's message: "The following vars are missing in data: Weight"
-  expect_error(
+test_that("Test 9: Missing column in noncat_vars", {
+    expect_error(
     quantitative_density(
       data = test_data,
       noncat_vars = "Weight",
@@ -185,7 +182,7 @@ test_that("Test 7: Missing column in noncat_vars", {
   )
 })
 
-test_that("Test 8: Non-numeric variable in noncat_vars", {
+test_that("Test 10: Non-numeric variable in noncat_vars", {
   # 'Gender' is non-numeric
   # Actual message: "The following vars are not numeric: Gender"
   expect_error(
@@ -198,10 +195,7 @@ test_that("Test 8: Non-numeric variable in noncat_vars", {
   )
 })
 
-test_that("Test 9: Completely empty data frame (no columns, no rows)", {
-  # By default, your function checks for target_col first,
-  # so you might see: "Target column 'Diabetes_binary' not found in data."
-  # If you want a specific message for zero cols, reorder checks or adapt the test.
+test_that("Test 11: Completely empty data frame (no columns, no rows)", {
   expect_error(
     quantitative_density(
       data = empty_df,
