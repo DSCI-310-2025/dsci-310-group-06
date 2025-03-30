@@ -59,26 +59,21 @@ test_that("categorical_bars title and axis text sizes are correct", {
 })
 
 # Edge cases
-test_that("categorical_bars handles empty dataframe correctly", {
-  result <- categorical_bars(
-    data_frame = data.frame(),
-    cat_vars = c("v1"),
-    target_col = "target"
-  )
-  
-  expect_length(result, 0)
+test_that("categorical_bars handles empty data frame correctly", {
+  expect_error(categorical_bars(data_frame = data.frame(), 
+                                cat_vars = c("v1"), 
+                                target_col = "target"),
+               "The provided data frame is empty.")
 })
 
-test_that("categorical_bars handles non-existing categorical variable (not in data
-          frame)", {
-  result <- categorical_bars(
-    data_frame = test_df,
-    cat_vars = c("non_existing_var"),
-    target_col = "target"
-  )
-  
-  expect_length(result, 0)
+test_that("categorical_bars handles missing categorical variables correctly", {
+  df <- data.frame(v1 = c("A", "B", "C"), target = c(1, 2, 1))
+  expect_error(categorical_bars(data_frame = df, 
+                                cat_vars = c("v2"), 
+                                target_col = "target"),
+               regexp = "The following categorical variable\\(s\\) are not found in the data frame: v2")
 })
+
 
 # Error case
 test_that("Check if target_col is specified", {
