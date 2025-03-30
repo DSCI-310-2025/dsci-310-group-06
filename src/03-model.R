@@ -50,10 +50,10 @@ diabetes_train_filtered <- diabetes_train %>%
 # # Choosing the metric with the highest recall
 # highest_auc <- lasso_grid %>% tune::select_best(metric = "recall")
 
-# lasso_dialsd_wflow <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), highest_auc) %>%
+# lasso_tuned_wflow <- tune::finalize_workflow(lr_workflow %>% add_model(lr_mod), highest_auc) %>%
 #   parsnip::fit(data = diabetes_train_filtered)
 
-lasso_dialsd_wflow <- lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall")
+lasso_tuned_wflow <- lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", opt$output_path)
 
-# WRITE lasso_dialsd_wflow
-readr::write_rds(lasso_dialsd_wflow, opt$output_path)
+# # WRITE lasso_tuned_wflow
+# readr::write_rds(lasso_tuned_wflow, opt$output_path)
