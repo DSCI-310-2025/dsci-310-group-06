@@ -1,5 +1,21 @@
 ---
 title: "Predicting the Risk of Diabetes using Logistic Regression"
+authors: 
+  - name: Nicholas Tam
+    affiliations:
+      - ref: ubc
+  - name: Dua Khan
+    affiliations:
+      - ref: ubc
+  - name: Kaylee Li
+    affiliations:
+      - ref: ubc
+  - name: Luke Huang
+    affiliations:
+      - ref: ubc
+affiliations:
+  - id: ubc
+    name: University of British Columbia, Vancouver, BC, Canada, V6T 1Z4
 format: 
   html:
     embed-resources: true
