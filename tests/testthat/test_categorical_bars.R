@@ -18,7 +18,7 @@ test_that("categorical_bars returns a list of ggplot objects", {
     cat_vars = c("v1", "v2"),
     target_col = "target"
   )
-  
+
   expect_type(result, "list")
   expect_true(all(sapply(result, inherits, "gg")) )
 })
@@ -29,7 +29,7 @@ test_that("categorical_bars returns a plot for each categorical variable", {
     cat_vars = c("v1", "v2"),
     target_col = "target"
   )
-  
+
   expect_length(result, 2)
 })
 
@@ -39,9 +39,9 @@ test_that("categorical_bars plot titles and axis labels are correct", {
     cat_vars = c("v1"),
     target_col = "target"
   )
-  
+
   expect_true(grepl("Diabetes Binary by v1", result[["v1"]]$labels$title))
-  
+
   # Check axis labels
   expect_equal(result[["v1"]]$labels$x, "v1")
   expect_equal(result[["v1"]]$labels$y, "Proportion")
@@ -53,7 +53,7 @@ test_that("categorical_bars title and axis text sizes are correct", {
     cat_vars = c("v1"),
     target_col = "target"
   )
-  
+
   expect_equal(result[["v1"]]$theme$plot.title$size, 30)  # Default title_size
   expect_equal(result[["v1"]]$theme$axis.text$size, 35)  # Default axis_size
 })
@@ -81,7 +81,7 @@ test_that("Check if target_col is specified", {
     v1 = factor(c(1, 2, 3, 4, 5)),
     v2 = factor(c(6, 7, 8, 9, 10))
   )
-  
+
   # Expect an error when 'target_col' is missing in the data
   expect_error(
     categorical_bars(
@@ -97,7 +97,7 @@ test_that("Check if cat_vars is specified", {
     v1 = factor(c(1, 2, 3, 4, 5)),
     v2 = factor(c(6, 7, 8, 9, 10))
   )
-  
+
   # Expect an error when 'cat_vars' is missing
   expect_error(
     categorical_bars(

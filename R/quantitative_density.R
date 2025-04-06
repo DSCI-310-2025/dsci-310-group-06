@@ -27,7 +27,6 @@
 #'   # Display the first density plot
 #'   print(density_plots[["mpg"]])
 #' }
-#'   
 quantitative_density <- function(data_frame, noncat_vars, target_col, title_size = 35, axis_size = 30) {
   density_plots <- list()
 
@@ -35,26 +34,26 @@ quantitative_density <- function(data_frame, noncat_vars, target_col, title_size
   if (!target_col %in% colnames(data_frame)) {
     stop(sprintf("Target column '%s' not found in data.", target_col))
   }
-  
+
   # 2. Check that all noncat_vars are in data
   missing_vars <- setdiff(noncat_vars, colnames(data_frame))
   if (length(missing_vars) > 0) {
     stop(sprintf("The following vars are missing in data: %s", 
                  paste(missing_vars, collapse = ", ")))
   }
-  
+
   # 3. Check that noncat_vars are numeric
   non_numeric <- noncat_vars[!sapply(data_frame[noncat_vars], is.numeric)]
   if (length(non_numeric) > 0) {
     stop(sprintf("The following vars are not numeric: %s", 
                  paste(non_numeric, collapse = ", ")))
   }
-  
+
   # 4. (Optional) If you want to disallow data frames w/ zero columns:
   if (ncol(data_frame) == 0) {
     stop("Data frame has no columns. Cannot plot an empty dataset.")
   }
-  
+
   # ...then proceed with your ggplot loop
   density_plots <- list()
   for (var in noncat_vars) {

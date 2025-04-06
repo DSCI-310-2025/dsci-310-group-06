@@ -15,13 +15,13 @@
 #' cm_plot(cm, "confusion_matrix_plot.png")
 #' 
 cm_plot <- function(conf_matrix_df, output_path) {
-  
+
   # Check if required columns are present
   required_columns <- c("Prediction", "Truth", "Freq")
   if (!all(required_columns %in% colnames(conf_matrix_df))) {
     stop("columns in conf_matrix_df must contain 'Prediction', 'Truth', and 'Freq'")
   }
-  
+
   # check if output path's directory exist
   output_dir <- dirname(output_path)
   if (!dir.exists(output_dir)) {
@@ -29,7 +29,7 @@ cm_plot <- function(conf_matrix_df, output_path) {
   }
 
   if(!interactive()) pdf(NULL)
-  
+
   output_plot <- ggplot2::ggplot(
     conf_matrix_df,
     ggplot2::aes(
@@ -59,10 +59,8 @@ cm_plot <- function(conf_matrix_df, output_path) {
       panel.grid = ggplot2::element_blank()
     ) +
     ggplot2::guides(fill = "none")
-  
+
   ggplot2::ggsave(output_path, output_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
   
   return(output_plot)
 }
-
-
