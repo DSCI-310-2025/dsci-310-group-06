@@ -28,6 +28,7 @@ All contributors must abide by our [code of conduct](CODE_OF_CONDUCT.md).
 
 - [README.md](README.md)
 - [Code of Conduct](CODE_OF_CONDUCT.md)
-- [License](LICENSE.md)
+- [MIT License](LICENSE-MIT.md)
+- [Creative Commons License](LICENSE-CC.md)
 - [Diabetes Classification Report](reports/diabetes_classification_report.ipynb)
 - [Dataset Download Python Code](src/dataset_download.py)
