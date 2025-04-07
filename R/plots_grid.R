@@ -45,7 +45,7 @@ plots_grid <- function(bar_plots, density_plots, num_cols = 3) {
         plot.title = ggplot2::element_text(size = 50, face = "bold"),
         plot.subtitle = ggplot2::element_text(size = 40),
         axis.title = ggplot2::element_text(size = 30),
-        axis.text = ggplot2::element_text(size = 30)
+        axis.text = ggplot2::element_text(size = 30),
       )
     )
   return(combined_plots)

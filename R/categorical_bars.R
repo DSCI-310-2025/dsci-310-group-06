@@ -64,7 +64,10 @@ categorical_bars <- function(data_frame, cat_vars, target_col, title_size = 30, 
       ggplot2::theme(
         axis.text = ggplot2::element_text(size = axis_size),
         axis.title = ggplot2::element_text(size = axis_size),
-        plot.title = ggplot2::element_text(size = title_size, face = "bold")
+        plot.title = ggplot2::element_text(size = title_size, face = "bold"),
+        legend.key.size = ggplot2::unit(5, "cm"),
+        legend.text = ggplot2::element_text(size = 40),
+        legend.title = ggplot2::element_text(size = 50),
       )
     bar_plots[[var]] <- p
   }
