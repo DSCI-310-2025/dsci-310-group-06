@@ -1,8 +1,6 @@
 library(testthat)
 source("~/work/R/quantitative_density.R")
 
-
-
 #Sample data frames
 
 set.seed(42)

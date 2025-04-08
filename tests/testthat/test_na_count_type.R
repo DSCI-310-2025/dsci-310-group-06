@@ -108,5 +108,5 @@ test_that("Checks how the function handles columns that contain mixed data types
 # Error case
 test_that("Empty data frame should return error", {
   invalid_df <- c(1, 2, 3)
-  expect_error(na_count_type(invalid_df)) 
+  expect_error(na_count_type(invalid_df))
 })
