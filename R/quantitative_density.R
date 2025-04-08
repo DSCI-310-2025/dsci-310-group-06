@@ -68,7 +68,10 @@ quantitative_density <- function(data_frame, noncat_vars, target_col, title_size
       ggplot2::theme(
         axis.text = ggplot2::element_text(size = axis_size),
         axis.title = ggplot2::element_text(size = axis_size),
-        plot.title = ggplot2::element_text(size = title_size, face = "bold")
+        plot.title = ggplot2::element_text(size = title_size, face = "bold"),
+        legend.key.size = ggplot2::unit(5, "cm"),
+        legend.text = ggplot2::element_text(size = 40),
+        legend.title = ggplot2::element_text(size = 50),
       )
     density_plots[[var]] <- p
   }
