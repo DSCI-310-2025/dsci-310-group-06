@@ -98,7 +98,7 @@ Visualizations (bar plots, density plots) are generated to explore the relations
 
 ### 3.1. Loading Data from Original Source on the Web
 
-The packages used in this analysis are `tidyverse`, `tidymodels`, `glmnet`, `patchwork`, `ROSE`, and `vcd`. The dataset of interest can be acquired from the source by running `dataset_download.py` through the `py_run_file()` function, which writes the result into `cdc_diabetes_health_indicators.csv` located in the `/work/data/raw/` directory.
+The packages used in this analysis are `tidyverse`, `tidymodels`, `glmnet`, `patchwork`, `ROSE`, and `vcd`. The dataset of interest can be acquired from the source by running `dataset_download.py` located in the `~/work/src/` directory. This script will fetch the raw dataset (UCI ID: 891) from the [UC Irvine machine learning repository](https://archive.ics.uci.edu/) and then write the result into a .csv file (`cdc_diabetes_health_indicators.csv`) located in the `~/work/data/raw/` directory.
 
 ```{r}
 # Importing required packages for analysis. Suppress warnings and startup messages the first time libraries are loaded
