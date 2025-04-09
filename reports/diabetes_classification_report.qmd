@@ -242,7 +242,7 @@ binned_df <- training_data %>%
   select(-BMI)
 ```
 
-@tbl-diabetes6 shows the resulting counts and percentages of individuals in the dataset that correspond to each binned BMI value.  
+@tbl-diabetes6 shows the resulting counts and percentages of individuals in the dataset that correspond to each binned BMI value.
 
 ```{r}
 #| label: tbl-diabetes6
@@ -266,7 +266,8 @@ non_obese_percent <- summary_table6 %>%
 
 knitr::kable(summary_table6)
 ```
-There appears to be a sizable portion of people who are categorized as obese (`BinnedBMI` = 4, 5, 6), with this group making up about `r obese_percent`% of the total. Only a slim majority of individuals have a BMI that is not considered obese (`r non_obese_percent`%).
+
+There appears to be a sizable portion of people who are categorized as obese (`BinnedBMI` = 4, 5, 6), with this group making up about `r obese_percent`% of the total. Only a slim majority of individuals have a BMI that is not considered obese (`r non_obese_percent`%) (@tbl-diabetes6).
 
 ### 3.4. Feature Selection
 
@@ -328,21 +329,29 @@ knitr::kable(variable_table)
 
 ```
 
-As such, we will be using the following features for our logistic regression model: `GenHlth`, `HighBP`, `Age`, `HighChol`, `DiffWalk`, `BinnedBMI`.
+As such, we will be using the following features for our logistic regression model: `GenHlth`, `HighBP`, `Age`, `HighChol`, `DiffWalk`, `BinnedBMI` (@tbl-diabetes9).
 
 ### 3.5. Classification Analysis
 
 *Analysis Workflow:*
 
-Given the large quantity of binary features and with the task being for classification, a logistic regression model `lr_mod` will be required. The v-fold cross-validation split `vfold_cv()` is created in preparation for cross-validation of the dataset, to provide a more effective estimate of the model performance. `lr_recipe` is created to apply one-hot encoding to the categorical features, and normalization to all numerical variables.
+Given the large quantity of binary features and with the task being for classification, a logistic regression model `lr_mod` will be required. Specifically, we will use a Least Absolute Shrinkage and Selection Operator (LASSO) regression model. We chose to use a LASSO model due to its interpretability, efficiency, and reduced overfitting risk.
 
-`lambda_grid` is created as a grid of hyperparameters for tuning with the cross-validation set with penalty terms, while `tune_grid()` is used for hyperparameter tuning, specifically tuned for higher recall, as the consequences of false negatives for this task would be more severe. The metric that maximizes recall is selected for the finalized workflow `lasso_tuned_wflow`.
+-   `Interpretability`: Each predictor in a LASSO model has an associated coefficient which can be extracted from the model. These coefficients can tell us the direction and magnitude of a predictor's impact on the target variable.
+
+-   `Efficiency`: LASSO is effective in handling multi-dimensional data which is useful when we one-hot encode features that result in many feature levels. Additionally, LASSO has been shown to outperform tree-based models in clinical applications, such as predictive diagnoses of medical conditions (@Ping2022).
+
+-   `Reduced overfitting risk`: LASSO inherently applies a penalty (L1) to the regression coefficients which shrinks less important features towards zero. This regularization aspect of LASSO reduces the risk of overfitting, especially in high-dimensionality. It also handles multicollinearity better than traditional least squares regression.
+
+In the model pipeline, a v-fold cross-validation split `vfold_cv()` is created in preparation for cross-validation of the dataset, to provide a more effective estimate of the model performance. `lr_recipe` is then created to apply one-hot encoding to the categorical features, and normalization to all predictor variables.
+
+`lambda_grid` is created as a grid of hyperparameters for tuning with the cross-validation set with penalty terms, while `tune_grid()` is used for hyperparameter tuning, specifically tuned for higher recall, as the consequences of false negatives for this task would be more severe. The model that maximizes recall is selected for the finalized workflow `lasso_tuned_wflow`.
 
 ### 3.6. Result of Analysis - Visualization
 
 *Analysis Workflow:*
 
-The results of our LASSO regression predictions include `lasso_preds`, which provides the predictions for each row, `lasso_probs`, which provides the probability of each classification for each row, and `lasso_metrics`, which displays the following metrics in @tbl-diabetes6:
+The results of our LASSO regression predictions include `lasso_preds`, which provides the predictions for each row, `lasso_probs`, which provides the probability of each classification for each row, and `lasso_metrics`, which displays the following metrics in @tbl-diabetes10:
 
 -   `sens`: Sensitivity; true positive rate
 -   `spec`: Specificity; true negative rate
@@ -397,11 +406,11 @@ fnr_percent <- round(fnr_calc*100)
 
 The confusion matrix displays the quantity of each type of prediction result; The model predicts `r format(TP, scientific = FALSE)` true positive, `r format(TN, scientific = FALSE)` true negative, `r FN` false negative and `r FP` false positive cases (@fig-cm3).
 
-Thus, the recall for the model can be calculated as $\frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}$ = `r recall_calc` (7 s.f.). This is the same result as shown in @tbl-diabetes6.
+Thus, the recall for the model can be calculated as $\frac{\text{True Positives}}{\text{True Positives} + \text{False Negatives}}$ = `r recall_calc` (7 s.f.). This is the same result as shown in @tbl-diabetes10.
 
-The false negative rate can be calculated as: $\frac{\text{False Negatives}}{\text{True Positives} + \text{False Negatives}}$ = `r fnr_calc` (7 s.f.). This is the same result as calculating (1 - `sens`) from @tbl-diabetes6.
+The false negative rate can be calculated as: $\frac{\text{False Negatives}}{\text{True Positives} + \text{False Negatives}}$ = `r fnr_calc` (7 s.f.). This is the same result as calculating (1 - `sens`) from @tbl-diabetes10.
 
-From @tbl-diabetes6, the values of particular interest are the `recall` score of `r recall_value` (7 s.f.) and the `roc_auc_value` of `r auc_value` (7 s.f.).
+From @tbl-diabetes10, the values of particular interest are the `recall` score of `r recall_value` (7 s.f.) and the `roc_auc_value` of `r auc_value` (7 s.f.).
 
 Looking into the fitted LASSO model, we can extract the coefficients to see which features are contributing at what magnitudes to the final prediction (Fig 3).
 
