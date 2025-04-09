@@ -172,7 +172,9 @@ percent_diabetes3 <- round(prop_diabetes3*100)
 knitr::kable(balanced_target_result)
 ```
 
-After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly `r percent_no_diabetes3` - `r percent_diabetes3` (@tbl-diabetes3). A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes4 below.
+After balancing, the distribution of individuals in both categories of `Diabetes_binary` is roughly `r percent_no_diabetes3` - `r percent_diabetes3` (@tbl-diabetes3). 
+
+A summary of the class distribution before and after ROSE can be seen in @tbl-diabetes4 below.
 
 ```{r}
 #| label: tbl-diabetes4
@@ -392,43 +394,27 @@ From @tbl-diabetes10, the values of particular interest are the `recall` score o
 
 Looking into the fitted LASSO model, we can extract the coefficients to see which features are contributing at what magnitudes to the final prediction (Fig 3).
 
-```{r}
-# Rudamentary code
-library(dplyr)
+![Coefficient Plot for Lasso Model](../output/coeff_plot.png){#fig-coeff4 width="75%"}
 
-final_model <- readRDS("/home/rstudio/work/output/lasso_tuned_wflow.RDS")
+From @fig-coeff4, we can see that multiple levels of `GenHlth`, along with `HighBP` and `HighChol`, are the primary features contributing positively to the target variable of the LASSO model. In contrast, lower `Age` levels are associated with smaller, more negative coefficients. 
 
-lasso_coefs <- final_model %>%
-  workflows::extract_fit_parsnip() %>%
-  broom::tidy()
+For the positive features:
 
-# Select the row with the maximum step for each variable
-lasso_coefs_summarized <- lasso_coefs %>%
-  arrange(desc(estimate))
+-   `GenHlth`: Individuals who classify themselves as 3 (Good), 4 (Fair), and 5 (Poor) tend to predict an increase in the target variable (`Diabetes_binary`).
 
-library(ggplot2)
-ggplot(lasso_coefs_summarized, aes(x = reorder(term, estimate), y = estimate)) +
-  geom_bar(stat = "identity") +
-  coord_flip() +
-  labs(title = "LASSO Model Coefficients", x = "Feature", y = "Coefficient") +
-  theme_minimal()
-```
+-   `HighBP`: Individuals with blood pressure higher than average appear to predict an increase in the target variable.
 
-From Fig. 3, we can see that multiple levels of `GenHlth` along with `HighBP` and `HighChol` are the main features with positive contributions to the LASSO model. On the flip side, lower age levels are the main features with negative coefficients. For the positive features:
+-   `HighChol`: Individuals with higher cholesterol levels than average seems to predict an increase in the target variable.
 
--   `GenHlth`: Individuals who classify themselves as 3 - Good, 4 - Fair, and 5 - Poor seem to predict an increase in the target variable (`Diabetes_binary`)
+For the negative feature(s): 
 
--   `HighBP`: Individuals with higher than average blood pressure seems to predict an increase in the target variable
+- `Age`: Younger individuals (`Age` <= 6, corresponding to those 49 and below) seem to predict a decrease in the target variable.
 
--   `HighChol`: Individuals with higher cholesterol levels than average seems to predict an increase in the target variable
-
-For the negative feature: - `Age`: Individuals who fall under 5 (corresponding to ages 25 to 44) seem to predict a decrease in the target variable
-
-From the LASSO coefficients, we can see that vital signs such as high blood pressure and cholesterol along with overall feelings of health are the strongest predictors for diabetes. Additionally, individuals who are younger appear to be inversely correlated with diabetes prevalence. However, as age increases, the corresponding coefficients increase which suggests that being older is a predictor for diabetes.
+The LASSO coefficients indicate that key health indicators such as high blood pressure and cholesterol along with along with self-reported health status are among the strongest predictors of diabetes. Additionally, younger individuals (<= 49 years old) show an inverse correlation with diabetes risk. However, as age increases, the corresponding coefficients also increase which suggests that older age can be another predictor for higher diabetes risk.
 
 ## 4. Discussion
 
-Our model achieved a recall score of `r recall_value` (7 s.f.) on the test set, implying that about `r recall_percent`% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes6). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of `r auc_value` (7 s.f.) on the test set (@tbl-diabetes6). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm3).
+Our model achieved a recall score of `r recall_value` (7 s.f.) on the test set, implying that about `r recall_percent`% of all positive instances of diabetes were correctly classified by the LASSO regression model (@tbl-diabetes10). This suggests that the model is relatively effective at identifying individuals who are at risk of developing diabetes. Additionally, the model achieved an area under the ROC curve of `r auc_value` (7 s.f.) on the test set (@tbl-diabetes10). Since the AUC is above 0.5, this indicates that the model can discriminate between diabetic and non-diabetic cases better than random guessing (@fig-cm3).
 
 We expected the model to perform better than random guessing, which it did achieve. Additionally, we aimed to minimize false negatives which is particularly important in healthcare diagnoses where a false negative case can have serious consequences. For example, a false negative would indicate that the model predicts the patient to not develop diabetes even though they do. This may lead to the patient not getting the treatment or care they need, potentially resulting in health complications and even death. The model had a false negative rate around `r fnr_percent`% which is concerning as it indicates a significant risk for missing positive cases leading to unfavourable patient outcomes.
 

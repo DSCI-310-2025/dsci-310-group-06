@@ -76,7 +76,7 @@ roc_plot <- function(model_outputs, true_class, predicted_probs, roc_auc_value, 
     ggplot2::theme_minimal()
 
   # Save the ROC plot to the specified file path
-  ggplot2::ggsave(output_path, output_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+  ggplot2::ggsave(output_path, output_plot)
 
   # Return the ROC plot object
   return(output_plot)

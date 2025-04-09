@@ -1,15 +1,17 @@
 "This script applies the lasso_tuned_wflow classification analysis model on the diabetes_test dataset
 
-Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --r_path_roc_plot=<r_path_roc_plot> --r_path_cm_plot=<r_path_cm_plot> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm> --output_path_cm_df=<output_path_cm_df>
+Usage: 04-analysis.R --file_path_test=<file_path_test> --file_path_wflow=<file_path_wflow> --r_path_roc_plot=<r_path_roc_plot> --r_path_cm_plot=<r_path_cm_plot> --r_path_coeff_plot=<r_path_coeff_plot> --output_path_lasso=<output_path_lasso> --output_path_roc=<output_path_roc> --output_path_cm=<output_path_cm> --output_path_cm_df=<output_path_cm_df> --output_path_coeff=<output_path_coeff>
 Options: 
 --file_path_test=<file_path_test>           Path to obtain the raw dataset CSV file
 --file_path_wflow=<file_path_wflow>         Path to obtain the lasso_tuned_wflow
 --r_path_roc_plot=<r_path_roc_plot>         Path to R script for roc_plot
 --r_path_cm_plot=<r_path_cm_plot>           Path to R script for cm_plot
+--r_path_coeff_plot=<r_path_coeff_plot>     Path to R script for coeff_plot
 --output_path_lasso=<output_path_lasso>     Path to save the lasso_metrics
 --output_path_roc=<output_path_roc>         Path to save the ROC curve
 --output_path_cm=<output_path_cm>           Path to save the confusion matrix
---output_path_cm_df=<output_path_cm_df>   Path to save values from the confusion matrix
+--output_path_cm_df=<output_path_cm_df>     Path to save values from the confusion matrix
+--output_path_coeff=<output_path_coeff>     Path to save the coefficient plot
 " -> doc
 
 library(tidyverse)
@@ -24,6 +26,7 @@ opt <- docopt::docopt(doc)
 # Sourcing required functions
 source(opt$r_path_roc_plot)
 source(opt$r_path_cm_plot)
+source(opt$r_path_coeff_plot)
 
 # READ diabetes_test, lasso_tuned_wflow
 diabetes_test <- readr::read_rds(opt$file_path_test)
@@ -53,7 +56,6 @@ lasso_metrics <- bind_rows(
     mutate(.metric = "roc_auc") 
 ) %>%
   select(.metric, .estimator, .estimate)
-readr::write_csv(lasso_metrics, opt$output_path_lasso) # WRITE lasso_metrics
 
 # Creating the ROC plot
 roc_plot(
@@ -67,7 +69,11 @@ roc_plot(
 # Creating the confusion matrix
 cm_df <- yardstick::conf_mat(lasso_modelOutputs, truth = Diabetes_binary, estimate = .pred_class, event_level = "second")$table |> 
   as.data.frame()
-readr::write_csv(cm_df, opt$output_path_cm_df) # WRITE matrix as csv 
 
-# Create matrix image
-cm_plot(cm_df, opt$output_path_cm)
+# Creating the coefficient plot
+coeff_plot <- coeff_plot(lasso_tuned_wflow)
+
+readr::write_csv(lasso_metrics, opt$output_path_lasso) # WRITE lasso_metrics
+readr::write_csv(cm_df, opt$output_path_cm_df) # WRITE matrix as csv 
+cm_plot(cm_df, opt$output_path_cm) # Create matrix image
+ggplot2::ggsave(opt$output_path_coeff, coeff_plot) # WRITE coeff_plot
