@@ -1,6 +1,6 @@
 services:
   report-env:
-    image: nt2103/dsci310_g6:aab7ed5
+    image: nt2103/dsci310_g6
     ports:
       - "10000:8787"
     volumes:
