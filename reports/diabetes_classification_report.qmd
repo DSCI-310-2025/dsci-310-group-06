@@ -185,13 +185,62 @@ The balanced dataset, `balanced_raw_diabetes_df`, will be saved in the `/work/da
 
 *Analysis Workflow:*
 
+```{r}
+library(dplyr)
+
+# Note: Rudimentary code for testing, NOT meant to be final
+training_data <- readRDS("~/work/data/processed/diabetes_train.RDS")
+
+bmi_bins <- c(-Inf, 18.5, 25, 30, 35, 40, Inf)
+bmi_labels <- c(1, 2, 3, 4, 5, 6)
+
+binned_df <- training_data %>%
+  mutate(BinnedBMI = cut(BMI, breaks = bmi_bins, labels = bmi_labels, right = FALSE)) %>%
+  select(-BMI)
+```
 Using every feature in the dataset would not be optimal as having a large number of features in our model could lead to a risk of overfitting, difficulty in interpretation and increased computation time. Thus, we will select only a subset of relevant predictors from the 21 total risk factors in the dataset.
 
 First, bar plots are created below to visually determine correlation between each categorical variable and the target variable `Diabetes_binary`. For `BMI`, a density plot was created due to this feature being numerical.
 
 ![Distribution of Diabetes Binary by Various Variables](../output/combined_plots.png){#fig-eda1}
 
-Of the 21 features, it appears that `HighBP`, `HighChol`, `CholCheck`, `Stroke`, `HeartDiseaseorAttack`, `HvyAlcoholConsump`, `DiffWalk`, `Age`, `Education`, `Income`, and `GenHlth` provide the most obvious differences in distribution between their categories and the target (@fig-eda1). We decided to exclude `BMI` from further feature selection given it was the only numerical feature; Including it would complicate the statistical tests, and its density plot exhibited a high degree of overlap, suggesting a weak correlation with the target (@fig-eda1).
+Of the 21 features, it appears that `HighBP`, `HighChol`, `CholCheck`, `Stroke`, `HeartDiseaseorAttack`, `HvyAlcoholConsump`, `DiffWalk`, `Age`, `Education`, `Income`, and `GenHlth` provide the most obvious differences in distribution between their categories and the target (@fig-eda1). 
+
+The `BMI` feature will be binned into discrete categories corresponding to the CDC's BMI categories (https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html). @tbl-diabetes111 below shows how the BMI feature is binned.
+
+```{r}
+#| label: tbl-diabetes111
+#| tbl-cap: CDC BMI Categories and Corresponding Binned BMI value
+# Note: Rudimentary code for testing, NOT meant to be final. Data taken from CDC https://www.cdc.gov/bmi/adult-calculator/bmi-categories.html
+bmi_categories <- c(
+  "Underweight", 
+  "Healthy Weight", 
+  "Overweight", 
+  "Class 1 Obesity", 
+  "Class 2 Obesity", 
+  "Class 3 Obesity (Severe Obesity)"
+)
+
+bmi_ranges <- c(
+  "Less than 18.5", 
+  "18.5 to less than 25", 
+  "25 to less than 30", 
+  "30 to less than 35", 
+  "35 to less than 40", 
+  "40 or greater"
+)
+
+# Create the table (data frame)
+bmi_table <- data.frame(
+  "BMI_Category" = bmi_categories,
+  "BMI_Range" = bmi_ranges,
+  "BinnedBMI_Value" = 1:6
+)
+
+# View the table
+knitr::kable(bmi_table)
+
+```
 
 To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`.
 
