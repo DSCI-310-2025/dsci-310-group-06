@@ -50,6 +50,6 @@ cramer_chi_results_sorted <- cramer_chi_results(diabetes_train, categorical_vars
 # Run information gain for each feature
 info_table <- info_gain(Diabetes_binary ~ ., data = diabetes_train)
 
-ggplot2::ggsave(opt$output_path_plots, combined_plots) # WRITE combined_plots
+ggplot2::ggsave(opt$output_path_plots, combined_plots, width = 50, height = 50, dpi = 300, limitsize = FALSE) # WRITE combined_plots
 readr::write_csv(cramer_chi_results_sorted, opt$output_path_cramers) # WRITE cramer_chi_results_sorted
 readr::write_csv(info_table, opt$output_path_info_gain) # WRITE info_table
