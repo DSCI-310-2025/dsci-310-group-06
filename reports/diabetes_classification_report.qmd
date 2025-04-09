@@ -22,7 +22,7 @@ format:
     toc: true
     toc-depth: 3
     editor: visual
-    bibliography: ~/work/reports/references.bib
+    bibliography: references.bib
 execute:
   echo: false
   warning: false
@@ -196,20 +196,6 @@ The balanced dataset, `balanced_raw_diabetes_df`, will be saved in the `~/work/o
 From our EDA, we also noted that the `BMI` feature being numerical will be an issue in feature selection. Here, we decide to bin the `BMI` feature into discrete categories corresponding to the Centers for Disease Control and Prevention (CDC) BMI categories for adults (@CDC2024). @tbl-diabetes5 below shows the CDC's categorization (`BMI_Category`, `BMI_Range` in (kg/m^2^)) and how the BMI feature will be binned in the dataset under `BinnedBMI` (@CDC2024).
 
 ```{r}
-library(dplyr)
-
-# Note: Rudimentary code for testing, NOT meant to be final
-training_data <- readRDS("~/work/data/processed/diabetes_train.RDS")
-
-bmi_bins <- c(-Inf, 18.5, 25, 30, 35, 40, Inf)
-bmi_labels <- c(1, 2, 3, 4, 5, 6)
-
-binned_df <- training_data %>%
-  mutate(BinnedBMI = cut(BMI, breaks = bmi_bins, labels = bmi_labels, right = FALSE)) %>%
-  select(-BMI)
-```
-
-```{r}
 #| label: tbl-diabetes5
 #| tbl-cap: CDC BMI Categories, Ranges and Corresponding Binned BMI Values in the Dataset
 # Note: Rudimentary code for testing, NOT meant to be final. Data taken from CDC
@@ -242,6 +228,46 @@ bmi_table <- data.frame(
 knitr::kable(bmi_table)
 ```
 
+```{r}
+library(dplyr)
+
+# Note: Rudimentary code for testing, NOT meant to be final
+training_data <- readRDS("~/work/data/processed/diabetes_train.RDS")
+
+bmi_bins <- c(-Inf, 18.5, 25, 30, 35, 40, Inf)
+bmi_labels <- c(1, 2, 3, 4, 5, 6)
+
+binned_df <- training_data %>%
+  mutate(BinnedBMI = cut(BMI, breaks = bmi_bins, labels = bmi_labels, right = FALSE)) %>%
+  select(-BMI)
+```
+
+@tbl-diabetes6 shows the resulting counts and percentages of individuals in the dataset that correspond to each binned BMI value.  
+
+```{r}
+#| label: tbl-diabetes6
+#| tbl-cap: Count of each Binned BMI Value in the Dataset
+summary_table6 <- binned_df %>%
+  group_by(BinnedBMI) %>% 
+  summarise(
+    Count = n(),
+    Percent = round((n() / nrow(binned_df)) * 100, 1)) %>%
+  arrange(desc(BinnedBMI))
+
+# Pulls the obese percentage metric
+obese_percent <- summary_table6 %>%
+  filter(BinnedBMI %in% c(4, 5, 6)) %>%
+  summarise(SumPercent = sum(Percent))
+
+# Pulls the non-obese percentage metric
+non_obese_percent <- summary_table6 %>%
+  filter(BinnedBMI %in% c(1, 2, 3)) %>%
+  summarise(SumPercent = sum(Percent))
+
+knitr::kable(summary_table6)
+```
+There appears to be a sizable portion of people who are categorized as obese (`BinnedBMI` = 4, 5, 6), with this group making up about `r obese_percent`% of the total. Only a slim majority of individuals have a BMI that is not considered obese (`r non_obese_percent`%).
+
 ### 3.4. Feature Selection
 
 *Analysis Workflow:*
@@ -249,7 +275,7 @@ knitr::kable(bmi_table)
 To further narrow down relevant predictors, we conducted independent chi-squared tests to determine whether a significant relationship exists between each categorical variable and the target variable `Diabetes_binary`.
 
 ```{r}
-#| label: tbl-diabetes5
+#| label: tbl-diabetes7
 #| tbl-cap: Chi-squared Statistic, Degrees of Freedom, p-value, and Cramér’s V sorted in Descending Order
 
 # Arrange the results by p-value (from smallest to largest)
@@ -264,20 +290,45 @@ To address this, we employed Cramér's V which provides a standardized measure o
 
 We defined a Cramér's V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér's V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes5).
 
-Since Cramer's V indicates direct associations between each categorical variable and the target, it is limited to linear relationships. Thus, we will need to analyze non-linear correlations as well. Information Gain (IG) is a metric that can be used for feature selection. This measure determines how much uncertainty is reduced when we use a particular feature in the model. A high IG value indicates an informative feature which means that it is useful for prediction. Research has shown positive results when using information gain to select features as a preprocessing step for various machine learning models, including logistic regression (https://doi.org/10.35145/jabt.v5i3.155).
+One limit of using Cramér's V is that it can only capture linear relationships since it measures the strength of associations between independent categorical variables and the target. To address this, we must also consider non-linear correlations. One metric is Information Gain (IG) which evaluates how much uncertainty is reduced when a particular feature is included in the model. A higher IG value indicates a more informative feature that is useful for prediction. Research has demonstrated the effectiveness of using Information Gain for feature selection as a preprocessing step in various machine learning models, including logistic regression (@Sholeh2024). @tbl-diabetes8 below displays the IG value for each feature in the dataset.
 
 ```{r}
+#| label: tbl-diabetes8
+#| tbl-cap: Information Gain (IG) Value for Each Feature 
 # Rudamentary code
 library(FSelectorRcpp)
 
 mi <- information_gain(Diabetes_binary ~ ., data = binned_df)
+df_sorted <- mi %>%
+  arrange(desc(importance)) %>%
+  rename(Variable = attributes, `Information_Gain` = importance)
 
-df_sorted <- mi %>% arrange(desc(importance))
-
-print(df_sorted)
+knitr::kable(df_sorted)
 ```
 
-Domain knowledge suggests that an information gain value greater than 0.05 (https://journalofbigdata.springeropen.com/articles/10.1186/s40537-021-00472-4) is generally considered to be valid. This threshold value has been shown to provide high model accuracy and optimal training time across multiple datasets. From the table above, we can see that `GenHlth`, `HighBP`, and `BinnedBMI` have an information gain greater than 0.05.
+Domain knowledge suggests that an information gain value greater than 0.05 is generally considered to be valid for feature selection (@Sholeh2024). This threshold value has been shown to yield high model accuracy and optimal training time across multiple datasets (@Sholeh2024). From @tbl-diabetes8, we can see that `GenHlth`, `HighBP`, and `BinnedBMI` have an information gain greater than 0.05. This makes them suitable candidates for inclusion in the model.
+
+Using both Cramér's V and Information Gain, there is overlap between features selected. This is summarized by @tbl-diabetes9 below:
+
+```{r}
+#| label: tbl-diabetes9
+#| tbl-cap: Summary of Features Selected using Cramér's V and Information Gain
+
+cramers <- c("GenHlth", "HighBP", "Age", "HighChol", "DiffWalk")
+ig <- c("GenHlth", "HighBP", "BinnedBMI", NA, NA)
+
+# Combine them into a data frame
+variable_table <- data.frame(
+  List1_Variables = cramers,
+  List2_Variables = ig
+)
+
+# Print the table
+knitr::kable(variable_table)
+
+```
+
+As such, we will be using the following features for our logistic regression model: `GenHlth`, `HighBP`, `Age`, `HighChol`, `DiffWalk`, `BinnedBMI`.
 
 ### 3.5. Classification Analysis
 
@@ -303,7 +354,7 @@ The results of our LASSO regression predictions include `lasso_preds`, which pro
 -   `roc_auc_value`: ROC AUC value; measure of the model's effectiveness in distinguishing between classes.
 
 ```{r}
-#| label: tbl-diabetes6
+#| label: tbl-diabetes10
 #| tbl-cap: Classification Metrics for Lasso Model on Test Set
 
 lasso_metrics <- read_csv("/home/rstudio/work/output/lasso_metrics.csv", show_col_types = FALSE)
