@@ -15,3 +15,5 @@ RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')
     rm -rf /var/lib/apt/lists/* && \
     python3.8 -m venv /venv && \
     /venv/bin/pip install -r /requirements.txt
+
+RUN R -e 'devtools::install_github("DSCI-310-2025/predictdiabetes")'
