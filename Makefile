@@ -12,8 +12,6 @@ clean:
 	rm -rf work/data/processed/*
 	rm -rf work/data/raw/*
 	rm -rf work/docs/*
-	rm -rf work/reports/diabetes_classification_report.html \
-		work/reports/diabetes_classification_report.pdf
 
 index.html: work/output/checking_raw_matrix.RDS \
 	work/output/target_result.csv \
