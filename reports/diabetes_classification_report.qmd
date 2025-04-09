@@ -94,7 +94,7 @@ First, the dataset is obtained from an [external source](https://archive.ics.uci
 
 Moreover, the dataset is highly imbalanced, with more non-diabetic cases than diabetic ones. To address this, the Random Over-Sampling Examples (ROSE) technique is applied to generate synthetic data points to balance the dataset.
 
-Visualizations (bar plots, density plots) are generated to explore the relationships between health indicators and diabetes status. Trends between factors such as `BMI` and `HighBP` with the target variable `Diabetes_binary` are examined. The dataset is split into 75% training data and 25% testing data to build and evaluate the LASSO regression model, with the results being visualised as an ROC curve and a confusion matrix.
+Visualizations (bar plots, density plots) are generated to explore the relationships between health indicators and diabetes status. Trends between factors such as `BMI` and `HighBP` with the target variable `Diabetes_binary` are examined. The dataset is split into 75% training data and 25% testing data to build and evaluate the LASSO regression model. According to @Sivakumar2024, the most commonly used train-test splits in the literature are 70:30 and 80:20. However, using too little or too much training data can lead to issues such as underfitting or overfitting. As such, we chose a 75:25 split as a reasonable compromise that has also demonstrated high accuracy in logistic regression machine learning models (@Sivakumar2024). The results of our analysis are visualised as an ROC curve and a confusion matrix.
 
 ### 3.1. Loading Data from Original Source on the Web
 
