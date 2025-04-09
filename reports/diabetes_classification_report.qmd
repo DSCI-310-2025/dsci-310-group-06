@@ -260,6 +260,19 @@ To address this, we employed Cramér's V which provides a standardized measure o
 
 We defined a Cramér's V value greater than 0.25 to be strongly associated with the target and sufficient to include the corresponding feature in our model. This value is supported in the literature; @Akoglu2018's correlation coefficient guide suggests that a value above 0.25 can be interpreted as a very strong relationship between the variables compared. Similarly, @Dai2021 considered Cramér's V values greater than 0.25 as reflecting a very strong association in their clinical study. Using this threshold, we selected the following features to use in our model: `GenHlth`, `HighBP`, `Age`, `HighChol`, and `DiffWalk` (@tbl-diabetes5).
 
+Since Cramer's V indicates direct associations between each categorical variable and the target, it is limited to linear relationships. Thus, we will need to analyze non-linear correlations as well. Information Gain (IG) is a metric that can be used for feature selection. This measure determines how much uncertainty is reduced when we use a particular feature in the model. A high IG value indicates an informative feature which means that it is useful for prediction. Research has shown positive results when using information gain to select features as a preprocessing step for various machine learning models, including logistic regression (https://doi.org/10.35145/jabt.v5i3.155).
+
+```{r}
+# Rudamentary code
+library(FSelectorRcpp)
+
+mi <- information_gain(Diabetes_binary ~ ., data = binned_df)
+
+df_sorted <- mi %>% arrange(desc(importance))
+
+print(df_sorted)
+```
+
 ### 3.4. Classification Analysis
 
 *Analysis Workflow:*
