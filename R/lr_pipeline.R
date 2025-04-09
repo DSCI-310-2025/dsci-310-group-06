@@ -3,7 +3,7 @@
 #' Trains and fits a logistic regression model and cross-validates for optimal 
 #' hyperparameter values
 #'
-#' @param data_frame A data frame or data frame extension (e.g. a tibble).
+#' @param data A data frame or data frame extension (e.g. a tibble).
 #' @param target_col A string specifying the variable of interest.
 #' @param vfolds A number specifying the amount of folds used in k-fold cross-validation (Default = 5).
 #' @param grid_size A number specifying penalty values to test during model tuning (Default = 10).

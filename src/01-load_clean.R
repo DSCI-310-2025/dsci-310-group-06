@@ -1,6 +1,6 @@
 "This script loads, cleans, and saves diabetes_train, diabetes_test
 
-Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_path_na_count_type=<r_path_na_count_type> --r_path_category_target=<r_path_category_target> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test>
+Usage: src/01-load_clean.R --python_path=<python_path> --extract_path=<extract_path> --file_path=<file_path> --r_path_na_count_type=<r_path_na_count_type> --r_path_category_target=<r_path_category_target> --output_path_raw=<output_path_raw> --output_path_target=<output_path_target> --output_path_bal=<output_path_bal> --output_path_df=<output_path_df> --output_path_train=<output_path_train> --output_path_test=<output_path_test> --output_path_bin=<output_path_bin>
 
 Options:
 --python_path=<python_path>                       Path to python executable
@@ -14,6 +14,7 @@ Options:
 --output_path_df=<output_path_df>                 Path to save the comparison data frame of target variable class distribution before and after balancing
 --output_path_train=<output_path_train>           Path to save the training dataset
 --output_path_test=<output_path_test>             Path to save the test dataset
+--output_path_bin=<output_path_bin>               Path to save the summary statistics of the binned variable
 " -> doc
 
 library(tidyverse)
@@ -37,7 +38,6 @@ raw_diabetes_df <- readr::read_csv(opt$file_path, show_col_types = FALSE)
 
 # Checking for NA values, distinct counts of each variable, and the current data type
 checking_raw_matrix <- na_count_type(raw_diabetes_df)
-readr::write_rds(checking_raw_matrix, opt$output_path_raw) # WRITE checking_raw_matrix
 
 # Converting categorical/binary variables into factors
 raw_diabetes_df <- raw_diabetes_df %>%
@@ -46,13 +46,9 @@ raw_diabetes_df <- raw_diabetes_df %>%
 # Checking to see how unbalanced the dataset is with respect to the target variable
 target_result <- category_target(raw_diabetes_df, Diabetes_binary)
 
-# WRITE target_result
-readr::write_csv(target_result, opt$output_path_target)
-
 # Using ROSE to balance data by oversampling
 balanced_raw_diabetes_df <- ROSE::ROSE(Diabetes_binary ~ ., data = raw_diabetes_df, seed = 123)$data
 balanced_target_result <- category_target(balanced_raw_diabetes_df, Diabetes_binary)
-readr::write_csv(balanced_target_result, opt$output_path_bal) # WRITE balanced_target_result
 
 # Comparing class distribution before and after balancing
 balanced_raw_comparision_df <- data.frame(
@@ -62,13 +58,24 @@ balanced_raw_comparision_df <- data.frame(
   Balanced_Count = balanced_target_result$Count,
   Balanced_Proportion = balanced_target_result$Proportion
 )
-readr::write_csv(balanced_raw_comparision_df, opt$output_path_df) # WRITE balanced_raw_comparison_df
+
+# Binning numerical BMI into discrete categories
+binned_diabetes_df <- balanced_raw_diabetes_df %>%
+  dplyr::mutate(BinnedBMI = cut(BMI, breaks = c(-Inf, 18.5, 25, 30, 35, 40, Inf), labels = c(1, 2, 3, 4, 5, 6), right = FALSE)) %>%
+  dplyr::select(-BMI)
+
+# Checking to see counts of the binned BMI variable
+binned_result <- category_target(binned_diabetes_df, BinnedBMI)
 
 # Split data into 75% train, 25% test for machine learning
-diabetes_split <- rsample::initial_split(balanced_raw_diabetes_df, prop = 0.75, strata = Diabetes_binary)
+diabetes_split <- rsample::initial_split(binned_diabetes_df, prop = 0.75, strata = Diabetes_binary)
 diabetes_train <- rsample::training(diabetes_split)
 diabetes_test <- rsample::testing(diabetes_split)
 
-# WRITE diabetes_train, diabetes_test
-readr::write_rds(diabetes_train, opt$output_path_train)
-readr::write_rds(diabetes_test, opt$output_path_test)
+readr::write_rds(checking_raw_matrix, opt$output_path_raw) # WRITE checking_raw_matrix
+readr::write_csv(target_result, opt$output_path_target) # WRITE target_result
+readr::write_csv(balanced_target_result, opt$output_path_bal) # WRITE balanced_target_result
+readr::write_csv(balanced_raw_comparision_df, opt$output_path_df) # WRITE balanced_raw_comparison_df
+readr::write_rds(diabetes_train, opt$output_path_train) # WRITE diabetes_train
+readr::write_rds(diabetes_test, opt$output_path_test) # WRITE diabetes_test
+readr::write_csv(binned_result, opt$output_path_bin) # WRITE binned_result
