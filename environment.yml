@@ -1,0 +1,25 @@
+# The version for `r-base` and R packages is not specified due to compatibility issues and the unavailability of `r-base=4.2.1` in Conda-Forge.
+# Using `r-base=4.*` ensures compatibility with R version 4.x for all dependencies.
+
+name: dsci310g6-env
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  - r-base=4.*
+  - quarto=1.6.43
+  - pip
+  - pip:
+      - pandas==2.0.3
+      - ucimlrepo==0.0.7
+  - r-tidyverse
+  - r-tidymodels
+  - r-glmnet
+  - r-patchwork
+  - r-rose
+  - r-vcd
+  - r-docopt
+  - r-janitor
+  - r-fselectorrcpp
+  - r-devtools
+  - r-pointblank
