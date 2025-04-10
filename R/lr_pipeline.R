@@ -1,7 +1,7 @@
-#' Logistic Regression Pipeline
+#' Logistic Regression Binary Classification Pipeline
 #' 
 #' Trains and fits a logistic regression model and cross-validates for optimal 
-#' hyperparameter values
+#' hyperparameter values.
 #'
 #' @param data A data frame or data frame extension (e.g. a tibble).
 #' @param target_col A string specifying the variable of interest.
@@ -10,7 +10,7 @@
 #' @param tuning_metric A string specifying the metric used to select for the most optimal model (e.g. "recall").
 #' @param output_path String path location to save the model as an RDS object.
 #' 
-#' @return An RDS object
+#' @return An RDS file containing the workflow object
 #'
 #' @export
 #' 
