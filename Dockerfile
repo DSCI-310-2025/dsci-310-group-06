@@ -10,6 +10,7 @@ RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')
     Rscript -e "remotes::install_version('tidymodels', version='1.2.0', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('docopt', version='0.7.1', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('janitor', version='2.2.1', repos='https://cloud.r-project.org')" && \
+    Rscript -e "remotes::install_version('pointblank', version='0.11.2', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('FSelectorRcpp', version='0.3.13', repos='https://cloud.r-project.org')" && \
     apt update && \
     apt install -y python3.8 python3-pip python3-venv && \
