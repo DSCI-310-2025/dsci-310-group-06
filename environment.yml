@@ -21,4 +21,4 @@ dependencies:
   - r-docopt
   - r-janitor
   - r-devtools
-  - r-FSelectorRcpp
+  - r-fselectorrcpp
