@@ -15,4 +15,4 @@ y = cdc_diabetes_health_indicators.data.targets
 # print(cdc_diabetes_health_indicators.variables)
 
 df = pd.concat([X, y], axis=1)
-df.to_csv('/home/rstudio/work/data/raw/cdc_diabetes_health_indicators.csv', index=False) # Running from base
+df.to_csv('~/work/data/raw/cdc_diabetes_health_indicators.csv', index=False) # Running from base

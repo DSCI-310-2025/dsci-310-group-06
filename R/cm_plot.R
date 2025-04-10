@@ -60,7 +60,7 @@ cm_plot <- function(conf_matrix_df, output_path) {
     ) +
     ggplot2::guides(fill = "none")
 
-  ggplot2::ggsave(output_path, output_plot, width = 8, height = 8, dpi = 300, limitsize = FALSE)
+  ggplot2::ggsave(output_path, output_plot)
   
   return(output_plot)
 }
