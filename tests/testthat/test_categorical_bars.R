@@ -1,9 +1,6 @@
 library(testthat)
 source("~/work/R/categorical_bars.R")
 
-library(testthat)
-library(ggplot2)
-
 # Sample testing data frame
 test_df <- data.frame(
   v1 = factor(c(4, 6, 6, 8, 4)),

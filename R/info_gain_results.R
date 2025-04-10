@@ -17,6 +17,10 @@
 #' 
 info_gain <- function(data, formula) {
   
+  if (is.null(data) || nrow(data) == 0) {
+    stop("Input data cannot be empty")
+  }
+  
   ig <- FSelectorRcpp::information_gain(formula, data = data)
   
   info_sorted <- ig %>%
