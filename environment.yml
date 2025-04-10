@@ -12,13 +12,14 @@ dependencies:
   - pip:
       - pandas==2.0.3
       - ucimlrepo==0.0.7
-  - r-pointblank
-  - r-rose
-  - r-patchwork
-  - r-glmnet
-  - r-vcd
+  - r-tidyverse
   - r-tidymodels
+  - r-glmnet
+  - r-patchwork
+  - r-rose
+  - r-vcd
   - r-docopt
   - r-janitor
-  - r-devtools
   - r-fselectorrcpp
+  - r-devtools
+  - r-pointblank
