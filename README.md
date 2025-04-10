@@ -84,6 +84,7 @@ docker-compose up
 - `vcd` (v1.4-13)
 - `docopt` (v0.7.1)
 - `janitor` (v2.2.1)
+- `pointblank` (v0.11.2)
 - `FSelectorRcpp` (v0.3.13)
 
 ### Python 3.8 and Python packages
