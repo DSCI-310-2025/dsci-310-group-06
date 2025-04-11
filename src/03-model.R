@@ -28,4 +28,4 @@ diabetes_train_filtered <- diabetes_train %>%
 # Pipeline for logistic regression
 lasso_tuned_wflow <- predictdiabetes::lr_pipeline(diabetes_train_filtered, "Diabetes_binary", 5, 10, "recall", opt$output_path)
 
-readr::write_rds(lasso_tuned_wflow, opt$output_path) # WRITE lasso_tuned_wflow
+readr::write_rds(lasso_tuned_wflow, opt$output_path, compress = "gz") # WRITE lasso_tuned_wflow
