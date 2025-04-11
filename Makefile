@@ -10,7 +10,6 @@ report:
 clean:
 	rm -rf work/output/*
 	rm -rf work/data/processed/*
-	rm -rf work/data/raw/*
 	rm -rf work/docs/*
 
 index.html: work/output/checking_raw_matrix.RDS \
