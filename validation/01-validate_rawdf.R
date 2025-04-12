@@ -38,6 +38,8 @@ agent <- agent %>%
   )
 
 # (5) Correct data types in each column
+agent <- agent %>%
+  pointblank::col_is_numeric(columns = everything())
 
 # (6) No duplicate observations
 
