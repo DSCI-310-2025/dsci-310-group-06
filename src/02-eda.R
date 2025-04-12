@@ -9,9 +9,6 @@ Options:
 " -> doc
 
 library(tidyverse)
-library(patchwork)
-library(vcd)
-library(FSelectorRcpp)
 library(docopt)
 library(predictdiabetes)
 

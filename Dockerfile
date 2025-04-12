@@ -3,6 +3,7 @@ FROM rocker/verse:4.2.1
 COPY src/requirements.txt /requirements.txt
 
 RUN Rscript -e "install.packages('remotes', repos='https://cloud.r-project.org')" && \
+    Rscript -e "remotes::install_version('glmnet', version='4.1-8', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('ROSE', version='0.0-4', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('tidymodels', version='1.2.0', repos='https://cloud.r-project.org')" && \
     Rscript -e "remotes::install_version('docopt', version='0.7.1', repos='https://cloud.r-project.org')" && \
