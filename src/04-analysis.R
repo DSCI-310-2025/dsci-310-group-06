@@ -25,6 +25,7 @@ opt <- docopt::docopt(doc)
 diabetes_test <- readr::read_rds(opt$file_path_test)
 lasso_tuned_wflow <- readr::read_rds(opt$file_path_wflow)
 
+
 # Applying to the test set
 lasso_modelOutputs <- diabetes_test %>%
   cbind(lasso_tuned_wflow %>% predict(diabetes_test), 
