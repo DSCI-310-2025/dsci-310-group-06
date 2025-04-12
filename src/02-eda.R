@@ -25,17 +25,17 @@ diabetes_train <- readr::read_rds(opt$file_path)
 
 # Categorical variables
 categorical_vars <- c("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", 
-                      "HeartDiseaseorAttack", "PhysActivity", "Fruits", "Veggies", 
+                      "HeartDiseaseorAttack", "PhysActivity", "Fruits", "Veggies",
                       "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", 
-                      "DiffWalk", "Sex", "Age", "Education", "Income", "MentHlth", 
+                      "DiffWalk", "Sex", "Age", "Education", "Income", "MentHlth",
                       "PhysHlth", "GenHlth", "BinnedBMI")
 
 # Creating bar plots for each categorical variable in the dataset
 bar_plots <- predictdiabetes::categorical_bars(diabetes_train, categorical_vars, "Diabetes_binary", 
-                                               title_size = 30, axis_size = 35,  
-                                               legend_key_size=5,
-                                               legend_text_size= 40,
-                                               legend_title_size=50)
+                                               title_size = 30, axis_size = 35,
+                                               legend_key_size = 5,
+                                               legend_text_size = 40,
+                                               legend_title_size = 50)
 
 
 # Combining all of the plots into a facet of plots (3 columns)
