@@ -1,5 +1,7 @@
-# The version for `r-base` and R packages is not specified due to compatibility issues and the unavailability of `r-base=4.2.1` in Conda-Forge.
-# Using `r-base=4.*` ensures compatibility with R version 4.x for all dependencies.
+# Environment for DSCI 310 Group 6 project.
+# We use `r-base=4.*` instead of a specific version like `r-base=4.2.1`
+# because Conda-Forge does not consistently offer all R packages for that version.
+# Using a wildcard ensures compatibility with the R 4.x ecosystem.
 
 name: dsci310g6-env
 channels:
@@ -15,11 +17,11 @@ dependencies:
   - r-tidyverse
   - r-tidymodels
   - r-glmnet
-  - r-patchwork
   - r-rose
-  - r-vcd
   - r-docopt
-  - r-janitor
-  - r-fselectorrcpp
   - r-devtools
   - r-pointblank
+
+# After creating the environment, run the following command in an R terminal:
+# devtools::install_github("DSCI-310-2025/predictdiabetes@1.0.0")
+# (Conda does not natively support installing packages directly from GitHub.)
