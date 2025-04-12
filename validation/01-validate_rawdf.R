@@ -41,7 +41,11 @@ agent <- agent %>%
 agent <- agent %>%
   pointblank::col_is_numeric(columns = everything())
 
-# (6) No duplicate observations
+# (6) No duplicate observations - stop if more than 10% are duplicated
+agent <- agent %>%
+  pointblank::rows_distinct(
+    actions = action_levels(warn_at = 0.01, stop_at = 0.1)
+  )
 
 # (7) No outlier or anomalous values
 numeric_cols <- raw_df %>% 
