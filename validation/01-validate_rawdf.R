@@ -86,7 +86,7 @@ expected_levels <- list(
   AnyHealthcare = c(0, 1),
   NoDocbcCost = c(0, 1),
   DiffWalk = c(0, 1),
-  Sex = c(1, 2),
+  Sex = c(0, 1),
   Age = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
   Education = c(1, 2, 3, 4, 5, 6),
   Income = c(1, 2, 3, 4, 5, 6, 7, 8),
