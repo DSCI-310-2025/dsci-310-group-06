@@ -9,6 +9,7 @@ services:
       - "./src:/home/rstudio/work/src"
       - "./output:/home/rstudio/work/output"
       - "./docs:/home/rstudio/work/docs"
+      - "./validation:/home/rstudio/work/validation"
       - "./Makefile:/home/rstudio/Makefile"
     environment:
       DISABLE_AUTH: true
