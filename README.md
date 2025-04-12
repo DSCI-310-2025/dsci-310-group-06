@@ -79,13 +79,10 @@ docker-compose up
 - `tidyverse` (v2.0.0)  
 - `tidymodels` (v1.2.0)  
 - `glmnet` (v4.1-8)  
-- `patchwork` (v1.3.0)  
 - `ROSE` (v0.0-4)  
-- `vcd` (v1.4-13)
 - `docopt` (v0.7.1)
-- `janitor` (v2.2.1)
 - `pointblank` (v0.11.2)
-- `FSelectorRcpp` (v0.3.13)
+- `predictdiabetes` (v1.0.0)
 
 ### Python 3.8 and Python packages
 
