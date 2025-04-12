@@ -24,7 +24,8 @@ index.html: work/output/checking_raw_matrix.RDS \
 	work/output/cm_plot.png \
 	work/output/cm_df.csv \
 	work/reports/diabetes_classification_report.html \
-	work/reports/diabetes_classification_report.pdf
+	work/reports/diabetes_classification_report.pdf \
+	work/reports/diabetes_rawdf_validation.html
 	cp work/reports/diabetes_classification_report.html work/docs/index.html
 
 # From 01-load_clean.R
@@ -41,6 +42,12 @@ work/output/checking_raw_matrix.RDS work/output/target_result.csv work/output/ba
 	--output_path_test=work/data/processed/diabetes_test.RDS \
 	--output_path_bin=work/output/binned_result.csv
 
+# From 01-validate_rawdf.R
+work/reports/diabetes_rawdf_validation.html: work/src/01-load_clean.R work/validation/01-validate_rawdf.R work/data/raw/cdc_diabetes_health_indicators.csv
+	Rscript work/validation/01-validate_rawdf.R \
+	--raw_df=work/data/raw/cdc_diabetes_health_indicators.csv \
+	--output_report=work/reports/diabetes_rawdf_validation.html
+	
 # From 02-eda.R
 work/output/combined_plots.png work/output/cramer_chi_results_sorted.csv work/output/info_table.csv: work/src/02-eda.R work/data/processed/diabetes_train.RDS
 	Rscript work/src/02-eda.R \
