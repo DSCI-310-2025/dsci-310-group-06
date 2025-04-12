@@ -41,37 +41,71 @@ agent <- agent %>%
 agent <- agent %>%
   pointblank::col_is_numeric(columns = everything())
 
-# (6) No duplicate observations - stop if more than 10% are duplicated
+# (6) No duplicate observations - stop if more than 1% are duplicated
 agent <- agent %>%
   pointblank::rows_distinct(
     actions = action_levels(warn_at = 0.01, stop_at = 0.1)
   )
 
 # (7) No outlier or anomalous values
-numeric_cols <- raw_df %>% 
-  dplyr::select(where(is.numeric)) %>% 
-  colnames()
+validation_criteria <- list(
+  BMI = list(type = "iqr", range = NULL),
+  Age = list(type = "range", range = 1:13),
+  Education = list(type = "range", range = 1:6),
+  Income = list(type = "range", range = 1:13),
+  MentHlth = list(type = "range", range = 1:30),
+  PhysHlth = list(type = "range", range = 1:30),
+  GenHlth = list(type = "range", range = 1:5)
+)
 
-for (col in numeric_cols) {
-  q1 <- quantile(raw_df[[col]], 0.25, na.rm = TRUE)
-  q3 <- quantile(raw_df[[col]], 0.75, na.rm = TRUE)
-  iqr <- q3 - q1
-  lower_bound <- q1 - 1.5 * iqr
-  upper_bound <- q3 + 1.5 * iqr
+all_columns <- colnames(raw_df)
+validated_columns <- names(validation_criteria)
+non_validated_columns <- setdiff(all_columns, validated_columns)
 
-  precond_expr <- rlang::new_formula(
-    NULL,
-    rlang::expr(. %>% dplyr::filter(!is.na(!!sym(col))))
-  )
+for (col in names(validation_criteria)) {
+  criteria <- validation_criteria[[col]]
+  
+  if (criteria$type == "iqr") {
+    # Calculate IQR bounds for BMI
+    q1 <- quantile(raw_df[[col]], 0.25, na.rm = TRUE)
+    q3 <- quantile(raw_df[[col]], 0.75, na.rm = TRUE)
+    iqr <- q3 - q1
+    lower_bound <- q1 - 1.5 * iqr
+    upper_bound <- q3 + 1.5 * iqr
+    
+    agent <- agent %>%
+      pointblank::col_vals_between(
+        columns = {{ col }},
+        left = lower_bound,
+        right = upper_bound,
+        na_pass = TRUE,
+        actions = action_levels(warn_at = 0.1, stop_at = 0.05),
+        brief = paste0("Check for outliers in ", col)
+      )
+  } else if (criteria$type == "range") {
+    # Apply range check based on validation criteria
+    range_values <- criteria$range
+    agent <- agent %>%
+      pointblank::col_vals_between(
+        columns = {{ col }},
+        left = min(range_values),
+        right = max(range_values),
+        na_pass = TRUE,
+        actions = action_levels(warn_at = 0.1, stop_at = 0.05),
+        brief = paste0("Check for outliers in ", col, " that are out of the range ", min(range_values), " to ", max(range_values))
+      )
+  } 
+}
+
+for (col in non_validated_columns) {
   agent <- agent %>%
-    col_vals_between(
+    pointblank::col_vals_between(
       columns = {{ col }},
-      left = lower_bound,
-      right = upper_bound,
+      left = 0,
+      right = 1,
       na_pass = TRUE,
-      preconditions = precond_expr,
-      actions = action_levels(warn_at = 0.25, stop_at = 0.05),
-      brief = paste0("Check for outliers in ", col),
+      actions = action_levels(warn_at = 0.1, stop_at = 0.05),
+      brief = paste0("Check for outliers in ", col, " that are out of the binary range 0 to 1")
     )
 }
 
@@ -79,6 +113,7 @@ for (col in numeric_cols) {
 
 ## String mismatches
 expected_levels <- list(
+  Diabetes_binary = c(0, 1),
   HighBP = c(0, 1),
   HighChol = c(0, 1),
   CholCheck = c(0, 1),
@@ -93,19 +128,17 @@ expected_levels <- list(
   NoDocbcCost = c(0, 1),
   DiffWalk = c(0, 1),
   Sex = c(0, 1),
-  Age = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13),
-  Education = c(1, 2, 3, 4, 5, 6),
-  Income = c(1, 2, 3, 4, 5, 6, 7, 8),
-  MentHlth = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-               16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30),
-  PhysHlth = c(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15,
-               16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30),
-  GenHlth = c(1, 2, 3, 4, 5)
+  Age = 1:13,
+  Education = 1:6,
+  Income = 1:8,
+  MentHlth = 1:30,
+  PhysHlth = 1:30,
+  GenHlth = 1:5
 )
 
 for (col in names(expected_levels)) {
   agent <- agent %>%
-    col_vals_in_set(
+    pointblank::col_vals_in_set(
       columns = {{ col }},
       set = expected_levels[[col]],
       actions = action_levels(warn_at = 0.01, stop_at = 0.05),
@@ -113,7 +146,7 @@ for (col in names(expected_levels)) {
 }
 
 ## Singleton values (Cannot find any function in pointblank for this)
-categorical_vars <- c("HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", 
+categorical_vars <- c("Diabetes_binary", "HighBP", "HighChol", "CholCheck", "Smoker", "Stroke", 
                       "HeartDiseaseorAttack", "PhysActivity", "Fruits", "Veggies",
                       "HvyAlcoholConsump", "AnyHealthcare", "NoDocbcCost", 
                       "DiffWalk", "Sex", "Age", "Education", "Income", "MentHlth",
