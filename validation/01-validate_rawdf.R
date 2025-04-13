@@ -96,8 +96,8 @@ for (col in names(validation_criteria)) {
     q1 <- quantile(raw_df[[col]], 0.25, na.rm = TRUE)
     q3 <- quantile(raw_df[[col]], 0.75, na.rm = TRUE)
     iqr <- q3 - q1
-    lower_bound <- q1 - 3 * iqr
-    upper_bound <- q3 + 3 * iqr
+    lower_bound <- q1 - 1.5 * iqr
+    upper_bound <- q3 + 1.5 * iqr
     
     agent <- agent %>%
       pointblank::col_vals_between(
