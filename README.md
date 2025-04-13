@@ -72,6 +72,23 @@ docker-compose up
 - Open a browser and visit `http://localhost:10000` on a web brower to interact with the service (e.g., view reports or access the web app).
 - To generate the entire report while the services are running, run `make all` in the R terminal inside the container.
 
+#### **Option 3: Use `environment.yml` to Create Custom Environment**
+
+Users can also use `environment.yml` with Conda to create and activate a custom environment:
+
+```bash
+conda env create -f environment.yml
+conda activate dsci310g6-env
+```
+
+After activating the environment, to obtain the necessary package for this analysis, open the R console and run:
+
+```R
+devtools::install_github("DSCI-310-2025/predictdiabetes@1.0.0")
+```
+
+NOTE: Conda does not natively support installing packages directly from GitHub.
+
 ## List of dependencies needed to run analysis
 
 ### R version 4.2.1 and R packages
