@@ -181,3 +181,4 @@ if (all(is.na(agent$validation_set$warn) & is.na(agent$validation_set$notify))) 
 } else {
   warning("Validation issues detected for raw data. Please review the report at: ", opt$output_report)
 }
+
