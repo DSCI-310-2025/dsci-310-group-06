@@ -23,6 +23,10 @@ agent <- pointblank::create_agent(tbl = raw_df)
 # Validations
 
 # (1) Correct data file format
+if (tools::file_ext(opt$raw_df) != "csv") {
+  stop("Error: The specified raw data file is not a .csv file.")
+}
+
 
 # (2) Correct column names
 expected_schema <- col_schema(
