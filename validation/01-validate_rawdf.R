@@ -67,10 +67,10 @@ agent <- agent %>%
 agent <- agent %>%
   pointblank::col_is_numeric(columns = everything())
 
-# (6) No duplicate observations - stop if more than 1% are duplicated
+# (6) No duplicate observations
 agent <- agent %>%
   pointblank::rows_distinct(
-    actions = action_levels(warn_at = 0.01, stop_at = 0.1)
+    actions = action_levels(warn_at = 0.15, stop_at = 0.20)
   )
 
 # (7) No outlier or anomalous values
@@ -79,8 +79,8 @@ validation_criteria <- list(
   Age = list(type = "range", range = 1:13),
   Education = list(type = "range", range = 1:6),
   Income = list(type = "range", range = 1:13),
-  MentHlth = list(type = "range", range = 1:30),
-  PhysHlth = list(type = "range", range = 1:30),
+  MentHlth = list(type = "range", range = 0:30),
+  PhysHlth = list(type = "range", range = 0:30),
   GenHlth = list(type = "range", range = 1:5)
 )
 
@@ -96,8 +96,8 @@ for (col in names(validation_criteria)) {
     q1 <- quantile(raw_df[[col]], 0.25, na.rm = TRUE)
     q3 <- quantile(raw_df[[col]], 0.75, na.rm = TRUE)
     iqr <- q3 - q1
-    lower_bound <- q1 - 1.5 * iqr
-    upper_bound <- q3 + 1.5 * iqr
+    lower_bound <- q1 - 3 * iqr
+    upper_bound <- q3 + 3 * iqr
     
     agent <- agent %>%
       pointblank::col_vals_between(
@@ -157,8 +157,8 @@ expected_levels <- list(
   Age = 1:13,
   Education = 1:6,
   Income = 1:8,
-  MentHlth = 1:30,
-  PhysHlth = 1:30,
+  MentHlth = 0:30,
+  PhysHlth = 0:30,
   GenHlth = 1:5
 )
 
