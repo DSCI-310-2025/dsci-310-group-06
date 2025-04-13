@@ -64,7 +64,10 @@ expected_schema <- pointblank::col_schema(
 )
 
 agent <- agent %>%
-  pointblank::col_schema_match(schema = expected_schema)
+  pointblank::col_schema_match(
+    schema = expected_schema,
+    brief = "Expect that column names are correct"
+  )
 
 # (3) No empty observations
 agent <- agent %>%
