@@ -25,6 +25,32 @@ agent <- pointblank::create_agent(tbl = raw_df)
 # (1) Correct data file format
 
 # (2) Correct column names
+expected_schema <- col_schema(
+  "Diabetes_binary",
+  "HighBP",
+  "HighChol",
+  "CholCheck",
+  "BMI",
+  "Smoker",
+  "Stroke",
+  "HeartDiseaseorAttack",
+  "PhysActivity",
+  "Fruits",
+  "Veggies",
+  "HvyAlcoholConsump",
+  "AnyHealthcare",
+  "NoDocbcCost",
+  "DiffWalk",
+  "Sex",
+  "Age",
+  "Education",
+  "Income",
+  "MentHlth",
+  "PhysHlth",
+  "GenHlth")
+
+agent <- agent %>%
+  pointblank::col_schema_match(schema = expected_schema)
 
 # (3) No empty observations
 agent <- agent %>%
