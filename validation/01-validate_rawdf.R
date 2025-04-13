@@ -29,7 +29,8 @@ temp_df <- data.frame(file_extension = data_format, stringsAsFactors = FALSE)
 agent_ext <- create_agent(tbl = temp_df) %>%
   pointblank::col_vals_equal(
     vars(file_extension),
-    value = data_format
+    value = data_format,
+    actions = action_levels(warn_at = 1, stop_at = 1)
   ) %>%
   pointblank::interrogate()
 
@@ -66,12 +67,15 @@ expected_schema <- pointblank::col_schema(
 agent <- agent %>%
   pointblank::col_schema_match(
     schema = expected_schema,
-    brief = "Expect that column names are correct"
+    brief = "Expect that column names are correct",
+    actions = action_levels(warn_at = 1, stop_at = 1)
   )
 
 # (3) No empty observations
 agent <- agent %>%
-  pointblank::rows_complete()
+  pointblank::rows_complete(
+    actions = action_levels(warn_at = 1, stop_at = 1)
+  )
 
 # (4) Missingness threshold - stop if more than 10% missing
 agent <- agent %>%
@@ -82,7 +86,10 @@ agent <- agent %>%
 
 # (5) Correct data types in each column
 agent <- agent %>%
-  pointblank::col_is_numeric(columns = everything())
+  pointblank::col_is_numeric(
+    columns = everything(),
+    actions = action_levels(warn_at = 1, stop_at = 1)
+  )
 
 # (6) No duplicate observations
 agent <- agent %>%
@@ -222,7 +229,7 @@ multiagent_report <- get_multiagent_report(multiagent, display_mode = "long")
 pointblank::export_report(multiagent_report, filename = opt$output_report)
 
 # Check validation results
-if (all(is.na(agent$validation_set$warn) & is.na(agent$validation_set$notify))) {
+if (all(agent$validation_set$warn) == FALSE) {
   message("Validation passed for raw data. Report saved to: ", opt$output_report)
 } else {
   warning("Validation issues detected for raw data. Please review the report at: ", opt$output_report)
