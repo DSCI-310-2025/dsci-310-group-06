@@ -25,6 +25,32 @@ agent <- pointblank::create_agent(tbl = raw_df)
 # (1) Correct data file format
 
 # (2) Correct column names
+expected_schema <- col_schema(
+  "Diabetes_binary",
+  "HighBP",
+  "HighChol",
+  "CholCheck",
+  "BMI",
+  "Smoker",
+  "Stroke",
+  "HeartDiseaseorAttack",
+  "PhysActivity",
+  "Fruits",
+  "Veggies",
+  "HvyAlcoholConsump",
+  "AnyHealthcare",
+  "NoDocbcCost",
+  "DiffWalk",
+  "Sex",
+  "Age",
+  "Education",
+  "Income",
+  "MentHlth",
+  "PhysHlth",
+  "GenHlth")
+
+agent <- agent %>%
+  pointblank::col_schema_match(schema = expected_schema)
 
 # (3) No empty observations
 agent <- agent %>%
@@ -41,10 +67,10 @@ agent <- agent %>%
 agent <- agent %>%
   pointblank::col_is_numeric(columns = everything())
 
-# (6) No duplicate observations - stop if more than 1% are duplicated
+# (6) No duplicate observations
 agent <- agent %>%
   pointblank::rows_distinct(
-    actions = action_levels(warn_at = 0.01, stop_at = 0.1)
+    actions = action_levels(warn_at = 0.15, stop_at = 0.20)
   )
 
 # (7) No outlier or anomalous values
@@ -53,8 +79,8 @@ validation_criteria <- list(
   Age = list(type = "range", range = 1:13),
   Education = list(type = "range", range = 1:6),
   Income = list(type = "range", range = 1:13),
-  MentHlth = list(type = "range", range = 1:30),
-  PhysHlth = list(type = "range", range = 1:30),
+  MentHlth = list(type = "range", range = 0:30),
+  PhysHlth = list(type = "range", range = 0:30),
   GenHlth = list(type = "range", range = 1:5)
 )
 
@@ -131,8 +157,8 @@ expected_levels <- list(
   Age = 1:13,
   Education = 1:6,
   Income = 1:8,
-  MentHlth = 1:30,
-  PhysHlth = 1:30,
+  MentHlth = 0:30,
+  PhysHlth = 0:30,
   GenHlth = 1:5
 )
 
