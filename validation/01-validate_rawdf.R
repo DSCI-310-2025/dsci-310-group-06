@@ -23,31 +23,45 @@ agent <- pointblank::create_agent(tbl = raw_df)
 # Validations
 
 # (1) Correct data file format
+data_format <- "csv"
+temp_df <- data.frame(file_extension = data_format, stringsAsFactors = FALSE)
 
-# (2) Correct column names
-expected_schema <- col_schema(
-  "Diabetes_binary",
-  "HighBP",
-  "HighChol",
-  "CholCheck",
-  "BMI",
-  "Smoker",
-  "Stroke",
-  "HeartDiseaseorAttack",
-  "PhysActivity",
-  "Fruits",
-  "Veggies",
-  "HvyAlcoholConsump",
-  "AnyHealthcare",
-  "NoDocbcCost",
-  "DiffWalk",
-  "Sex",
-  "Age",
-  "Education",
-  "Income",
-  "MentHlth",
-  "PhysHlth",
-  "GenHlth")
+agent_ext <- create_agent(tbl = temp_df) %>%
+  pointblank::col_vals_equal(
+    vars(file_extension),
+    value = data_format
+  ) %>%
+  pointblank::interrogate()
+
+if (agent_ext$validation_set$f_failed > 0) {
+  stop("The input file is not a CSV. Please provide a file with a .csv extension.")
+}
+
+# (2) Correct column names - col_schema() requires both col_names and col_types to be specified
+expected_schema <- pointblank::col_schema(
+  HighBP = "numeric",
+  HighChol = "numeric",
+  CholCheck = "numeric",
+  BMI = "numeric",
+  Smoker = "numeric",
+  Stroke = "numeric",
+  HeartDiseaseorAttack = "numeric",
+  PhysActivity = "numeric",
+  Fruits = "numeric",
+  Veggies = "numeric",
+  HvyAlcoholConsump = "numeric",
+  AnyHealthcare = "numeric",
+  NoDocbcCost = "numeric",
+  GenHlth = "numeric",
+  MentHlth = "numeric",
+  PhysHlth = "numeric",
+  DiffWalk = "numeric",
+  Sex = "numeric",
+  Age = "numeric",
+  Education = "numeric",
+  Income = "numeric",
+  Diabetes_binary = "numeric"
+)
 
 agent <- agent %>%
   pointblank::col_schema_match(schema = expected_schema)
@@ -199,7 +213,10 @@ agent <- agent %>%
 # Report output logic in work/reports/
 # report error in terminal if issue
 
-pointblank::export_report(agent, filename = opt$output_report)
+multiagent <- create_multiagent(agent, agent_ext)
+multiagent_report <- get_multiagent_report(multiagent, display_mode = "long")
+
+pointblank::export_report(multiagent_report, filename = opt$output_report)
 
 # Check validation results
 if (all(is.na(agent$validation_set$warn) & is.na(agent$validation_set$notify))) {
